@@ -36,14 +36,6 @@ namespace SimulatorTest
 		TEST_METHOD(open_existing_file_and_close_it){
 
 			char* fileName = "..\\SimulatorTest\\TestFiles\\TrajectoryTestFiles\\simpleTrajectoryFile.txt";
-			std::ofstream myfile(fileName);
-
-			if (myfile.is_open())
-			{
-				myfile << "This is a line.\n";
-				myfile << "This is another line.\n";
-				myfile.close();
-			}
 
 			trajectoryReader* testObject = new trajectoryReader(fileName);
 			testObject->open();
