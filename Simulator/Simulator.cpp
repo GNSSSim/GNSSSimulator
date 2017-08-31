@@ -15,7 +15,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	double ecef[3] = {0,0,0};
 
 	//pos2ecef(llh, ecef);
-
+	//TEstcomment
 	return 0;
 }
 
