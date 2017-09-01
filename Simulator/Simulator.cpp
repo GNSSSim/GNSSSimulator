@@ -7,7 +7,7 @@
 #include "trajectoryReader.h"
 #include <string>
 #include "GNSStime.h"
-#include "rtklib.h"
+//#include "rtklib.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
