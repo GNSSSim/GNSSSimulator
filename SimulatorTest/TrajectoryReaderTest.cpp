@@ -6,6 +6,7 @@
 #include "..\Simulator\GNSStime.h"
 #include "..\Simulator\CoordinateFrames.h"
 
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SimulatorTest
@@ -252,6 +253,52 @@ namespace SimulatorTest
 
 
 			ECEFCoordinate pos;
+			pos = testObject.nextECEF();
+			Assert::IsTrue(abs(double(pos.x) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.y) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.z) - 4487419.12)<0.1);
+
+			/*pos = testObject.nextLLH();
+			Assert::AreEqual(int(pos.latidute), 44);
+			Assert::AreEqual(int(pos.longitude), 46);
+			Assert::AreEqual(int(pos.height), 101);*/
+
+			testObject.close();
+		}
+
+		TEST_METHOD(get_the_first_ECEF_position_from_ECEF_file) {
+
+			char* fileName = "..\\SimulatorTest\\TestFiles\\TrajectoryTestFiles\\goodTrajectoryFilewECEF.txt";
+			trajectoryReader testObject(fileName);
+			testObject.open();
+
+
+			ECEFCoordinate pos;
+			pos = testObject.nextECEF();
+			Assert::IsTrue(abs(double(pos.x) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.y) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.z) - 4487419.12)<0.1);
+
+			/*pos = testObject.nextLLH();
+			Assert::AreEqual(int(pos.latidute), 44);
+			Assert::AreEqual(int(pos.longitude), 46);
+			Assert::AreEqual(int(pos.height), 101);*/
+
+			testObject.close();
+		}
+		TEST_METHOD(get_the_first_2_ECEF_position_from_ECEF_file) {
+
+			char* fileName = "..\\SimulatorTest\\TestFiles\\TrajectoryTestFiles\\goodTrajectoryFilewECEF.txt";
+			trajectoryReader testObject(fileName);
+			testObject.open();
+
+
+			ECEFCoordinate pos;
+			pos = testObject.nextECEF();
+			Assert::IsTrue(abs(double(pos.x) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.y) - 3194469.15)<0.1);
+			Assert::IsTrue(abs(double(pos.z) - 4487419.12)<0.1);
+
 			pos = testObject.nextECEF();
 			Assert::IsTrue(abs(double(pos.x) - 3194469.15)<0.1);
 			Assert::IsTrue(abs(double(pos.y) - 3194469.15)<0.1);

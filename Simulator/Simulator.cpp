@@ -10,6 +10,8 @@
 #include "GNSStime.h"
 //#include "rtklib.h"
 
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	double llh[3] = { 0.75, 0.75, 100 };

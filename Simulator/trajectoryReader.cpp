@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "trajectoryReader.h"
 
+
 //using namespace std;
 trajectoryReader::trajectoryReader(){
 	this->fileNamewPath = "This_File_is_not_exist_and_should_not_be_exist_424242_69696969_21212121";
@@ -149,19 +150,19 @@ void trajectoryReader::nextPos(double* coor1, double* coor2, double* coor3){
 	token = line.substr(0, linePos);
 	line.erase(0, linePos + delimiter.length());
 
-	*coor1 = std::stoi(token);
+	*coor1 = std::stod(token);
 
 	linePos = line.find(delimiter);
 	token = line.substr(0, linePos);
 	line.erase(0, linePos + delimiter.length());
 
-	*coor2 = std::stoi(token);
+	*coor2 = std::stod(token);
 	
 	linePos = line.find(delimiter);
 	token = line.substr(0, linePos);
 	line.erase(0, linePos + delimiter.length());
 
-	*coor3 = std::stoi(token);
+	*coor3 = std::stod(token);
 }
 
 LLHCoordinate trajectoryReader::nextLLH(void){
