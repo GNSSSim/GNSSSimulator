@@ -87,6 +87,7 @@
     <ClInclude Include="trajectoryReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RTKLIB-master\app\rnx2rtkp\rnx2rtkp.c" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
