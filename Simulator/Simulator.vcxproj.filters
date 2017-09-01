@@ -47,9 +47,6 @@
     <ClCompile Include="trajectoryReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RTKLIB-master\app\rnx2rtkp\rnx2rtkp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
