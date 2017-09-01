@@ -38,5 +38,8 @@
     <ClCompile Include="..\Simulator\trajectoryReader.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimulatorTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
