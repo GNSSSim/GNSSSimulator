@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <fstream>
+#include "Simulator.h"
 #include "trajectoryReader.h"
 #include <string>
 #include "GNSStime.h"
@@ -20,3 +21,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+void Simulator::llh2ecef(double *, double *)
+{
+
+}
