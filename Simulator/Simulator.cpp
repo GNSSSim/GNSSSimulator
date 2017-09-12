@@ -8,7 +8,8 @@
 #include "trajectoryReader.h"
 #include <string>
 #include "GNSStime.h"
-//#include "rtklib.h"
+//GPSTK includes
+#include "RefTime\TimeSystem.hpp"
 
 
 
@@ -17,6 +18,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	double llh[3] = { 0.75, 0.75, 100 };
 	double ecef[3] = {0,0,0};
 
+
+	std::cout << gpstk::TimeSystem::getLeapSeconds(1993, 9, 21);
+	getchar();
 	//pos2ecef(llh, ecef);
 	//TEstcomment
 	// TestCommit2
