@@ -9,15 +9,25 @@
 #include <string>
 #include "GNSStime.h"
 //GPSTK includes
-#include "RefTime\TimeSystem.hpp"
+#include "TimeSystem.hpp"
+#include "Position.hpp"
 
-
+using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	double llh[3] = { 0.75, 0.75, 100 };
 	double ecef[3] = {0,0,0};
 
+	gpstk::Position pos;
+	cout << "Position is: " << pos << endl;
+	pos.setECEF(-1575232.0141, -4707872.2332, 3993198.4383);
+	cout << "Position is: " << pos << endl;
+	cout << "ECEF transformed to LLH(Geodetic): " << pos.transformTo(gpstk::Position::Geodetic) << endl;
+
+
+	std::cout << "LeapSeconds of 1993.09.21. is: " << gpstk::TimeSystem::getLeapSeconds(1993, 9, 21) << std::endl;
+	getchar();
 
 	std::cout << gpstk::TimeSystem::getLeapSeconds(1993, 9, 21);
 	getchar();
