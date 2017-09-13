@@ -100,12 +100,20 @@ FULLFrame trajectoryReader::readLine_as_frame(void)		// Read tge whole line, whi
 		frame.ECEFcoordinates.x = tempvalues.first;
 		frame.ECEFcoordinates.y = tempvalues.second;
 		frame.ECEFcoordinates.z = tempvalues.third;
+		coordFHandler.convertToLLH(&(tempvalues.first), &(tempvalues.second), &(tempvalues.third));
+		frame.LLHcoordinates.latitude = tempvalues.first;
+		frame.LLHcoordinates.longitude = tempvalues.second;
+		frame.LLHcoordinates.height = tempvalues.third;
 		
 		break;
 	case trajectoryReader::LLH:
 		frame.LLHcoordinates.latitude = tempvalues.first;
 		frame.LLHcoordinates.longitude = tempvalues.second;
 		frame.LLHcoordinates.height = tempvalues.third;
+		coordFHandler.convertToECEF(&(tempvalues.first), &(tempvalues.second), &(tempvalues.third));
+		frame.ECEFcoordinates.x = tempvalues.first;
+		frame.ECEFcoordinates.y = tempvalues.second;
+		frame.ECEFcoordinates.z = tempvalues.third;
 		break;
 	default:
 		break;

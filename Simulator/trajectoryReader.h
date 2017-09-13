@@ -4,6 +4,7 @@
 #include <iostream>
 //#include "GNSStime.h"
 #include "CoordinateFrames.h"
+#include "CoordinateFrameHandler.h"
 
 #define TESTING
 
@@ -46,8 +47,11 @@ private:
 	bool isFileOpen = false;
 	char* fileNamewPath;
 	FULLFrame frame;
+	LLHCoordinate LLHcoords;
+	ECEFCoordinate ECEFcoords;
 	enum CoordinateType {ECEF,LLH};
 	CoordinateType coordType;
+	CoordinateFrameHandler coordFHandler;
 	std::ifstream trajFile;
 };
 

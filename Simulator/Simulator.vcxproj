@@ -144,6 +144,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
     <ClInclude Include="GNSStime.h" />
     <ClInclude Include="Simulator.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="trajectoryReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CoordinateFrameHandler.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

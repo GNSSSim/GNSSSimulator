@@ -47,7 +47,4 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
-void Simulator::llh2ecef(double *, double *)
-{
 
-}
