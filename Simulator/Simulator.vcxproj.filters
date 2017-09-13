@@ -27,9 +27,6 @@
     <ClInclude Include="trajectoryReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GNSStime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CoordinateFrames.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -84,12 +84,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\LUS2BP\Source\Repos\NavigationSimulator\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\LUS2BP\Source\Repos\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -99,12 +99,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +146,6 @@
   <ItemGroup>
     <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
-    <ClInclude Include="GNSStime.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
