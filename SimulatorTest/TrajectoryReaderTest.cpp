@@ -217,7 +217,7 @@ namespace SimulatorTest
 
 			LLHCoordinate pos;
 			pos = testObject.nextLLH();
-			Assert::AreEqual(int(pos.latidute), 45);
+			Assert::AreEqual(int(pos.latitude), 45);
 			Assert::AreEqual(int(pos.longitude), 45);
 			Assert::AreEqual(int(pos.height), 100);
 			
@@ -233,12 +233,12 @@ namespace SimulatorTest
 
 			LLHCoordinate pos;
 			pos = testObject.nextLLH();
-			Assert::AreEqual(int(pos.latidute), 45);
+			Assert::AreEqual(int(pos.latitude), 45);
 			Assert::AreEqual(int(pos.longitude), 45);
 			Assert::AreEqual(int(pos.height), 100);
 
 			pos = testObject.nextLLH();
-			Assert::AreEqual(int(pos.latidute), 44);
+			Assert::AreEqual(int(pos.latitude), 44);
 			Assert::AreEqual(int(pos.longitude), 46);
 			Assert::AreEqual(int(pos.height), 101);
 
@@ -310,6 +310,9 @@ namespace SimulatorTest
 			Assert::AreEqual(int(pos.height), 101);*/
 
 			testObject.close();
+		}
+		TEST_METHOD(read_line_as_structure_time_and_positions) {
+			Assert::IsTrue(false);
 		}
 	};
 	

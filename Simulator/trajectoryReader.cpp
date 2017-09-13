@@ -38,6 +38,82 @@ void trajectoryReader::close(void){
 	}
 }
 
+FULLFrame trajectoryReader::readLine_as_frame(void)		// Read tge whole line, which's output is a FullFrame type
+{
+	struct temp
+	{
+		double first, second, third;
+	}tempvalues;
+
+	frame.GPSTime.ToW = 0;
+	frame.GPSTime.WN = 0;
+	frame.ECEFcoordinates.x = 0;
+	frame.ECEFcoordinates.y = 0;
+	frame.ECEFcoordinates.z = 0;
+	frame.LLHcoordinates.height = 0;
+	frame.LLHcoordinates.latitude = 0;
+	frame.LLHcoordinates.longitude = 0;
+
+	//this->open();
+	if (!isFileOpen) {
+		this->open();
+		if (!this->isFormatValid())
+			return frame;
+	}
+	if (this->isNotHeaderRead) {
+		this->readHeader();
+	}
+
+	
+
+	std::string line = this->readLine();
+	std::string delimiter = " ";
+	std::string token;
+	size_t pos = 0;
+
+	pos = line.find(delimiter);					//GPSTime
+	token = line.substr(0, pos);
+	frame.GPSTime.WN = std::stoi(token);
+	line.erase(0, pos + delimiter.length());
+
+	pos = line.find(delimiter);
+	token = line.substr(0, pos);
+	frame.GPSTime.ToW = std::stoi(token);
+	line.erase(0, pos + delimiter.length());
+
+	pos = line.find(delimiter);					//Temp coordinate eval
+	token = line.substr(0, pos);
+	tempvalues.first = std::stoi(token);
+	line.erase(0, pos + delimiter.length());
+	pos = line.find(delimiter);					
+	token = line.substr(0, pos);
+	tempvalues.second = std::stoi(token);
+	line.erase(0, pos + delimiter.length());
+	pos = line.find(delimiter);					
+	token = line.substr(0, pos);
+	tempvalues.third = std::stoi(token);
+	line.erase(0, pos + delimiter.length());
+
+	switch (coordType)
+	{
+	case trajectoryReader::ECEF:
+		frame.ECEFcoordinates.x = tempvalues.first;
+		frame.ECEFcoordinates.y = tempvalues.second;
+		frame.ECEFcoordinates.z = tempvalues.third;
+		
+		break;
+	case trajectoryReader::LLH:
+		frame.LLHcoordinates.latitude = tempvalues.first;
+		frame.LLHcoordinates.longitude = tempvalues.second;
+		frame.LLHcoordinates.height = tempvalues.third;
+		break;
+	default:
+		break;
+	}
+
+	return frame;
+}
+
 bool trajectoryReader::is_open(void){
 	return this->isFileOpen;
 }
@@ -91,6 +167,10 @@ std::string trajectoryReader::readHeader(){
 	this->setFile2Begining();
 	std::string header = this->readLine();
 
+	if (header.find("ECEF") != std::string::npos)
+		coordType = ECEF;
+	else
+		coordType = LLH;
 	this->isNotHeaderRead = false;
 	return header;
 }
@@ -99,6 +179,7 @@ void trajectoryReader::setFile2Begining(void){
 	this->trajFile.clear();
 	this->trajFile.seekg(0, std::ios::beg);
 }
+
 
 GPSTime trajectoryReader::nextTime(void){
 
@@ -168,11 +249,11 @@ void trajectoryReader::nextPos(double* coor1, double* coor2, double* coor3){
 LLHCoordinate trajectoryReader::nextLLH(void){
 
 	LLHCoordinate pos;
-	pos.latidute = 0;
+	pos.latitude = 0;
 	pos.longitude = 0;
 	pos.height = 0;
 
-	this->nextPos(&pos.latidute, &pos.longitude, &pos.height);
+	this->nextPos(&pos.latitude, &pos.longitude, &pos.height);
 
 	return pos;
 }

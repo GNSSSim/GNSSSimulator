@@ -90,7 +90,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpstk.lib;gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
