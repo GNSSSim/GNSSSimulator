@@ -2,15 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <iostream>
-#include <fstream>
 #include "Simulator.h"
-#include "trajectoryReader.h"
-#include <string>
-//#include "GNSStime.h"
-//GPSTK includes
-#include "TimeSystem.hpp"
-#include "Position.hpp"
 
 using namespace std;
 
@@ -31,7 +23,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "LeapSeconds of 1993.09.21. is: " << gpstk::TimeSystem::getLeapSeconds(1993, 9, 21) << std::endl;
 	cout << "Pre-Debug tests ended" << endl << "---------------------------------" << endl;
 
-	char* path = "..\\SimulatorTest\\TestFiles\\TrajectoryTestFiles\\goodTrajectoryFilewLLH.txt";
+	char* path = "..\\SimulatorTest\\TestFiles\\TrajectoryTestFiles\\goodTrajectoryFilewECEF.txt";
 	trajectoryReader trajectoryReader(path);
 	frame = trajectoryReader.readLine_as_frame();
 	cout << frame.GPSTime.WN << " " << frame.GPSTime.ToW << " " << frame.ECEFcoordinates.x << " " << frame.ECEFcoordinates.y << " " << frame.ECEFcoordinates.z << " " << frame.LLHcoordinates.latitude << " " << frame.LLHcoordinates.longitude << " " << frame.LLHcoordinates.height << endl;

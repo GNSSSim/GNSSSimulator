@@ -3,7 +3,6 @@
 #include "..\Simulator\trajectoryReader.h"
 #include <iostream>
 #include <fstream>
-#include "..\Simulator\GNSStime.h"
 #include "..\Simulator\CoordinateFrames.h"
 
 
