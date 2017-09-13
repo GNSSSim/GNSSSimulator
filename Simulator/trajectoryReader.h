@@ -2,8 +2,9 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#include "GNSStime.h"
+//#include "GNSStime.h"
 #include "CoordinateFrames.h"
+#include "CoordinateFrameHandler.h"
 
 #define TESTING
 
@@ -18,7 +19,7 @@ public:
 
 	void open(void);
 	void close(void);
-	GPSTime nextTime(void);
+	FULLFrame readLine_as_frame(void);
 	
 
 #ifdef TESTING
@@ -30,6 +31,8 @@ public:
 private:
 
 #endif
+	
+	GPSTime nextTime(void);
 	LLHCoordinate nextLLH(void);
 	ECEFCoordinate nextECEF(void);
 	bool isFormatValid(void);
@@ -43,6 +46,12 @@ private:
 	bool isNotHeaderRead = true;
 	bool isFileOpen = false;
 	char* fileNamewPath;
+	FULLFrame frame;
+	LLHCoordinate LLHcoords;
+	ECEFCoordinate ECEFcoords;
+	enum CoordinateType {ECEF,LLH};
+	CoordinateType coordType;
+	CoordinateFrameHandler coordFHandler;
 	std::ifstream trajFile;
 };
 

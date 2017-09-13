@@ -27,13 +27,13 @@
     <ClInclude Include="trajectoryReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GNSStime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CoordinateFrames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Simulator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoordinateFrameHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -45,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="trajectoryReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CoordinateFrameHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
