@@ -36,6 +36,9 @@
     <ClInclude Include="CoordinateFrameHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rinexreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

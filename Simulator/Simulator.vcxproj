@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
+    <ClInclude Include="rinexreader.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
