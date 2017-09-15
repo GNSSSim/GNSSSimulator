@@ -6,6 +6,7 @@
 #include <string>
 #include "TimeSystem.hpp"		//GPSTK includes
 #include "Position.hpp"
+#include "rinexreader.h"
 
 
 class Simulator

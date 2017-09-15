@@ -1,3 +1,7 @@
 #pragma once
 
-#include 
+#include "RinexObsBase.hpp"
+#include "RinexObsHeader.hpp"
+#include "RinexObsData.hpp"
+#include "RinexObsStream.hpp"
+#include "RinexDatum.hpp"
