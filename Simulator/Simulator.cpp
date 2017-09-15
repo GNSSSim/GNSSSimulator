@@ -8,23 +8,40 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	int myprn;
+
+	cout << "Name PRN (1..32): ";
+	cin >> myprn;
+
+	//double gamma = (L1_FREQ_GPS / L2_FREQ_GPS)*(L1_FREQ_GPS / L2_FREQ_GPS);
 	cout << "RINEX data file reading Started" << endl;
 
 	gpstk::RinexObsStream rin("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
 	gpstk::RinexObsStream rout("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o.new", ios::out | ios::trunc);
 
+	rin.exceptions(ios::failbit);
 	gpstk::RinexObsHeader head;
+	gpstk::RinexObsData data;
+	gpstk::RinexDatum dataobj;
+
+	//Read the RINEX header
 	rin >> head;
-	rout.header = rin.header;
+	head.dump(cout);
+
 	rout << rout.header;
 
-	gpstk::RinexObsData data;
+	/*
 	while (rin >> data) {
 		rout << data;
 		//cout << data;
 	}
-	cout << "ROUT Write finished." << endl;
+	*/
+
+
+	cout << "Main Process Finished!" << endl;
 	getchar();
+	cin >> myprn;
 
 	return 0;
 }
