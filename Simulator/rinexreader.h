@@ -1,9 +1,9 @@
 #pragma once
 
-#include "RinexObsBase.hpp"
-#include "RinexObsHeader.hpp"
-#include "RinexObsData.hpp"
-#include "RinexObsStream.hpp"
+#include "Rinex3ObsBase.hpp"
+#include "Rinex3ObsHeader.hpp"
+#include "Rinex3ObsData.hpp"
+#include "Rinex3ObsStream.hpp"
 #include "RinexDatum.hpp"
 #include "CivilTime.hpp"
 #include "GNSSconstants.hpp"
@@ -15,11 +15,11 @@ public:
 	RinexReader();
 	~RinexReader();
 
-	void setInputFile(char*);
-	void setOutputFile(char*);
+	void readFile(char*);
 private:
 	char* inputpath;
 	char* outputpath;
+	
 
 
 };
