@@ -99,13 +99,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GPSTK_FULL_LIB\Debug\;..\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\GPSTK_FULL_LIB\Debug\;..\..\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpstk_full.lib;gpstk_full_64.lib;gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
+    <ClInclude Include="rinexreader.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -153,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoordinateFrameHandler.cpp" />
+    <ClCompile Include="rinexreader.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
