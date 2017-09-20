@@ -8,6 +8,7 @@
 *.sln.docstates
 *.lib
 *.new
+GPSTK_FULL_LIB/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
