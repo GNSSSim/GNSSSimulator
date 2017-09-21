@@ -50,6 +50,9 @@
 #include "EphemerisRange.hpp"
 #include "Position.hpp"
 
+//GPSTK ext lib includes
+#include "GPSEphemerisStore.hpp"
+#include "GPSEphemeris.hpp"
 
 
 class Simulator

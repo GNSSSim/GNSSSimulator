@@ -44,24 +44,36 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3ObsHeader Rhead, Rheadout;
 		Rinex3ObsData Rdata;
 		RinexDatum dataobj;
-		string filepath("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
+
+		Rinex3NavStream inavstrm;
+		Rinex3NavHeader Rnavhead;
+		Rinex3NavData Rnavdata;
+
+		GPSEphemerisStore bceStore;
+
+		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
+		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2570.17n");
 
 		RinexSatID sat;
 		RinexSatID tsat(-1, SatID::systemGPS);
 
 		iret = 0;
 
-		//Open the file
-		istrm.open(filepath, ios::in);
+		//Open the files
+		istrm.open(filepath_obs, ios::in);
+		inavstrm.open(filepath_nav.c_str(), ios::in);
 
-		if (!istrm.is_open()) {
+		if (!istrm.is_open() || !inavstrm.is_open()) {
 			LOG(WARNING) << "Warning : could not open file ";
 			iret = 1;
 		}
 		try
 		{
 			istrm >> Rhead;
+			inavstrm >> Rnavhead;
+
 			Rhead.dump(cout);
+			Rnavhead.dump(cout);
 			try
 			{
 				indexC1 = Rhead.getObsIndex("C1");
@@ -72,8 +84,6 @@ int ProcessFiles(void) throw(Exception)
 			}
 			
 
-			cout << "Printing Data objects" << endl;
-
 			map<string, vector<RinexObsID>>::const_iterator kt;
 			for (kt = Rhead.mapObsTypes.begin();kt != Rhead.mapObsTypes.end();kt++) {
 				sat.fromString(kt->first);
@@ -81,6 +91,8 @@ int ProcessFiles(void) throw(Exception)
 				cout << "  " << sat.systemChar() << endl;
 			}
 
+			// Store Ephemeris Data
+			while (inavstrm >> Rnavdata) bceStore.addEphemeris(Rnavdata);
 
 			while (istrm >> Rdata) {
 				//Rdata.dump(cout);
@@ -96,12 +108,9 @@ int ProcessFiles(void) throw(Exception)
 					try
 					{
 						sat = (*it).first; //Get Sat ID
-						if (SatID::systemGPS != sat.system) {	//Skip if Sat is not GPS
-							continue;
-						}
-
+					    //		Skip if Sat is not GPS		Skip if Observations are less than 7
+						if (SatID::systemGPS != sat.system || (*it).second.capacity() != 7) continue;
 						C1 = Rdata.getObs((*it).first, indexC1).data;	//Get C1 Pseudorange observation
-
 						cout << civtime << " " << sat << " " << C1 << endl;
 						
 					}
