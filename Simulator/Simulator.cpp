@@ -46,9 +46,14 @@ int ProcessFiles(void) throw(Exception)
 		RinexDatum dataobj;
 		string filepath("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
 
+		RinexSatID sat;
+		RinexSatID tsat(-1, SatID::systemGPS);
+
 		iret = 0;
+
 		//Open the file
 		istrm.open(filepath, ios::in);
+
 		if (!istrm.is_open()) {
 			LOG(WARNING) << "Warning : could not open file ";
 			iret = 1;
@@ -68,24 +73,44 @@ int ProcessFiles(void) throw(Exception)
 			
 
 			cout << "Printing Data objects" << endl;
+
+			map<string, vector<RinexObsID>>::const_iterator kt;
+			for (kt = Rhead.mapObsTypes.begin();kt != Rhead.mapObsTypes.end();kt++) {
+				sat.fromString(kt->first);
+				sat.dump(cout);
+				cout << "  " << sat.systemChar() << endl;
+			}
+
+
 			while (istrm >> Rdata) {
 				//Rdata.dump(cout);
 				vector<SatID> prnVec;			// According to Ex4
 				vector<double> rangeVec;
+				CivilTime civtime(Rdata.time);
 				Rinex3ObsData::DataMap::const_iterator it;
 
+
+				// Iterate over observations
 				for (it = Rdata.obs.begin();it != Rdata.obs.end();it++) {
 					double C1(0.0);
 					try
 					{
-						C1 = Rdata.getObs((*it).first, indexC1).data;
-						cout << C1 << endl;
+						sat = (*it).first; //Get Sat ID
+						if (SatID::systemGPS != sat.system) {	//Skip if Sat is not GPS
+							continue;
+						}
+
+						C1 = Rdata.getObs((*it).first, indexC1).data;	//Get C1 Pseudorange observation
+
+						cout << civtime << " " << sat << " " << C1 << endl;
+						
 					}
 					catch (...)
 					{
-
+						cout << "C1 not found" << endl;
 					}
 				}
+				
 				
 			}
 		}
