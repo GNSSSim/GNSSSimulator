@@ -50,9 +50,10 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3NavData Rnavdata;
 
 		GPSEphemerisStore bceStore;
+		Xvt xvt_data;
 
-		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
-		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2570.17n");
+		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2530.17o");
+		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2530.17n");
 
 		RinexSatID sat;
 		RinexSatID tsat(-1, SatID::systemGPS);
@@ -111,7 +112,10 @@ int ProcessFiles(void) throw(Exception)
 					    //		Skip if Sat is not GPS		Skip if Observations are less than 7
 						if (SatID::systemGPS != sat.system || (*it).second.capacity() != 7) continue;
 						C1 = Rdata.getObs((*it).first, indexC1).data;	//Get C1 Pseudorange observation
-						cout << civtime << " " << sat << " " << C1 << endl;
+
+						xvt_data = bceStore.getXvt((*it).first, civtime);
+
+						cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;
 						
 					}
 					catch (...)

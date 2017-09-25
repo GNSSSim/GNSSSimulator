@@ -105,7 +105,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\GPSTK_FULL_LIB\Debug\;..\..\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpstk_full.lib;gpstk_full_64.lib;gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gpstk_full.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
