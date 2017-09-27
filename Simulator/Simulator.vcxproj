@@ -84,7 +84,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\LUS2BP\Source\Repos\NavigationSimulator\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Simulator\GPSTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,7 +105,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\GPSTK_FULL_LIB\Debug\;..\..\GPSTk-Build\Debug;C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\GPSTK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpstk_full.lib;gpstk_full_64.lib;gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gpstk_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,14 +146,22 @@
   <ItemGroup>
     <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
+    <ClInclude Include="Navigation_examples.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="rinexreader.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Test_Trajectory_Class.hpp" />
+    <ClInclude Include="TrajectoryBase.hpp" />
+    <ClInclude Include="TrajectoryData.hpp" />
+    <ClInclude Include="TrajectoryHeader.hpp" />
     <ClInclude Include="trajectoryReader.h" />
+    <ClInclude Include="TrajectoryStream.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoordinateFrameHandler.cpp" />
+    <ClCompile Include="naigationExample_1.cpp" />
     <ClCompile Include="rinexreader.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -162,10 +170,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Test_Trajectory_Class.cpp" />
+    <ClCompile Include="TrajectoryData.cpp" />
+    <ClCompile Include="TrajectoryHeader.cpp" />
     <ClCompile Include="trajectoryReader.cpp" />
+    <ClCompile Include="TrajectoryStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Simulator.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

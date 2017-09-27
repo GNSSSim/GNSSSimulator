@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "..\Simulator\CoordinateFrames.h"
+#include "..\Simulator\CoordinateFrameHandler.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
