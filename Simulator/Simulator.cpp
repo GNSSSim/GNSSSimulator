@@ -3,21 +3,15 @@
 
 #include "stdafx.h"
 #include "Simulator.h"
-#include "Navigation_examples.h"
-#include "Test_Trajectory_Class.hpp"
+
+
 
 using namespace gpstk;
 using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//Navigation_examples_1();
-
-	//Test_Trajectory_1();
-	Test_Trajectory_2();
-
-
-	/*/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
+	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
 	GPSTime gpstime;
 	gpstk::Position pos;
 	FULLFrame frame;
@@ -35,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wallclkbeg.setLocalTime();
 
 
-	ProcessFiles();*/
+	ProcessFiles();	//Process Rinex files and store data in containers		//TODO: implement IF depending on commandline argument. Only process and store Rinex on first run.
 	return 0;
 }
 
@@ -43,6 +37,7 @@ int ProcessFiles(void) throw(Exception)
 {
 	try {
 
+		trajectoryContainer mTrajectoryContainer;
 
 		int iret;
 		int indexC1;
@@ -56,9 +51,10 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3NavData Rnavdata;
 
 		GPSEphemerisStore bceStore;
+		Xvt xvt_data;
 
-		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2340.17o");
-		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2570.17n");
+		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2530.17o");
+		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2530.17n");
 
 		RinexSatID sat;
 		RinexSatID tsat(-1, SatID::systemGPS);
@@ -78,11 +74,11 @@ int ProcessFiles(void) throw(Exception)
 			istrm >> Rhead;
 			inavstrm >> Rnavhead;
 
-			Rhead.dump(cout);
-			Rnavhead.dump(cout);
+			Rhead.dump(cout);		//TODO: delete later
+			Rnavhead.dump(cout);	//TODO: delete later
 			try
 			{
-				indexC1 = Rhead.getObsIndex("C1");
+				indexC1 = Rhead.getObsIndex("C1");	//Pseudorange obs index
 			}
 			catch (...)
 			{
@@ -90,7 +86,7 @@ int ProcessFiles(void) throw(Exception)
 			}
 			
 
-			map<string, vector<RinexObsID>>::const_iterator kt;
+			map<string, vector<RinexObsID>>::const_iterator kt;			//TODO: Dummy - Print sat systems from Obs
 			for (kt = Rhead.mapObsTypes.begin();kt != Rhead.mapObsTypes.end();kt++) {
 				sat.fromString(kt->first);
 				sat.dump(cout);
@@ -98,15 +94,14 @@ int ProcessFiles(void) throw(Exception)
 			}
 
 			// Store Ephemeris Data
-			while (inavstrm >> Rnavdata) bceStore.addEphemeris(Rnavdata);
+			while (inavstrm >> Rnavdata) {
+				bceStore.addEphemeris(Rnavdata);			//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
+				mTrajectoryContainer.addNavData(Rnavdata);	//TODO: Probably not needed, instead keep bcestore
+			}
 
 			while (istrm >> Rdata) {
-				//Rdata.dump(cout);
-				vector<SatID> prnVec;			// According to Ex4
-				vector<double> rangeVec;
 				CivilTime civtime(Rdata.time);
 				Rinex3ObsData::DataMap::const_iterator it;
-
 
 				// Iterate over observations
 				for (it = Rdata.obs.begin();it != Rdata.obs.end();it++) {
@@ -116,8 +111,12 @@ int ProcessFiles(void) throw(Exception)
 						sat = (*it).first; //Get Sat ID
 					    //		Skip if Sat is not GPS		Skip if Observations are less than 7
 						if (SatID::systemGPS != sat.system || (*it).second.capacity() != 7) continue;
-						C1 = Rdata.getObs((*it).first, indexC1).data;	//Get C1 Pseudorange observation
-						cout << civtime << " " << sat << " " << C1 << endl;
+						C1 = Rdata.getObs((*it).first, indexC1).data;			//Get C1 Pseudorange observation
+						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
+
+						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
+						
+						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
 						
 					}
 					catch (...)
@@ -125,9 +124,8 @@ int ProcessFiles(void) throw(Exception)
 						cout << "C1 not found" << endl;
 					}
 				}
-				
-				
 			}
+			mTrajectoryContainer.write_to_file();
 		}
 		catch (const std::exception& e)
 		{
