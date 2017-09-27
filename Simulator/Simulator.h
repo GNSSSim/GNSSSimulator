@@ -9,6 +9,7 @@
 //Own includes
 #include "trajectoryReader.h"
 #include "rinexreader.h"
+#include "trajectoryContainer.h"
 
 //GPSTK includes
 #include "Exception.hpp"

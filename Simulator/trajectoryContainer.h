@@ -8,17 +8,19 @@
 #include "GPSEphemerisStore.hpp"
 #include "Xvt.hpp"
 
+using namespace gpstk;
+
 class trajectoryContainer {
 
 public:
 	trajectoryContainer();
-	trajectoryContainer();
+	~trajectoryContainer();
 
 	void addObsData();
-	void addNavData();
+	void addNavData(const GPSEphemeris& gpseph);
 
 private:
-
+	GPSEphemerisStore ephemerisStore;
 
 
 };

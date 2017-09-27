@@ -37,6 +37,7 @@ int ProcessFiles(void) throw(Exception)
 {
 	try {
 
+		trajectoryContainer mTrajectoryContainer;
 
 		int iret;
 		int indexC1;
@@ -93,7 +94,10 @@ int ProcessFiles(void) throw(Exception)
 			}
 
 			// Store Ephemeris Data
-			while (inavstrm >> Rnavdata) bceStore.addEphemeris(Rnavdata);
+			while (inavstrm >> Rnavdata) {
+				bceStore.addEphemeris(Rnavdata);
+				mTrajectoryContainer.addNavData(Rnavdata);
+			}
 
 			while (istrm >> Rdata) {
 				//Rdata.dump(cout);
