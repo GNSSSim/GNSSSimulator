@@ -57,6 +57,7 @@ namespace gnsssimulator {
 			else if (line == endofHeaderString) {
 				isHeaderEnd = true;
 				strm.headerRead = true;
+				strm.header = *this;
 			}
 		}
 	}

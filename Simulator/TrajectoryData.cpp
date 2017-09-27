@@ -6,14 +6,6 @@ namespace gnsssimulator
 	using namespace gpstk::StringUtils;
 	using namespace std;
 
-	/*TrajectoryData::TrajectoryData()
-	{
-	}*/
-
-
-	/*TrajectoryData::~TrajectoryData()
-	{
-	}*/
 	void TrajectoryData::reallyPutRecord(gpstk::FFStream& s) const
 		throw(std::exception, gpstk::FFStreamError,
 			gpstk::StringUtils::StringException) {
@@ -81,7 +73,8 @@ namespace gnsssimulator
 
 			pos = gpstk::Position(	const_cast<const double&>(coor1), 
 									const_cast<const double&>(coor2), 
-									const_cast<const double&>(coor3), 
+									const_cast<const double&>(coor3),
+									
 									coorSys);
 			cout << gpsTime << endl; 
 			cout << pos << endl;

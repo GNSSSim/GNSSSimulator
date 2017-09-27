@@ -3,15 +3,21 @@
 
 #include "stdafx.h"
 #include "Simulator.h"
-
-
+#include "Navigation_examples.h"
+#include "Test_Trajectory_Class.hpp"
 
 using namespace gpstk;
 using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
+	//Navigation_examples_1();
+
+	//Test_Trajectory_1();
+	Test_Trajectory_2();
+
+
+	/*/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
 	GPSTime gpstime;
 	gpstk::Position pos;
 	FULLFrame frame;
@@ -29,7 +35,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wallclkbeg.setLocalTime();
 
 
-	ProcessFiles();	//Process Rinex files and store data in containers		//TODO: implement IF depending on commandline argument. Only process and store Rinex on first run.
+	ProcessFiles();
 	return 0;
 }
 
@@ -141,7 +147,7 @@ int ProcessFiles(void) throw(Exception)
 	catch (...) {
 
 		return 1;
-	}
+	}*/
 }
 
 
