@@ -29,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wallclkbeg.setLocalTime();
 
 
-	ProcessFiles();
+	ProcessFiles();	//Process Rinex files and store data in containers		//TODO: implement IF depending on commandline argument. Only process and store Rinex on first run.
 	return 0;
 }
 
@@ -74,11 +74,11 @@ int ProcessFiles(void) throw(Exception)
 			istrm >> Rhead;
 			inavstrm >> Rnavhead;
 
-			Rhead.dump(cout);
-			Rnavhead.dump(cout);
+			Rhead.dump(cout);		//TODO: delete later
+			Rnavhead.dump(cout);	//TODO: delete later
 			try
 			{
-				indexC1 = Rhead.getObsIndex("C1");
+				indexC1 = Rhead.getObsIndex("C1");	//Pseudorange obs index
 			}
 			catch (...)
 			{
@@ -86,7 +86,7 @@ int ProcessFiles(void) throw(Exception)
 			}
 			
 
-			map<string, vector<RinexObsID>>::const_iterator kt;
+			map<string, vector<RinexObsID>>::const_iterator kt;			//TODO: Dummy - Print sat systems from Obs
 			for (kt = Rhead.mapObsTypes.begin();kt != Rhead.mapObsTypes.end();kt++) {
 				sat.fromString(kt->first);
 				sat.dump(cout);
@@ -95,13 +95,13 @@ int ProcessFiles(void) throw(Exception)
 
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
-				bceStore.addEphemeris(Rnavdata);
-				mTrajectoryContainer.addNavData(Rnavdata);
+				bceStore.addEphemeris(Rnavdata);		//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
+				mTrajectoryContainer.addNavData(Rnavdata);	
 			}
 
 			while (istrm >> Rdata) {
 				//Rdata.dump(cout);
-				vector<SatID> prnVec;			// According to Ex4
+				vector<SatID> prnVec;			// According to gpstk Ex4
 				vector<double> rangeVec;
 				CivilTime civtime(Rdata.time);
 				Rinex3ObsData::DataMap::const_iterator it;
@@ -119,7 +119,8 @@ int ProcessFiles(void) throw(Exception)
 
 						xvt_data = bceStore.getXvt((*it).first, civtime);
 
-						cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;
+						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data);
+						cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
 						
 					}
 					catch (...)
