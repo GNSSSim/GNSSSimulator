@@ -3,11 +3,19 @@
 #include "trajectoryReader.h"
 #include "CoordinateFrameHandler.h"
 
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include "Rinex3ObsData.hpp"
 #include "Rinex3NavData.hpp"
 #include "RinexSatID.hpp"
 #include "GPSEphemerisStore.hpp"
 #include "Xvt.hpp"
+#include "GPSWeek.hpp"
+#include "GPSWeekZcount.hpp"
+#include "GPSWeekSecond.hpp"
 
 using namespace gpstk;
 
@@ -28,15 +36,18 @@ public:
 
 	void addObsData();
 	void addNavData(const GPSEphemeris& gpseph);
-	void assembleTrajectories(SatID,CivilTime,Xvt);		//Store data in containers
+	/* Add these items to the gps_eph_map container */
+	void assembleTrajectories(SatID,CivilTime,Xvt,double);		//Store data in containers
 
 	CivilTime listEpochs();			//Print all stored Epochs
 	CivilTime listEpochs(SatID);	//Print all stored epochs for a specified sat
 
 	gps_eph_map getNavData();
-	GPSEphemeris getNavData(SatID);
-	GPSEphemeris getNavData(CivilTime);
-	GPSEphemeris getNavData(SatID, CivilTime);
+	gps_eph_map getNavData(SatID);
+	gps_eph_map getNavData(CivilTime);
+	gps_eph_map getNavData(SatID, CivilTime);
+
+	void write_to_file();		//Write to trajectory format(One file per sat)
 
 
 private:
@@ -52,17 +63,3 @@ private:
 
 };
 
-class trajectoryData_c {
-public:
-	trajectoryData_c();
-	~trajectoryData_c();
-
-	void setData();	//
-	void getData();
-
-	void setxvt();
-
-private:
-	mTrajectoryData trajData;
-
-};

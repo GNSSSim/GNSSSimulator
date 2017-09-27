@@ -95,17 +95,13 @@ int ProcessFiles(void) throw(Exception)
 
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
-				bceStore.addEphemeris(Rnavdata);		//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
-				mTrajectoryContainer.addNavData(Rnavdata);	
+				bceStore.addEphemeris(Rnavdata);			//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
+				mTrajectoryContainer.addNavData(Rnavdata);	//TODO: Probably not needed, instead keep bcestore
 			}
 
 			while (istrm >> Rdata) {
-				//Rdata.dump(cout);
-				vector<SatID> prnVec;			// According to gpstk Ex4
-				vector<double> rangeVec;
 				CivilTime civtime(Rdata.time);
 				Rinex3ObsData::DataMap::const_iterator it;
-
 
 				// Iterate over observations
 				for (it = Rdata.obs.begin();it != Rdata.obs.end();it++) {
@@ -115,12 +111,12 @@ int ProcessFiles(void) throw(Exception)
 						sat = (*it).first; //Get Sat ID
 					    //		Skip if Sat is not GPS		Skip if Observations are less than 7
 						if (SatID::systemGPS != sat.system || (*it).second.capacity() != 7) continue;
-						C1 = Rdata.getObs((*it).first, indexC1).data;	//Get C1 Pseudorange observation
+						C1 = Rdata.getObs((*it).first, indexC1).data;			//Get C1 Pseudorange observation
+						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
 
-						xvt_data = bceStore.getXvt((*it).first, civtime);
-
-						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data);
-						cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
+						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
+						
+						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
 						
 					}
 					catch (...)
@@ -128,9 +124,8 @@ int ProcessFiles(void) throw(Exception)
 						cout << "C1 not found" << endl;
 					}
 				}
-				
-				
 			}
+			mTrajectoryContainer.write_to_file();
 		}
 		catch (const std::exception& e)
 		{
