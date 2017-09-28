@@ -9,9 +9,6 @@ trajectoryContainer::~trajectoryContainer()
 {
 }
 
-void trajectoryContainer::addObsData()
-{
-}
 
 void trajectoryContainer::addNavData(const GPSEphemeris& gpseph)
 {
@@ -27,19 +24,8 @@ void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt 
 
 }
 
-gps_eph_map trajectoryContainer::getNavData()
-{	
 
-
-	return trajectoryDataContainer;
-}
-
-gps_eph_map trajectoryContainer::getNavData(SatID)
-{
-	return gps_eph_map();
-}
-
-void trajectoryContainer::write_to_file()
+void trajectoryContainer::write_to_cout_all()
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
