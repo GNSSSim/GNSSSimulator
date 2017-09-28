@@ -154,6 +154,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Test_Trajectory_Class.hpp" />
     <ClInclude Include="TrajectoryBase.hpp" />
+    <ClInclude Include="trajectoryContainer.h" />
     <ClInclude Include="TrajectoryData.hpp" />
     <ClInclude Include="TrajectoryHeader.hpp" />
     <ClInclude Include="trajectoryReader.h" />
@@ -171,6 +172,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Test_Trajectory_Class.cpp" />
+    <ClCompile Include="trajectoryContainer.cpp" />
     <ClCompile Include="TrajectoryData.cpp" />
     <ClCompile Include="TrajectoryHeader.cpp" />
     <ClCompile Include="trajectoryReader.cpp" />

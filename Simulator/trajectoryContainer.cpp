@@ -73,3 +73,26 @@ void trajectoryContainer::write_to_file()
 	}
 
 }
+
+void trajectoryContainer::write_to_cout_test()
+
+{
+	gps_eph_map::const_iterator it;
+	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
+	mTrajectoryData outputData;
+
+	CivilTime time;
+	GPSWeekSecond gpswns;
+	ECEFCoordinate ecefcoords;
+
+	it = trajectoryDataContainer.begin();
+	std::advance(it, 8);
+	sat = (*it).first;
+	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
+
+	kt = output.begin();
+	std::advance(kt, 10);
+	time = (*kt).first;
+	outputData = (*kt).second;
+	std::cout << sat << "     TIME: " << time << " pRange: " << outputData.pseudorange << std::endl;
+}
