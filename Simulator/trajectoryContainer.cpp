@@ -99,7 +99,7 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 			std::cout << std::endl << "[ERROR] EPOCH IS ON DARK SIDE" << std::endl;
 		outputData = output.at(query_time);
 		std::cout << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
-			<< "  positions: " << outputData.xvt.x << std::endl;
+			<< "  positions: " << std::setprecision(10) << outputData.xvt.x << std::endl;
 	}
 	catch (const std::exception&)
 	{
@@ -117,7 +117,7 @@ SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = Sa
 	}
 	SatID querysat;
 	
-	std::cout << (*it).first.id << " <-QuerySat   "  ;
+	std::cout << (*it).first.id << " <- QuerySat   "  ;
 	if ((*it).first.system != sys)
 		return (*it).first;			//TODO: return invalid SatID
 	return (*it).first;
@@ -135,6 +135,6 @@ CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr
 	returnTime.minute = min;
 	returnTime.second = sec;
 
-	std::cout << returnTime << " <-returnTime ";
+	std::cout << returnTime << " <- returnTime ";
 	return returnTime;
 }

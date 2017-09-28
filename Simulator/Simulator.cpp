@@ -125,6 +125,9 @@ int ProcessFiles(void) throw(Exception)
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
 			//mTrajectoryContainer.write_to_file();
 			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4,SatID::systemGPS),mTrajectoryContainer.getCivilTimeObject(2017,9,10,1,13,30));
+			GPSEphemeris orbiteph_test = bceStore.findEphemeris(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
+			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
 		}
 		catch (const std::exception& e)
 		{
