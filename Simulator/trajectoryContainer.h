@@ -41,16 +41,13 @@ public:
 
 	CivilTime listEpochs();			//Print all stored Epochs
 	CivilTime listEpochs(SatID);	//Print all stored epochs for a specified sat
-
-	gps_eph_map getNavData();
-	gps_eph_map getNavData(SatID);
-	gps_eph_map getNavData(CivilTime);
-	gps_eph_map getNavData(SatID, CivilTime);
+	bool isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpochs);
 
 	void write_to_cout_all();		//Write to trajectory format(One file per sat)
 	void write_to_cout_test(SatID,CivilTime);
 
 	SatID getSatIDObject(int, SatID::SatelliteSystem );//Return ith SV as SatID object.
+	int getSatIDObject_index();
 	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
 
 private:

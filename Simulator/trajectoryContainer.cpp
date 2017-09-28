@@ -25,6 +25,14 @@ void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt 
 }
 
 
+bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
+{
+	if (civiliantime < referenceEpoch.front() || civiliantime > referenceEpoch.back())
+		return true;
+	else
+		return false;
+}
+
 void trajectoryContainer::write_to_cout_all()
 {
 	gps_eph_map::const_iterator it;
@@ -76,14 +84,28 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 	//std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
 	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(query_sat);
 
+	std::vector<CivilTime> epochs;
+	for (auto& x : output)
+		epochs.push_back(x.first);
+
 	kt = output.begin();
 	std::advance(kt, 10);
 	time = (*kt).first;
 
 	//outputData = (*kt).second;
-	outputData = output.at(query_time);
-	std::cout << sat << "     TIME: " << time << " pRange: " << outputData.pseudorange 
-		<< "  positions: " << outputData.xvt.x << std::endl;
+	try
+	{
+		if (isEpochonDarkSide(query_time, epochs))
+			std::cout << std::endl << "[ERROR] EPOCH IS ON DARK SIDE" << std::endl;
+		outputData = output.at(query_time);
+		std::cout << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
+			<< "  positions: " << outputData.xvt.x << std::endl;
+	}
+	catch (const std::exception&)
+	{
+		std::cout << std::endl << "[ERROR] Epoch for " << query_sat << " not found!" << std::endl;
+	}
+	
 }
 
 SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
@@ -95,12 +117,13 @@ SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = Sa
 	}
 	SatID querysat;
 	
-	std::cout << (*it).first << "   "  ;
+	std::cout << (*it).first.id << " <-QuerySat   "  ;
 	if ((*it).first.system != sys)
 		return (*it).first;			//TODO: return invalid SatID
 	return (*it).first;
 }
 
+//Create and return a CivilTime object
 CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)
 {
 	CivilTime returnTime;
@@ -112,6 +135,6 @@ CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr
 	returnTime.minute = min;
 	returnTime.second = sec;
 
-	std::cout << returnTime << "  ";
+	std::cout << returnTime << " <-returnTime ";
 	return returnTime;
 }
