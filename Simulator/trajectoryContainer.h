@@ -48,7 +48,10 @@ public:
 	gps_eph_map getNavData(SatID, CivilTime);
 
 	void write_to_cout_all();		//Write to trajectory format(One file per sat)
-	void write_to_cout_test();
+	void write_to_cout_test(SatID,CivilTime);
+
+	SatID getSatIDObject(int, SatID::SatelliteSystem );//Return ith SV as SatID object.
+	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
 
 private:
 	

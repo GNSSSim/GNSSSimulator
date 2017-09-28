@@ -60,8 +60,7 @@ void trajectoryContainer::write_to_cout_all()
 
 }
 
-void trajectoryContainer::write_to_cout_test()
-
+void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -74,11 +73,45 @@ void trajectoryContainer::write_to_cout_test()
 	it = trajectoryDataContainer.begin();
 	std::advance(it, 8);
 	sat = (*it).first;
-	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
+	//std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
+	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(query_sat);
 
 	kt = output.begin();
 	std::advance(kt, 10);
 	time = (*kt).first;
-	outputData = (*kt).second;
-	std::cout << sat << "     TIME: " << time << " pRange: " << outputData.pseudorange << std::endl;
+
+	//outputData = (*kt).second;
+	outputData = output.at(query_time);
+	std::cout << sat << "     TIME: " << time << " pRange: " << outputData.pseudorange 
+		<< "  positions: " << outputData.xvt.x << std::endl;
+}
+
+SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
+{
+	//SV's are ordered
+	gps_eph_map::const_iterator it = trajectoryDataContainer.begin();
+	if (i > 1) {
+		std::advance(it, i - 1);
+	}
+	SatID querysat;
+	
+	std::cout << (*it).first << "   "  ;
+	if ((*it).first.system != sys)
+		return (*it).first;			//TODO: return invalid SatID
+	return (*it).first;
+}
+
+CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)
+{
+	CivilTime returnTime;
+	returnTime.setTimeSystem(TimeSystem::GPS);
+	returnTime.year = yr;
+	returnTime.month = mo;
+	returnTime.day = da;
+	returnTime.hour = hr;
+	returnTime.minute = min;
+	returnTime.second = sec;
+
+	std::cout << returnTime << "  ";
+	return returnTime;
 }

@@ -124,7 +124,7 @@ int ProcessFiles(void) throw(Exception)
 			}
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
 			//mTrajectoryContainer.write_to_file();
-			mTrajectoryContainer.write_to_cout_test();
+			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4,SatID::systemGPS),mTrajectoryContainer.getCivilTimeObject(2017,9,10,1,13,30));
 		}
 		catch (const std::exception& e)
 		{
