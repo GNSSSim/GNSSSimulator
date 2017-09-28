@@ -37,6 +37,7 @@ void Test_Trajectory_2(void) {
 	cout << "Next epoch" << endl;
 	while (trajFileIn >> trajData) {
 		cout << endl <<"Next epoch" << endl;
+		trajFileOut << trajData;
 	}
 
 

@@ -68,7 +68,7 @@ namespace gnsssimulator {
 
 		string line;
 
-		line = positionTypeECEFString;
+		line = startofHeader;
 		strm << line << endl;
 		strm.lineNumber++;
 

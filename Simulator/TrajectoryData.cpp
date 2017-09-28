@@ -6,11 +6,22 @@ namespace gnsssimulator
 	using namespace gpstk::StringUtils;
 	using namespace std;
 
-	void TrajectoryData::reallyPutRecord(gpstk::FFStream& s) const
+	void TrajectoryData::reallyPutRecord(gpstk::FFStream& ffs) const
 		throw(std::exception, gpstk::FFStreamError,
 			gpstk::StringUtils::StringException) {
-	
-		return;
+		string line;
+		TrajectoryStream& strm = dynamic_cast<TrajectoryStream&>(ffs);
+
+		strm.precision(6);
+		strm << fixed << setprecision(0) << gpsTime.getWeek() << "   ";
+		strm << fixed << setprecision(1) << gpsTime.getSOW() << setprecision(4) << "  ";
+
+		strm << fixed << setprecision(3) << pos.getX() << "  ";
+		strm << fixed << setprecision(3) << pos.getY() << "  ";
+		strm << fixed << setprecision(3) << pos.getZ() << "  ";
+
+		strm << endl;
+		strm.lineNumber++;
 	}
 
 	/**
@@ -71,11 +82,8 @@ namespace gnsssimulator
 			double coor2 = asDouble(currentLine.substr(28, 13));
 			double coor3 = asDouble(currentLine.substr(41, 13));
 
-			pos = gpstk::Position(	const_cast<const double&>(coor1), 
-									const_cast<const double&>(coor2), 
-									const_cast<const double&>(coor3),
+			pos = gpstk::Position(	coor1,	coor2,	coor3, 	coorSys,  NULL );
 									
-									coorSys);
 			cout << gpsTime << endl; 
 			cout << pos << endl;
 		}
