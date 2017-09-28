@@ -14,10 +14,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Navigation_examples_1();
 
 	//Test_Trajectory_1();
-	Test_Trajectory_2();
+	//Test_Trajectory_2();
 
 
-	/*/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
+	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
 	GPSTime gpstime;
 	gpstk::Position pos;
 	FULLFrame frame;
@@ -77,11 +77,10 @@ int ProcessFiles(void) throw(Exception)
 		}
 		try
 		{
+			cout << "Parsing Started. Wait for [ERROR] or a [FLAG:...] message." << endl;
 			istrm >> Rhead;
 			inavstrm >> Rnavhead;
 
-			Rhead.dump(cout);		//TODO: delete later
-			Rnavhead.dump(cout);	//TODO: delete later
 			try
 			{
 				indexC1 = Rhead.getObsIndex("C1");	//Pseudorange obs index
@@ -89,14 +88,6 @@ int ProcessFiles(void) throw(Exception)
 			catch (...)
 			{
 				exit(1);
-			}
-			
-
-			map<string, vector<RinexObsID>>::const_iterator kt;			//TODO: Dummy - Print sat systems from Obs
-			for (kt = Rhead.mapObsTypes.begin();kt != Rhead.mapObsTypes.end();kt++) {
-				sat.fromString(kt->first);
-				sat.dump(cout);
-				cout << "  " << sat.systemChar() << endl;
 			}
 
 			// Store Ephemeris Data
@@ -127,11 +118,13 @@ int ProcessFiles(void) throw(Exception)
 					}
 					catch (...)
 					{
-						cout << "C1 not found" << endl;
+						cout << "WARNING: C1 not found for SV:   " << sat << " at epoch:   " << civtime << endl;
 					}
 				}
 			}
-			mTrajectoryContainer.write_to_file();
+			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
+			//mTrajectoryContainer.write_to_file();
+			mTrajectoryContainer.write_to_cout_test();
 		}
 		catch (const std::exception& e)
 		{
@@ -147,7 +140,7 @@ int ProcessFiles(void) throw(Exception)
 	catch (...) {
 
 		return 1;
-	}*/
+	}
 }
 
 

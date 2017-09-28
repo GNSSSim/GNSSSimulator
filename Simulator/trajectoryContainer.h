@@ -48,7 +48,7 @@ public:
 	gps_eph_map getNavData(SatID, CivilTime);
 
 	void write_to_file();		//Write to trajectory format(One file per sat)
-
+	void write_to_cout_test();
 
 private:
 	
