@@ -133,7 +133,7 @@ SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID
 	SatID querysat;
 
 	if ((*it).first.system != sys)
-		return (*it).first;			//TODO: return invalid SatID
+		return (*it).first;			// TODO: return invalid SatID
 	return (*it).first;
 }
 
@@ -155,9 +155,12 @@ CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, i
 
 OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_time)
 {
+	if (isEpochonDarkSide(query_time, getEpochVectorforSat(query_sat)))
+	{
+		throw "Sat has no observations at given time. Dark Side Error.";
+		return OrbitEph();
+	}
 	GPSEphemeris ephemeris = ephemerisStore.findEphemeris(query_sat,query_time);
-
-
 	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
 	return ephemeris;
 }

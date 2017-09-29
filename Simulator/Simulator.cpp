@@ -46,13 +46,21 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
 	cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
 	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
-	//TODO: ^^^^ DELETE THESE ^^^^
+	// TODO: ^^^^ DELETE THESE ^^^^
 
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
 	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
-	query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
-	cout << query_ephemeris.svXvt(query_time) << endl;
+	try
+	{
+		query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
+		cout << query_ephemeris.svXvt(query_time) << endl;
+	}
+	catch (const std::exception& e)
+	{
+		cout << endl << e.what();
+	}
+	
 
 	return 0;
 }
@@ -73,7 +81,6 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3NavStream inavstrm;
 		Rinex3NavHeader Rnavhead;
 		Rinex3NavData Rnavdata;
-
 		
 		Xvt xvt_data;
 
@@ -128,8 +135,8 @@ int ProcessFiles(void) throw(Exception)
 						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
 
 						satDataContainer_c.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
-						
-						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
+						satDataContainer_c.assemblePseudoRangeContainer(sat, civtime, C1);
+						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	// TODO: delete later (debug cout)
 						
 					}
 					catch (...)
@@ -141,17 +148,11 @@ int ProcessFiles(void) throw(Exception)
 			//Add EphemerisStore to Container class
 			satDataContainer_c.passEphemerisStore(bceStore);
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
-
-			//mTrajectoryContainer.write_to_file();
 			}
 		catch (const std::exception& e)
 		{
 
 		}
-
-
-
-
 
 		return 0;
 	}

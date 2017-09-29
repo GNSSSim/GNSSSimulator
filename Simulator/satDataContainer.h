@@ -26,7 +26,7 @@ typedef struct {
 	GPSEphemeris ephemeris;
 } mTrajectoryData;
 typedef std::map<SatID, std::map<CivilTime, mTrajectoryData>> gps_eph_map;
-//TODO: ^^^^ DELETE THESE ^^^^
+// TODO: ^^^^ DELETE THESE ^^^^
 
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
@@ -92,7 +92,7 @@ private:
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
 	
-	//TODO: DELETE THESE BELOW
+	// TODO: DELETE THESE BELOW
 	mTrajectoryData trajectoryData;
 	gps_eph_map trajectoryDataContainer;
 
