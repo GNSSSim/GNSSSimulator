@@ -26,12 +26,10 @@ typedef struct {
 	GPSEphemeris ephemeris;
 } mTrajectoryData;
 typedef std::map<SatID, std::map<CivilTime, mTrajectoryData>> gps_eph_map;
+//TODO: ^^^^ DELETE THESE ^^^^
 
-// v2 struct and map
-typedef struct {
-	double pseudoRange;
-	std::vector<CivilTime> timeVector;
-};
+// v2 map
+typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
 
 
 class satDataContainer {
@@ -40,14 +38,24 @@ public:
 	satDataContainer();
 	~satDataContainer();
 
-	void addObsData();
 	/* Add these items to the gps_eph_map container */
 	void assembleTrajectories(SatID,CivilTime,Xvt,double);		//Store data in containers
+
+	/* When reading in RINEX line by line, pass the pseudorange for each epoch 
+		for each Satellite
+	*/
+	void assemblePseudoRangeContainer(SatID, CivilTime, double);
+	
+	/* Pass EphemerisStore reference to SatDataContainer.
+		EphStore stores all the ephemeris data for each satellite.
+	*/
 	void passEphemerisStore(GPSEphemerisStore&);
 
-	CivilTime listEpochs();			//Print all stored Epochs
-	CivilTime listEpochs(SatID);	//Print all stored epochs for a specified sat
-	
+	/* Get the full epoch list for a given satellite
+		@Param The SatID object
+		@return The <vector> containing all the epoch times for the given SatID
+	*/
+	std::vector<CivilTime> getEpochVectorforSat(SatID&);
 
 	void write_to_cout_all();		//Write to trajectory format(One file per sat)
 	void write_to_cout_test(SatID,CivilTime);
@@ -69,17 +77,24 @@ public:
 	*/
 	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
 	
-	
-	GPSEphemeris getSatInfoAtEpoch(SatID, CivilTime);
+	/* Query Ephemeris Data for a [SatID, CivilianTime] combination
+		Time can be any valid CivilianTime object. If Navigation Data
+		from RINEX file for the queried epoch is not available,
+		GPSTK uses built-in models to calculate Satellite position.
+	*/
+	OrbitEph getSatInfoAtEpoch(SatID, CivilTime);
 private:
 	
 	GPSEphemerisStore ephemerisStore;
 	GPSEphemeris ephemeris;
 	RinexSatID sat;
-	//trajectoryData_c trajectoryData;
-	gps_eph_map trajectoryDataContainer;;
-	mTrajectoryData trajectoryData;
+	/* Contains the C1 Pseudorange for every RINEX epoch for each satellite
+	*/
+	PseudoRangeContainer pseudoRangeContainer;
 	
+	
+	mTrajectoryData trajectoryData;
+	gps_eph_map trajectoryDataContainer;
 
 
 };
