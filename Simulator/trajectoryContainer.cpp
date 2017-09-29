@@ -9,9 +9,6 @@ trajectoryContainer::~trajectoryContainer()
 {
 }
 
-void trajectoryContainer::addObsData()
-{
-}
 
 void trajectoryContainer::addNavData(const GPSEphemeris& gpseph)
 {
@@ -27,19 +24,16 @@ void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt 
 
 }
 
-gps_eph_map trajectoryContainer::getNavData()
-{	
 
-
-	return trajectoryDataContainer;
-}
-
-gps_eph_map trajectoryContainer::getNavData(SatID)
+bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
 {
-	return gps_eph_map();
+	if (civiliantime < referenceEpoch.front() || civiliantime > referenceEpoch.back())
+		return true;
+	else
+		return false;
 }
 
-void trajectoryContainer::write_to_file()
+void trajectoryContainer::write_to_cout_all()
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -74,8 +68,7 @@ void trajectoryContainer::write_to_file()
 
 }
 
-void trajectoryContainer::write_to_cout_test()
-
+void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -88,11 +81,60 @@ void trajectoryContainer::write_to_cout_test()
 	it = trajectoryDataContainer.begin();
 	std::advance(it, 8);
 	sat = (*it).first;
-	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
+	//std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(sat);
+	std::map<CivilTime, mTrajectoryData> output = trajectoryDataContainer.at(query_sat);
+
+	std::vector<CivilTime> epochs;
+	for (auto& x : output)
+		epochs.push_back(x.first);
 
 	kt = output.begin();
 	std::advance(kt, 10);
 	time = (*kt).first;
-	outputData = (*kt).second;
-	std::cout << sat << "     TIME: " << time << " pRange: " << outputData.pseudorange << std::endl;
+
+	//outputData = (*kt).second;
+	try
+	{
+		if (isEpochonDarkSide(query_time, epochs))
+			std::cout << std::endl << "[ERROR] EPOCH IS ON DARK SIDE" << std::endl;
+		outputData = output.at(query_time);
+		std::cout << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
+			<< "  positions: " << std::setprecision(10) << outputData.xvt.x << std::endl;
+	}
+	catch (const std::exception&)
+	{
+		std::cout << std::endl << "[ERROR] Epoch for " << query_sat << " not found!" << std::endl;
+	}
+	
+}
+
+SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
+{
+	//SV's are ordered
+	gps_eph_map::const_iterator it = trajectoryDataContainer.begin();
+	if (i > 1) {
+		std::advance(it, i - 1);
+	}
+	SatID querysat;
+	
+	std::cout << (*it).first.id << " <- QuerySat   "  ;
+	if ((*it).first.system != sys)
+		return (*it).first;			//TODO: return invalid SatID
+	return (*it).first;
+}
+
+//Create and return a CivilTime object
+CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)
+{
+	CivilTime returnTime;
+	returnTime.setTimeSystem(TimeSystem::GPS);
+	returnTime.year = yr;
+	returnTime.month = mo;
+	returnTime.day = da;
+	returnTime.hour = hr;
+	returnTime.minute = min;
+	returnTime.second = sec;
+
+	std::cout << returnTime << " <- returnTime ";
+	return returnTime;
 }
