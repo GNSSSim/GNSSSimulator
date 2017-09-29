@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "TrajectoryStore.h"
+#include "TrajectoryStore.hpp"
 
 namespace gnsssimulator {
 	TrajectoryStore::TrajectoryStore()
