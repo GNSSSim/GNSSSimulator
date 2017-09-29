@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "trajectoryReader.h"
 #include "CoordinateFrameHandler.h"
@@ -75,7 +75,7 @@ public:
 
 	/* Create a CivilianTime object from input time as arguments
 	*/
-	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
+	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, double second);
 	
 	/* Query Ephemeris Data for a [SatID, CivilianTime] combination
 		Time can be any valid CivilianTime object. If Navigation Data
@@ -92,7 +92,7 @@ private:
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
 	
-	
+	//TODO: DELETE THESE BELOW
 	mTrajectoryData trajectoryData;
 	gps_eph_map trajectoryDataContainer;
 

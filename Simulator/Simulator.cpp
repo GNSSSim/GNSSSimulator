@@ -50,7 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
-	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30);
+	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
 	query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
 	cout << query_ephemeris.svXvt(query_time) << endl;
 

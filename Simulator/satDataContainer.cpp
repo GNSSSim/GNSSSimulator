@@ -139,7 +139,7 @@ SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID
 
 
 
-CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)	//TODO: double sec for subsecundum acquisiton
+CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, double sec)	//TODO: double sec for subsecundum acquisiton
 {
 	CivilTime returnTime;
 	returnTime.setTimeSystem(TimeSystem::GPS);
