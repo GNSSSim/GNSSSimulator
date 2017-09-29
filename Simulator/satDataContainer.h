@@ -82,7 +82,7 @@ public:
 		from RINEX file for the queried epoch is not available,
 		GPSTK uses built-in models to calculate Satellite position.
 	*/
-	OrbitEph getSatInfoAtEpoch(SatID, CivilTime);
+	OrbitEph getSatInfoAtEpoch(SatID&, CivilTime&);
 private:
 	
 	GPSEphemerisStore ephemerisStore;

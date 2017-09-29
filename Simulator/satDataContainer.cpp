@@ -153,10 +153,11 @@ CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, i
 	return returnTime;
 }
 
-OrbitEph satDataContainer::getSatInfoAtEpoch(SatID query_sat, CivilTime query_time)
+OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_time)
 {
-	GPSEphemeris returnEph;
+	GPSEphemeris ephemeris = ephemerisStore.findEphemeris(query_sat,query_time);
 
-	returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
-	return returnEph;
+
+	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
+	return ephemeris;
 }

@@ -9,6 +9,10 @@
 using namespace gpstk;
 using namespace std;
 
+
+satDataContainer satDataContainer_c;
+GPSEphemerisStore bceStore;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/// Function Declarations
@@ -33,9 +37,23 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "Pre-Debug tests ended" << endl << "---------------------------------" << endl;
 	/////-------------- END OF PRE DEBUG TEST--------------------\\\\\\\\\\\\
 	
-
+	/// Read in RINEX files
 	ProcessFiles();
 	
+
+	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+	GPSEphemeris orbiteph_test = bceStore.findEphemeris(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+	cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+	cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
+	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
+	//TODO: ^^^^ DELETE THESE ^^^^
+
+	cout << endl << endl << "------------" << endl;
+	OrbitEph query_ephemeris;
+	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30);
+	query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
+	cout << query_ephemeris.svXvt(query_time) << endl;
+
 	return 0;
 }
 
@@ -43,7 +61,7 @@ int ProcessFiles(void) throw(Exception)
 {
 	try {
 
-		satDataContainer satDataContainer_c;
+		
 
 		int iret;
 		int indexC1;
@@ -56,7 +74,7 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3NavHeader Rnavhead;
 		Rinex3NavData Rnavdata;
 
-		GPSEphemerisStore bceStore;
+		
 		Xvt xvt_data;
 
 		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2530.17o");
@@ -125,13 +143,7 @@ int ProcessFiles(void) throw(Exception)
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
 
 			//mTrajectoryContainer.write_to_file();
-			satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4,SatID::systemGPS),satDataContainer_c.getCivilTimeObject(2017,9,10,1,13,30));
-			
-			GPSEphemeris orbiteph_test = bceStore.findEphemeris(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-			cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
-			satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
-		}
+			}
 		catch (const std::exception& e)
 		{
 
