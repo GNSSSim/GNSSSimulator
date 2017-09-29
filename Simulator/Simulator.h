@@ -9,7 +9,7 @@
 //Own includes
 #include "trajectoryReader.h"
 #include "rinexreader.h"
-#include "trajectoryContainer.h"
+#include "satDataContainer.h"
 
 //GPSTK includes
 #include "Exception.hpp"
@@ -61,5 +61,5 @@ class Simulator
 public:
 	
 private:
-
+	
 };

@@ -9,8 +9,16 @@
 using namespace gpstk;
 using namespace std;
 
+
+satDataContainer satDataContainer_c;
+GPSEphemerisStore bceStore;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	/// Function Declarations
+	int ProcessFiles();
+
+	/// End of Declarations
 	//Navigation_examples_1();
 
 	//Test_Trajectory_1();
@@ -29,13 +37,31 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "Pre-Debug tests ended" << endl << "---------------------------------" << endl;
 	/////-------------- END OF PRE DEBUG TEST--------------------\\\\\\\\\\\\
 	
-	int ProcessFiles();
-	clock_t totaltime(clock());
-	Epoch wallclkbeg;
-	wallclkbeg.setLocalTime();
-
-
+	/// Read in RINEX files
 	ProcessFiles();
+	
+
+	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+	GPSEphemeris orbiteph_test = bceStore.findEphemeris(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+	cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+	cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
+	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
+	// TODO: ^^^^ DELETE THESE ^^^^
+
+	cout << endl << endl << "------------" << endl;
+	OrbitEph query_ephemeris;
+	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
+	try
+	{
+		query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
+		cout << query_ephemeris.svXvt(query_time) << endl;
+	}
+	catch (const std::exception& e)
+	{
+		cout << endl << e.what();
+	}
+	
+
 	return 0;
 }
 
@@ -43,7 +69,7 @@ int ProcessFiles(void) throw(Exception)
 {
 	try {
 
-		trajectoryContainer mTrajectoryContainer;
+		
 
 		int iret;
 		int indexC1;
@@ -55,15 +81,13 @@ int ProcessFiles(void) throw(Exception)
 		Rinex3NavStream inavstrm;
 		Rinex3NavHeader Rnavhead;
 		Rinex3NavData Rnavdata;
-
-		GPSEphemerisStore bceStore;
+		
 		Xvt xvt_data;
 
 		string filepath_obs("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2530.17o");
 		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2530.17n");
 
 		RinexSatID sat;
-		RinexSatID tsat(-1, SatID::systemGPS);
 
 		iret = 0;
 
@@ -93,7 +117,6 @@ int ProcessFiles(void) throw(Exception)
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
 				bceStore.addEphemeris(Rnavdata);			//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
-				mTrajectoryContainer.addNavData(Rnavdata);	//TODO: Probably not needed, instead keep bcestore
 			}
 
 			while (istrm >> Rdata) {
@@ -111,9 +134,9 @@ int ProcessFiles(void) throw(Exception)
 						C1 = Rdata.getObs((*it).first, indexC1).data;			//Get C1 Pseudorange observation
 						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
 
-						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
-						
-						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
+						satDataContainer_c.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
+						satDataContainer_c.assemblePseudoRangeContainer(sat, civtime, C1);
+						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	// TODO: delete later (debug cout)
 						
 					}
 					catch (...)
@@ -122,21 +145,14 @@ int ProcessFiles(void) throw(Exception)
 					}
 				}
 			}
+			//Add EphemerisStore to Container class
+			satDataContainer_c.passEphemerisStore(bceStore);
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
-			//mTrajectoryContainer.write_to_file();
-			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4,SatID::systemGPS),mTrajectoryContainer.getCivilTimeObject(2017,9,10,1,13,30));
-			GPSEphemeris orbiteph_test = bceStore.findEphemeris(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
-			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
-		}
+			}
 		catch (const std::exception& e)
 		{
 
 		}
-
-
-
-
 
 		return 0;
 	}

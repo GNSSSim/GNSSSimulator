@@ -1,31 +1,35 @@
 #include "stdafx.h"
-#include "trajectoryContainer.h"
+#include "satDataContainer.h"
 
-trajectoryContainer::trajectoryContainer()
+satDataContainer::satDataContainer()
 {
 }
 
-trajectoryContainer::~trajectoryContainer()
+satDataContainer::~satDataContainer()
 {
 }
 
 
-void trajectoryContainer::addNavData(const GPSEphemeris& gpseph)
-{
-	ephemerisStore.addEphemeris(gpseph);
-}
-
-void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt xvt_i, double pseudorange)
+void satDataContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt xvt_i, double pseudorange)
 {
 	trajectoryData.xvt = xvt_i;
 	trajectoryData.pseudorange = pseudorange;
 	trajectoryDataContainer[sat][civtime] = trajectoryData;
-	
+}
+
+void satDataContainer::assemblePseudoRangeContainer(SatID inSat, CivilTime inTime, double inPRange)
+{
+	pseudoRangeContainer[inSat][inTime] = inPRange;
 
 }
 
+void satDataContainer::passEphemerisStore(GPSEphemerisStore &eph)
+{
+	ephemerisStore = eph;
+}
 
-bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
+
+bool satDataContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
 {
 	if (civiliantime < referenceEpoch.front() || civiliantime > referenceEpoch.back())
 		return true;
@@ -33,7 +37,18 @@ bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<
 		return false;
 }
 
-void trajectoryContainer::write_to_cout_all()
+std::vector<CivilTime> satDataContainer::getEpochVectorforSat(SatID& querySat)
+{
+	std::map<CivilTime,double> queryMap = pseudoRangeContainer.at(querySat);
+	std::vector<CivilTime> outVector;
+
+	for (auto& x : queryMap)
+		outVector.push_back(x.first);
+	
+	return outVector;
+}
+
+void satDataContainer::write_to_cout_all()
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -68,7 +83,7 @@ void trajectoryContainer::write_to_cout_all()
 
 }
 
-void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
+void satDataContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -98,7 +113,7 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 		if (isEpochonDarkSide(query_time, epochs))
 			std::cout << std::endl << "[ERROR] EPOCH IS ON DARK SIDE" << std::endl;
 		outputData = output.at(query_time);
-		std::cout << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
+		std::cout << std::endl << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
 			<< "  positions: " << std::setprecision(10) << outputData.xvt.x << std::endl;
 	}
 	catch (const std::exception&)
@@ -108,7 +123,7 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 	
 }
 
-SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
+SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
 {
 	//SV's are ordered
 	gps_eph_map::const_iterator it = trajectoryDataContainer.begin();
@@ -116,15 +131,15 @@ SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = Sa
 		std::advance(it, i - 1);
 	}
 	SatID querysat;
-	
-	std::cout << (*it).first.id << " <- QuerySat   "  ;
+
 	if ((*it).first.system != sys)
-		return (*it).first;			//TODO: return invalid SatID
+		return (*it).first;			// TODO: return invalid SatID
 	return (*it).first;
 }
 
-//Create and return a CivilTime object
-CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)
+
+
+CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, double sec)	//TODO: double sec for subsecundum acquisiton
 {
 	CivilTime returnTime;
 	returnTime.setTimeSystem(TimeSystem::GPS);
@@ -135,6 +150,17 @@ CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr
 	returnTime.minute = min;
 	returnTime.second = sec;
 
-	std::cout << returnTime << " <- returnTime ";
 	return returnTime;
+}
+
+OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_time)
+{
+	if (isEpochonDarkSide(query_time, getEpochVectorforSat(query_sat)))
+	{
+		throw "Sat has no observations at given time. Dark Side Error.";
+		return OrbitEph();
+	}
+	GPSEphemeris ephemeris = ephemerisStore.findEphemeris(query_sat,query_time);
+	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
+	return ephemeris;
 }
