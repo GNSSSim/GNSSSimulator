@@ -158,6 +158,7 @@
     <ClInclude Include="TrajectoryData.hpp" />
     <ClInclude Include="TrajectoryHeader.hpp" />
     <ClInclude Include="trajectoryReader.h" />
+    <ClInclude Include="TrajectoryStore.hpp" />
     <ClInclude Include="TrajectoryStream.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +177,7 @@
     <ClCompile Include="TrajectoryData.cpp" />
     <ClCompile Include="TrajectoryHeader.cpp" />
     <ClCompile Include="trajectoryReader.cpp" />
+    <ClCompile Include="TrajectoryStore.cpp" />
     <ClCompile Include="TrajectoryStream.cpp" />
   </ItemGroup>
   <ItemGroup>

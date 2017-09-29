@@ -72,6 +72,9 @@
     <ClInclude Include="satDataContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TrajectoryStore.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="satDataContainer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrajectoryStore.cpp">
+      <Filter>Source Files\Trajectory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
