@@ -11,6 +11,10 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	/// Function Declarations
+	int ProcessFiles();
+
+	/// End of Declarations
 	//Navigation_examples_1();
 
 	//Test_Trajectory_1();
@@ -29,13 +33,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "Pre-Debug tests ended" << endl << "---------------------------------" << endl;
 	/////-------------- END OF PRE DEBUG TEST--------------------\\\\\\\\\\\\
 	
-	int ProcessFiles();
-	clock_t totaltime(clock());
-	Epoch wallclkbeg;
-	wallclkbeg.setLocalTime();
-
 
 	ProcessFiles();
+	
 	return 0;
 }
 
@@ -63,7 +63,6 @@ int ProcessFiles(void) throw(Exception)
 		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2530.17n");
 
 		RinexSatID sat;
-		RinexSatID tsat(-1, SatID::systemGPS);
 
 		iret = 0;
 
@@ -93,7 +92,6 @@ int ProcessFiles(void) throw(Exception)
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
 				bceStore.addEphemeris(Rnavdata);			//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
-				mTrajectoryContainer.addNavData(Rnavdata);	//TODO: Probably not needed, instead keep bcestore
 			}
 
 			while (istrm >> Rdata) {
@@ -122,10 +120,15 @@ int ProcessFiles(void) throw(Exception)
 					}
 				}
 			}
+			//Add EphemerisStore to Container class
+			mTrajectoryContainer.assembleEphemerisStore(bceStore);
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
+
 			//mTrajectoryContainer.write_to_file();
 			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4,SatID::systemGPS),mTrajectoryContainer.getCivilTimeObject(2017,9,10,1,13,30));
+			
 			GPSEphemeris orbiteph_test = bceStore.findEphemeris(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+			cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
 			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
 			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
 		}

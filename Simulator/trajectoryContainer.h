@@ -19,13 +19,19 @@
 
 using namespace gpstk;
 
-
+// v1 struct and map
 typedef struct {
 	Xvt xvt;
 	double pseudorange;
 	GPSEphemeris ephemeris;
 } mTrajectoryData;
 typedef std::map<SatID, std::map<CivilTime, mTrajectoryData>> gps_eph_map;
+
+// v2 struct and map
+typedef struct {
+	double pseudoRange;
+	std::vector<CivilTime> timeVector;
+};
 
 
 class trajectoryContainer {
@@ -35,21 +41,35 @@ public:
 	~trajectoryContainer();
 
 	void addObsData();
-	void addNavData(const GPSEphemeris& gpseph);
 	/* Add these items to the gps_eph_map container */
 	void assembleTrajectories(SatID,CivilTime,Xvt,double);		//Store data in containers
+	void assembleEphemerisStore(GPSEphemerisStore&);
 
 	CivilTime listEpochs();			//Print all stored Epochs
 	CivilTime listEpochs(SatID);	//Print all stored epochs for a specified sat
-	bool isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpochs);
+	
 
 	void write_to_cout_all();		//Write to trajectory format(One file per sat)
 	void write_to_cout_test(SatID,CivilTime);
 
-	SatID getSatIDObject(int, SatID::SatelliteSystem );//Return ith SV as SatID object.
-	int getSatIDObject_index();
-	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
+	/* Check if a given epoch is outside of the associated epoch observation vector
+	* Returns TRUE if satellite is not observable in the given epoch.
+	* @param : CivilianTime in question
+	* @param : Time vectors of the given sat.
+	*/
+	bool isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpochs);
+	
+	/* Get Satellite ID object
+	* Satellites are ordered and stored inside the DataContainer object.
+	* This function iterates through it and returns the ith satellite stored.
+	*/
+	SatID getSatIDObject(int, SatID::SatelliteSystem );
 
+
+	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
+	
+	
+	GPSEphemeris getSatInfoAtEpoch(SatID, CivilTime);
 private:
 	
 	GPSEphemerisStore ephemerisStore;

@@ -10,11 +10,6 @@ trajectoryContainer::~trajectoryContainer()
 }
 
 
-void trajectoryContainer::addNavData(const GPSEphemeris& gpseph)
-{
-	ephemerisStore.addEphemeris(gpseph);
-}
-
 void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt xvt_i, double pseudorange)
 {
 	trajectoryData.xvt = xvt_i;
@@ -22,6 +17,11 @@ void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt 
 	trajectoryDataContainer[sat][civtime] = trajectoryData;
 	
 
+}
+
+void trajectoryContainer::assembleEphemerisStore(GPSEphemerisStore &eph)
+{
+	ephemerisStore = eph;
 }
 
 
@@ -98,7 +98,7 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 		if (isEpochonDarkSide(query_time, epochs))
 			std::cout << std::endl << "[ERROR] EPOCH IS ON DARK SIDE" << std::endl;
 		outputData = output.at(query_time);
-		std::cout << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
+		std::cout << std::endl << query_sat << "     TIME: " << query_time << " pRange: " << outputData.pseudorange
 			<< "  positions: " << std::setprecision(10) << outputData.xvt.x << std::endl;
 	}
 	catch (const std::exception&)
@@ -117,14 +117,15 @@ SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = Sa
 	}
 	SatID querysat;
 	
-	std::cout << (*it).first.id << " <- QuerySat   "  ;
+	//std::cout << (*it).first.id << " <- QuerySat   "  ;
 	if ((*it).first.system != sys)
 		return (*it).first;			//TODO: return invalid SatID
 	return (*it).first;
 }
 
-//Create and return a CivilTime object
-CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)
+
+
+CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)	//TODO: double sec for subsecundum acquisiton
 {
 	CivilTime returnTime;
 	returnTime.setTimeSystem(TimeSystem::GPS);
@@ -135,6 +136,14 @@ CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr
 	returnTime.minute = min;
 	returnTime.second = sec;
 
-	std::cout << returnTime << " <- returnTime ";
+	//std::cout << returnTime << " <- returnTime ";
 	return returnTime;
+}
+
+GPSEphemeris trajectoryContainer::getSatInfoAtEpoch(SatID query_sat, CivilTime query_time)
+{
+	GPSEphemeris returnEph;
+
+	returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
+	return returnEph;
 }
