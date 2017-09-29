@@ -34,16 +34,16 @@ typedef struct {
 };
 
 
-class trajectoryContainer {
+class satDataContainer {
 
 public:
-	trajectoryContainer();
-	~trajectoryContainer();
+	satDataContainer();
+	~satDataContainer();
 
 	void addObsData();
 	/* Add these items to the gps_eph_map container */
 	void assembleTrajectories(SatID,CivilTime,Xvt,double);		//Store data in containers
-	void assembleEphemerisStore(GPSEphemerisStore&);
+	void passEphemerisStore(GPSEphemerisStore&);
 
 	CivilTime listEpochs();			//Print all stored Epochs
 	CivilTime listEpochs(SatID);	//Print all stored epochs for a specified sat
@@ -65,7 +65,8 @@ public:
 	*/
 	SatID getSatIDObject(int, SatID::SatelliteSystem );
 
-
+	/* Create a CivilianTime object from input time as arguments
+	*/
 	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, int second);
 	
 	

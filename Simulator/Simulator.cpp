@@ -43,7 +43,7 @@ int ProcessFiles(void) throw(Exception)
 {
 	try {
 
-		trajectoryContainer mTrajectoryContainer;
+		satDataContainer satDataContainer_c;
 
 		int iret;
 		int indexC1;
@@ -109,7 +109,7 @@ int ProcessFiles(void) throw(Exception)
 						C1 = Rdata.getObs((*it).first, indexC1).data;			//Get C1 Pseudorange observation
 						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
 
-						mTrajectoryContainer.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
+						satDataContainer_c.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
 						
 						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	//TODO: delete later (debug cout)
 						
@@ -121,16 +121,16 @@ int ProcessFiles(void) throw(Exception)
 				}
 			}
 			//Add EphemerisStore to Container class
-			mTrajectoryContainer.assembleEphemerisStore(bceStore);
+			satDataContainer_c.passEphemerisStore(bceStore);
 			cout << "[FLAG: Success] Finished Rinex parsing." << endl;
 
 			//mTrajectoryContainer.write_to_file();
-			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4,SatID::systemGPS),mTrajectoryContainer.getCivilTimeObject(2017,9,10,1,13,30));
+			satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4,SatID::systemGPS),satDataContainer_c.getCivilTimeObject(2017,9,10,1,13,30));
 			
-			GPSEphemeris orbiteph_test = bceStore.findEphemeris(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-			cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
-			mTrajectoryContainer.write_to_cout_test(mTrajectoryContainer.getSatIDObject(4, SatID::systemGPS), mTrajectoryContainer.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
+			GPSEphemeris orbiteph_test = bceStore.findEphemeris(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+			cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
+			cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
+			satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
 		}
 		catch (const std::exception& e)
 		{

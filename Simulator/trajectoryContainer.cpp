@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "trajectoryContainer.h"
 
-trajectoryContainer::trajectoryContainer()
+satDataContainer::satDataContainer()
 {
 }
 
-trajectoryContainer::~trajectoryContainer()
+satDataContainer::~satDataContainer()
 {
 }
 
 
-void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt xvt_i, double pseudorange)
+void satDataContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt xvt_i, double pseudorange)
 {
 	trajectoryData.xvt = xvt_i;
 	trajectoryData.pseudorange = pseudorange;
@@ -19,13 +19,13 @@ void trajectoryContainer::assembleTrajectories(SatID sat,CivilTime civtime, Xvt 
 
 }
 
-void trajectoryContainer::assembleEphemerisStore(GPSEphemerisStore &eph)
+void satDataContainer::passEphemerisStore(GPSEphemerisStore &eph)
 {
 	ephemerisStore = eph;
 }
 
 
-bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
+bool satDataContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<CivilTime>& referenceEpoch)
 {
 	if (civiliantime < referenceEpoch.front() || civiliantime > referenceEpoch.back())
 		return true;
@@ -33,7 +33,7 @@ bool trajectoryContainer::isEpochonDarkSide(CivilTime civiliantime, std::vector<
 		return false;
 }
 
-void trajectoryContainer::write_to_cout_all()
+void satDataContainer::write_to_cout_all()
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -68,7 +68,7 @@ void trajectoryContainer::write_to_cout_all()
 
 }
 
-void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
+void satDataContainer::write_to_cout_test(SatID query_sat,CivilTime query_time)
 {
 	gps_eph_map::const_iterator it;
 	std::map<CivilTime, mTrajectoryData>::const_iterator kt;
@@ -108,7 +108,7 @@ void trajectoryContainer::write_to_cout_test(SatID query_sat,CivilTime query_tim
 	
 }
 
-SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
+SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
 {
 	//SV's are ordered
 	gps_eph_map::const_iterator it = trajectoryDataContainer.begin();
@@ -125,7 +125,7 @@ SatID trajectoryContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = Sa
 
 
 
-CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)	//TODO: double sec for subsecundum acquisiton
+CivilTime satDataContainer::getCivilTimeObject(int yr, int mo, int da, int hr, int min, int sec)	//TODO: double sec for subsecundum acquisiton
 {
 	CivilTime returnTime;
 	returnTime.setTimeSystem(TimeSystem::GPS);
@@ -140,7 +140,7 @@ CivilTime trajectoryContainer::getCivilTimeObject(int yr, int mo, int da, int hr
 	return returnTime;
 }
 
-GPSEphemeris trajectoryContainer::getSatInfoAtEpoch(SatID query_sat, CivilTime query_time)
+GPSEphemeris satDataContainer::getSatInfoAtEpoch(SatID query_sat, CivilTime query_time)
 {
 	GPSEphemeris returnEph;
 
