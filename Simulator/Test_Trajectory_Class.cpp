@@ -12,7 +12,6 @@ using namespace std;
 
 void Test_Trajectory_1(void) {
 
-
 	gnsssimulator::TrajectoryStream trajFileIn("C:\\Users\\LUS2BP\\Source\\Repos\\GNSSSimulator\\Simulator\\TrajectoryTestFiles\\Test1_TrajectoryFileExample.txt");
 	gnsssimulator::TrajectoryStream trajFileOut("C:\\Users\\LUS2BP\\Source\\Repos\\GNSSSimulator\\Simulator\\TrajectoryTestFiles\\Test1_TrajectoryFileExample_Out.txt", std::ios::out);
 	gnsssimulator::TrajectoryHeader trajHeader;
@@ -25,7 +24,6 @@ void Test_Trajectory_1(void) {
 }
 
 void Test_Trajectory_2(void) {
-
 
 	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
 	gnsssimulator::TrajectoryStream trajFileOut("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_Out.txt", std::ios::out);
@@ -41,8 +39,8 @@ void Test_Trajectory_2(void) {
 		trajFileOut << trajData;
 	}
 }
-	void Test_Trajectory_3(void) {
 
+	void Test_Trajectory_3(void) {
 
 		gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\Test3_TrajectoryFileExample.txt");
 		gnsssimulator::TrajectoryStream trajFileOut("..\\Simulator\\TrajectoryTestFiles\\Test3_TrajectoryFileExample_Out.txt", std::ios::out);
@@ -63,13 +61,8 @@ void Test_Trajectory_2(void) {
 			cout << testPos;
 	}
 
-
-
-
 	trajFileIn.close();
 	trajFileOut.close();
-
-
 }
 
 	void Test_Trajectory_4(void) {
@@ -94,6 +87,7 @@ void Test_Trajectory_2(void) {
 	}
 
 	void Test_Trajectory_5(void) {
+
 		gnsssimulator::TrajectoryData orginal, modified;
 		orginal.pos.setGeodetic(40, 40, 100);
 		orginal.gpsTime.week = 1956;
@@ -162,7 +156,6 @@ void Test_Trajectory_2(void) {
 			if (returnTraj != trajData3) {
 				cout << "Szar van a palacsintaban. trajData3" << endl;
 			}
-			
 		}
 
 	void Test_Trajectory_7(void) {
@@ -200,7 +193,7 @@ void Test_Trajectory_2(void) {
 		}
 	}
 
-		void Test_Trajectory_8(void) {
+	void Test_Trajectory_8(void) {
 
 			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
 			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
@@ -237,7 +230,7 @@ void Test_Trajectory_2(void) {
 
 	}
 
-		void Test_Trajectory_9(void) {
+	void Test_Trajectory_9(void) {
 
 			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
 			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
@@ -276,9 +269,9 @@ void Test_Trajectory_2(void) {
 				cout << "Error. The two traj store should be the same." << endl;
 			}
 
-		}
+	}
 
-		void Test_Trajectory_10(void) {
+	void Test_Trajectory_10(void) {
 
 			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
 			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
@@ -317,9 +310,9 @@ void Test_Trajectory_2(void) {
 				cout << "Error. The two traj store should be the same." << endl;
 			}
 
-		}
+	}
 
-		void Test_Trajectory_11(void) {
+	void Test_Trajectory_11(void) {
 
 			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
 			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
@@ -359,6 +352,22 @@ void Test_Trajectory_2(void) {
 				cout << "Error. The two traj store should not be the same." << endl;
 			}
 
-		}
+	}
+
+	void Test_Trajectory_12(void) {
+
+		gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+		gpstk::Position pos1(0, 670000, 0);
+		gpstk::Position pos2(1, 670001, 2);
+		gpstk::GPSWeekSecond gpsTime;
+		gpsTime.week = 1956;
+		gpsTime.sow = 1;
+
+		gpstk::Position pos_diff = pos1 - pos2;
+		cout << pos_diff.getX() << endl;
+		cout << pos_diff.getY() << endl;
+		cout << pos_diff.getZ() << endl;
+	}
 
 	

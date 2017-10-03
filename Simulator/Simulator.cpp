@@ -32,6 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_9();
 	//Test_Trajectory_10();
 	//Test_Trajectory_11();
+	Test_Trajectory_12();
 
 	/*
 	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
