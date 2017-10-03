@@ -56,6 +56,25 @@ namespace gnsssimulator
 		return;
 	}
 
+	bool TrajectoryData::compare(const TrajectoryData& other) const{
+		return (this->pos == other.pos && this->gpsTime == other.gpsTime);
+	}
+
+	//bool operator== (const Triple& right) const;
+	bool TrajectoryData::operator==(const TrajectoryData& other) const{
+		return this->compare(other);
+	}
+
+	bool TrajectoryData::operator!=(const TrajectoryData& other) const {
+		return !this->compare(other);
+	}
+
+	TrajectoryData& TrajectoryData::operator+=(gpstk::Position& newpos) {
+		this->pos = newpos;
+		this->coorSys = newpos.getCoordinateSystem();
+		return *this;
+	}
+
 	void TrajectoryData::getTime(const std::string& currentLine)
 		throw(gpstk::StringUtils::StringException, gpstk::FFStreamError)
 	{

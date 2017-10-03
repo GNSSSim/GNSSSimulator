@@ -23,8 +23,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//Test_Trajectory_1();
 	//Test_Trajectory_2();
+	//Test_Trajectory_3();
+	//Test_Trajectory_4();
+	//Test_Trajectory_5();
+	//Test_Trajectory_6();
+	//Test_Trajectory_7();
+	//Test_Trajectory_8();
+	//Test_Trajectory_9();
+	//Test_Trajectory_10();
+	//Test_Trajectory_11();
 
-
+	/*
 	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
 	GPSTime gpstime;
 	gpstk::Position pos;
@@ -60,7 +69,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << e.what();
 	}
-	
+	*/
 
 	return 0;
 }

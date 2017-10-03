@@ -57,16 +57,25 @@ namespace gnsssimulator
 			throw(std::exception, gpstk::FFStreamError,
 				gpstk::StringUtils::StringException);
 	
+		bool compare(const TrajectoryData&) const;
+		bool operator==(const TrajectoryData& ) const;
+		bool operator!=(const TrajectoryData& ) const;
+
+		TrajectoryData& operator+=(gpstk::Position&);
+
 		gpstk::Position::CoordinateSystem coorSys = gpstk::Position::CoordinateSystem::Unknown;
 		gpstk::Position pos;
 		gpstk::GPSWeekSecond gpsTime;
 	
+		
 	private:
 		void TrajectoryData::getPosition(const std::string& currentLine)
 			throw(gpstk::StringUtils::StringException, gpstk::FFStreamError);
 
 		void TrajectoryData::getTime(const std::string& currentLine)
 			throw(gpstk::StringUtils::StringException, gpstk::FFStreamError);
+
+		
 
 	};  // class RinexNavData
 

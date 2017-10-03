@@ -3,6 +3,7 @@
 #include "TrajectoryData.hpp"
 #include "TrajectoryStream.hpp"
 #include "RinexNavData.hpp"
+#include "TrajectoryStore.hpp"
 
 #include "Test_Trajectory_Class.hpp"
 
@@ -33,12 +34,36 @@ void Test_Trajectory_2(void) {
 
 	trajFileIn >> trajHeader;
 	trajFileOut << trajHeader;
-	
+
 	cout << "Next epoch" << endl;
 	while (trajFileIn >> trajData) {
-		cout << endl <<"Next epoch" << endl;
+		cout << endl << "Next epoch" << endl;
 		trajFileOut << trajData;
 	}
+}
+	void Test_Trajectory_3(void) {
+
+
+		gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\Test3_TrajectoryFileExample.txt");
+		gnsssimulator::TrajectoryStream trajFileOut("..\\Simulator\\TrajectoryTestFiles\\Test3_TrajectoryFileExample_Out.txt", std::ios::out);
+		gnsssimulator::TrajectoryHeader trajHeader;
+		gnsssimulator::TrajectoryData trajData;
+		gnsssimulator::TrajectoryData testPos;
+		trajFileIn >> trajHeader;
+		trajFileOut << trajHeader;
+
+		gnsssimulator::TrajectoryStore TrajStore;
+		cout << "Next epoch" << endl;
+		while (trajFileIn >> trajData) {
+			TrajStore.addPosition(trajData);
+			testPos = TrajStore.findPosition(trajData.gpsTime);
+			
+			cout << endl << "Next epoch" << endl;
+			trajFileOut << trajData;
+			cout << testPos;
+	}
+
+
 
 
 	trajFileIn.close();
@@ -46,3 +71,294 @@ void Test_Trajectory_2(void) {
 
 
 }
+
+	void Test_Trajectory_4(void) {
+	
+		gnsssimulator::TrajectoryStore test_TrajStore;
+		gnsssimulator::TrajectoryData trajData, returnTraj;
+
+		gpstk::Position pos;
+		gpstk::GPSWeekSecond gpsTime;
+		gpsTime.week = 1956;
+		gpsTime.sow = 6;
+		trajData.gpsTime = gpsTime;
+		
+		test_TrajStore.addPosition(trajData);
+		trajData.~TrajectoryData();
+		returnTraj = test_TrajStore.findPosition(gpsTime);
+		
+		gnsssimulator::TrajectoryData copyTraj(returnTraj);
+		if (returnTraj != copyTraj) {
+			cout << "Error. Is not the same." << endl;
+		}
+	}
+
+	void Test_Trajectory_5(void) {
+		gnsssimulator::TrajectoryData orginal, modified;
+		orginal.pos.setGeodetic(40, 40, 100);
+		orginal.gpsTime.week = 1956;
+		orginal.gpsTime.sow = 6;
+		modified.pos.setGeodetic(40, 41, 100);
+		modified.gpsTime.week = 1956;
+		modified.gpsTime.sow = 7;
+
+		gnsssimulator::TrajectoryData copyTraj(orginal);
+		if (orginal == copyTraj) {
+		}
+		else {
+			cout << "Error. Is not the same." << endl;
+		}
+		if (orginal == modified) {
+			cout << "Error. Is the same but should not be" << endl;
+		}
+
+		if (orginal != copyTraj) {
+			cout << "Error. Is not the same." << endl;
+		}
+		if (orginal != modified) {
+		}
+		else {
+			cout << "Error. Is the same but should not be" << endl;
+		}
+	}
+
+	void Test_Trajectory_6(void) {
+
+			gnsssimulator::TrajectoryStore test_TrajStore;
+			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+			gpstk::Position pos(0,670000,0);
+			gpstk::GPSWeekSecond gpsTime;
+			gpsTime.week = 1956;
+			gpsTime.sow = 1;
+			
+			trajData1.gpsTime.week = 1956;
+			trajData1.gpsTime.sow = 1;
+			trajData1 += pos;
+			trajData2.gpsTime.week = 1956;
+			trajData2.gpsTime.sow = 2;
+			trajData2 += pos;
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 3;
+			trajData3 += pos;
+
+			test_TrajStore.addPosition(trajData1);
+			test_TrajStore.addPosition(trajData2);
+			test_TrajStore.addPosition(trajData3);
+			
+			returnTraj = test_TrajStore.findPosition(gpsTime);
+			if (returnTraj != trajData1){
+				cout << "Szar van a palacsintaban. trajData1" << endl;
+			}
+
+			gpsTime.sow = 2;
+			returnTraj = test_TrajStore.findPosition(gpsTime);
+			if (returnTraj != trajData2) {
+				cout << "Szar van a palacsintaban. trajData2" << endl;
+			}
+
+			gpsTime.sow = 3;
+			returnTraj = test_TrajStore.findPosition(gpsTime);
+			if (returnTraj != trajData3) {
+				cout << "Szar van a palacsintaban. trajData3" << endl;
+			}
+			
+		}
+
+	void Test_Trajectory_7(void) {
+
+		gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
+		gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+		gpstk::Position pos(0, 670000, 0);
+		gpstk::GPSWeekSecond gpsTime;
+		gpsTime.week = 1956;
+		gpsTime.sow = 1;
+
+		trajData1.gpsTime.week = 1956;
+		trajData1.gpsTime.sow = 1;
+		trajData1 += pos;
+		trajData2.gpsTime.week = 1956;
+		trajData2.gpsTime.sow = 2;
+		trajData2 += pos;
+		trajData3.gpsTime.week = 1956;
+		trajData3.gpsTime.sow = 3;
+		trajData3 += pos;
+
+		test_TrajStore1.addPosition(trajData1);
+		test_TrajStore1.addPosition(trajData2);
+		test_TrajStore1.addPosition(trajData3);
+
+		test_TrajStore2.addPosition(trajData1);
+		test_TrajStore2.addPosition(trajData2);
+		test_TrajStore2.addPosition(trajData3);
+
+		if (test_TrajStore1 == test_TrajStore2) {}
+		else {
+			cout << "Error. The two traj store should be the same." << endl;
+
+		}
+	}
+
+		void Test_Trajectory_8(void) {
+
+			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
+			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+			gpstk::Position pos(0, 670000, 0);
+			gpstk::GPSWeekSecond gpsTime;
+			gpsTime.week = 1956;
+			gpsTime.sow = 1;
+
+			trajData1.gpsTime.week = 1956;
+			trajData1.gpsTime.sow = 1;
+			trajData1 += pos;
+			trajData2.gpsTime.week = 1956;
+			trajData2.gpsTime.sow = 2;
+			trajData2 += pos;
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 3;
+			trajData3 += pos;
+
+			test_TrajStore1.addPosition(trajData1);
+			test_TrajStore1.addPosition(trajData2);
+			test_TrajStore1.addPosition(trajData3);
+
+			test_TrajStore2.addPosition(trajData1);
+			test_TrajStore2.addPosition(trajData2);
+
+			if (test_TrajStore1 == test_TrajStore2) {
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+			if (test_TrajStore1 == test_TrajStore2){
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+	}
+
+		void Test_Trajectory_9(void) {
+
+			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
+			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+			gpstk::Position pos(0, 670000, 0);
+			gpstk::GPSWeekSecond gpsTime;
+			gpsTime.week = 1956;
+			gpsTime.sow = 1;
+
+			trajData1.gpsTime.week = 1956;
+			trajData1.gpsTime.sow = 1;
+			trajData1 += pos;
+			trajData2.gpsTime.week = 1956;
+			trajData2.gpsTime.sow = 2;
+			trajData2 += pos;
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 3;
+			trajData3 += pos;
+
+			test_TrajStore1.addPosition(trajData1);
+			test_TrajStore1.addPosition(trajData2);
+			test_TrajStore1.addPosition(trajData3);
+
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 5;
+			trajData3 += pos;
+			test_TrajStore2.addPosition(trajData1);
+			test_TrajStore2.addPosition(trajData2);
+			test_TrajStore2.addPosition(trajData3);
+
+			if (test_TrajStore1 == test_TrajStore2) {
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+			if (test_TrajStore1 == test_TrajStore2) {
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+		}
+
+		void Test_Trajectory_10(void) {
+
+			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
+			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+			gpstk::Position pos(0, 670000, 0);
+			gpstk::GPSWeekSecond gpsTime;
+			gpsTime.week = 1956;
+			gpsTime.sow = 1;
+
+			trajData1.gpsTime.week = 1956;
+			trajData1.gpsTime.sow = 1;
+			trajData1 += pos;
+			trajData2.gpsTime.week = 1956;
+			trajData2.gpsTime.sow = 2;
+			trajData2 += pos;
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 2;
+			trajData3 += pos;
+
+			test_TrajStore1.addPosition(trajData1);
+			test_TrajStore1.addPosition(trajData2);
+			test_TrajStore1.addPosition(trajData3);
+
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 2;
+			trajData3 += pos;
+			test_TrajStore2.addPosition(trajData1);
+			test_TrajStore2.addPosition(trajData2);
+			test_TrajStore2.addPosition(trajData3);
+
+			if (test_TrajStore1 != test_TrajStore2) {
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+			if (test_TrajStore1 != test_TrajStore2) {
+				cout << "Error. The two traj store should be the same." << endl;
+			}
+
+		}
+
+		void Test_Trajectory_11(void) {
+
+			gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
+			gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+			gpstk::Position pos1(0, 670000, 0);
+			gpstk::Position pos2(0, 780001, 0);
+			gpstk::GPSWeekSecond gpsTime;
+			gpsTime.week = 1956;
+			gpsTime.sow = 1;
+
+			trajData1.gpsTime.week = 1956;
+			trajData1.gpsTime.sow = 1;
+			trajData1 += pos1;
+			trajData2.gpsTime.week = 1956;
+			trajData2.gpsTime.sow = 2;
+			trajData2 += pos1;
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 3;
+			trajData3 += pos1;
+
+			test_TrajStore1.addPosition(trajData1);
+			test_TrajStore1.addPosition(trajData2);
+			test_TrajStore1.addPosition(trajData3);
+
+			trajData3.gpsTime.week = 1956;
+			trajData3.gpsTime.sow = 3;
+			trajData3 += pos2;
+			test_TrajStore2.addPosition(trajData1);
+			test_TrajStore2.addPosition(trajData2);
+			test_TrajStore2.addPosition(trajData3);
+
+			if (test_TrajStore1 == test_TrajStore2) {
+				cout << "Error. The two traj store should not be the same." << endl;
+			}
+
+			if (test_TrajStore1 == test_TrajStore2) {
+				cout << "Error. The two traj store should not be the same." << endl;
+			}
+
+		}
+
+	

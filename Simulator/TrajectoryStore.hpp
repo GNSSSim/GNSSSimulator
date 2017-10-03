@@ -11,12 +11,20 @@ namespace gnsssimulator {
 		TrajectoryStore();
 		~TrajectoryStore();
 
-		void TrajectoryStore::addPosition(gpstk::GPSWeekSecond&, TrajectoryData&);
+		gpstk::Position::CoordinateSystem coorSys = gpstk::Position::CoordinateSystem::Unknown;
 
+		TrajectoryData& addPosition(TrajectoryData);
+		TrajectoryData& findPosition(gpstk::GPSWeekSecond);
+
+		bool TrajectoryStore::operator==(const TrajectoryStore& other) const;
+		bool TrajectoryStore::operator!=(const TrajectoryStore& other) const;
 
 	protected:
+		bool isCoorSystemSet = false;
 		typedef std::map<gpstk::GPSWeekSecond, TrajectoryData> TrajectoryMap;
 		TrajectoryMap TrajStore;
+		void setCorrdinateSystem(gpstk::Position::CoordinateSystem);
+		bool compare(const TrajectoryStore& other) const;
 	};
 
 }
