@@ -83,6 +83,12 @@ public:
 		GPSTK uses built-in models to calculate Satellite position.
 	*/
 	OrbitEph getSatInfoAtEpoch(SatID&, CivilTime&);
+
+	/* Get the C1 PseudoRange stored. Can return only values
+		that were stored in the RINEX file.
+		@ Return double [meters]
+	*/
+	double getPseudorangeatEpoch(SatID&, CivilTime&);
 private:
 	
 	GPSEphemerisStore ephemerisStore;

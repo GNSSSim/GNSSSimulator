@@ -164,3 +164,11 @@ OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_
 	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
 	return ephemeris;
 }
+
+double satDataContainer::getPseudorangeatEpoch(SatID &querysat, CivilTime &querytime)
+{
+	double return_range;
+	return_range = pseudoRangeContainer.at(querysat).at(querytime);
+
+	return return_range;
+}
