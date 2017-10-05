@@ -5,6 +5,7 @@
 #include "Simulator.h"
 #include "Navigation_examples.h"
 #include "Test_Trajectory_Class.hpp"
+#include "Test_simulatePseudoRange.hpp"
 
 using namespace gpstk;
 using namespace std;
@@ -15,6 +16,7 @@ GPSEphemerisStore bceStore;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
 	/// Function Declarations
 	int ProcessFiles();
 
@@ -32,7 +34,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_9();
 	//Test_Trajectory_10();
 	//Test_Trajectory_11();
-	Test_Trajectory_12();
+	//Test_Trajectory_12();
+	//Test_Trajectory_13();
+	//Test_Trajectory_14();
+	//Test_Trajectory_15();
+
+	makeSimplePseudoRange();
 
 	/*
 	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
