@@ -49,7 +49,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// Read Rover Trajectory file
 	ProcessTrajectoryFile();
 
-	/*
+	/*		//DEBUG FOR RINEX PROCESS
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
 	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
@@ -63,6 +63,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << endl << e.what();
 	}
 	*/
+
+	//DEBUG FOR PRSOLUTION
+
 
 	return 0;
 }
