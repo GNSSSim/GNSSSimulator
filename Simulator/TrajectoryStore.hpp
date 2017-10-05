@@ -15,6 +15,7 @@ namespace gnsssimulator {
 
 		TrajectoryData& addPosition(TrajectoryData);
 		TrajectoryData& findPosition(gpstk::GPSWeekSecond);
+		vector<gpstk::GPSWeekSecond> listTime(void); // TODO tudja kilistázni a benne levo idoket.
 
 		bool TrajectoryStore::operator==(const TrajectoryStore& other) const;
 		bool TrajectoryStore::operator!=(const TrajectoryStore& other) const;
