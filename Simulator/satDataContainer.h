@@ -18,7 +18,7 @@
 #include "GPSWeekSecond.hpp"
 
 using namespace gpstk;
-
+/*
 // v1 struct and map
 typedef struct {
 	Xvt xvt;
@@ -27,6 +27,7 @@ typedef struct {
 } mTrajectoryData;
 typedef std::map<SatID, std::map<CivilTime, mTrajectoryData>> gps_eph_map;
 // TODO: ^^^^ DELETE THESE ^^^^
+*/
 
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
@@ -37,9 +38,6 @@ class satDataContainer {
 public:
 	satDataContainer();
 	~satDataContainer();
-
-	/* Add these items to the gps_eph_map container */
-	void assembleTrajectories(SatID,CivilTime,Xvt,double);		//Store data in containers
 
 	/* When reading in RINEX line by line, pass the pseudorange for each epoch 
 		for each Satellite
@@ -56,9 +54,6 @@ public:
 		@return The <vector> containing all the epoch times for the given SatID
 	*/
 	std::vector<CivilTime> getEpochVectorforSat(SatID&);
-
-	void write_to_cout_all();		//Write to trajectory format(One file per sat)
-	void write_to_cout_test(SatID,CivilTime);
 
 	/* Check if a given epoch is outside of the associated epoch observation vector
 	* Returns TRUE if satellite is not observable in the given epoch.
@@ -83,6 +78,12 @@ public:
 		GPSTK uses built-in models to calculate Satellite position.
 	*/
 	OrbitEph getSatInfoAtEpoch(SatID&, CivilTime&);
+
+	/* Get the C1 PseudoRange stored. Can return only values
+		that were stored in the RINEX file.
+		@ Return double [meters]
+	*/
+	double getPseudorangeatEpoch(SatID&, CivilTime&);
 private:
 	
 	GPSEphemerisStore ephemerisStore;
@@ -93,8 +94,8 @@ private:
 	PseudoRangeContainer pseudoRangeContainer;
 	
 	// TODO: DELETE THESE BELOW
-	mTrajectoryData trajectoryData;
-	gps_eph_map trajectoryDataContainer;
+	//mTrajectoryData trajectoryData;
+	//gps_eph_map trajectoryDataContainer;
 
 
 };
