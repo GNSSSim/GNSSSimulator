@@ -34,29 +34,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_11();
 	Test_Trajectory_12();
 
-	/*
-	/////-------------- PRE TEST OF INCLUDES--------------------\\\\\\\\\\\\
-	GPSTime gpstime;
-	gpstk::Position pos;
-	FULLFrame frame;
-	cout << "Position is: " << pos << endl;
-	pos.setECEF(-1575232.0141, -4707872.2332, 3993198.4383);
-	cout << "Position is: " << pos << endl;
-	cout << "ECEF transformed to LLH(Geodetic): " << pos.transformTo(gpstk::Position::Geodetic) << endl;
-	std::cout << "LeapSeconds of 1993.09.21. is: " << gpstk::TimeSystem::getLeapSeconds(1993, 9, 21) << std::endl;
-	cout << "Pre-Debug tests ended" << endl << "---------------------------------" << endl;
-	/////-------------- END OF PRE DEBUG TEST--------------------\\\\\\\\\\\\
+	
 	
 	/// Read in RINEX files
 	ProcessFiles();
-	
 
-	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
-	GPSEphemeris orbiteph_test = bceStore.findEphemeris(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-	cout << endl << "Offsetepoch: " << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 35));
-	cout << endl << endl << std::setprecision(10) << orbiteph_test.svXvt(satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0)).x;
-	satDataContainer_c.write_to_cout_test(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 14, 0));
-	// TODO: ^^^^ DELETE THESE ^^^^
+
 
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
@@ -70,7 +53,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << e.what();
 	}
-	*/
+	
 
 	return 0;
 }
@@ -78,10 +61,8 @@ int _tmain(int argc, _TCHAR* argv[])
 int ProcessFiles(void) throw(Exception) 
 {
 	try {
-
-		
-
 		int iret;
+		iret = 0;
 		int indexC1;
 		Rinex3ObsStream istrm;
 		Rinex3ObsHeader Rhead, Rheadout;
@@ -98,8 +79,6 @@ int ProcessFiles(void) throw(Exception)
 		string filepath_nav("..\\SimulatorTest\\TestFiles\\RINEX_nav\\mobs2530.17n");
 
 		RinexSatID sat;
-
-		iret = 0;
 
 		//Open the files
 		istrm.open(filepath_obs, ios::in);
