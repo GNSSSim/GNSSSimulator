@@ -18,16 +18,6 @@
 #include "GPSWeekSecond.hpp"
 
 using namespace gpstk;
-/*
-// v1 struct and map
-typedef struct {
-	Xvt xvt;
-	double pseudorange;
-	GPSEphemeris ephemeris;
-} mTrajectoryData;
-typedef std::map<SatID, std::map<CivilTime, mTrajectoryData>> gps_eph_map;
-// TODO: ^^^^ DELETE THESE ^^^^
-*/
 
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
@@ -84,6 +74,7 @@ public:
 		@ Return double [meters]
 	*/
 	double getPseudorangeatEpoch(SatID&, CivilTime&);
+
 private:
 	
 	GPSEphemerisStore ephemerisStore;
@@ -93,10 +84,7 @@ private:
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
 	
-	// TODO: DELETE THESE BELOW
-	//mTrajectoryData trajectoryData;
-	//gps_eph_map trajectoryDataContainer;
-
+	
 
 };
 

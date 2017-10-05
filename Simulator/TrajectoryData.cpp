@@ -101,10 +101,9 @@ namespace gnsssimulator
 			double coor2 = asDouble(currentLine.substr(28, 13));
 			double coor3 = asDouble(currentLine.substr(41, 13));
 
-			pos = gpstk::Position(	coor1,	coor2,	coor3, 	coorSys,  NULL );
-									
-			cout << gpsTime << endl; 
-			cout << pos << endl;
+			this->pos = gpstk::Position(	coor1,	coor2,	coor3, 	coorSys,  NULL );
+			this->pos = this->pos.transformTo(this->coorSys);
+
 		}
 		catch (std::exception &e)
 		{
