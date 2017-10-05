@@ -15,3 +15,5 @@ void Test_Trajectory_12(void);
 void Test_Trajectory_13(void);
 void Test_Trajectory_14(void);
 void Test_Trajectory_15(void);
+void Test_Trajectory_16(void);
+void Test_Trajectory_17(void);

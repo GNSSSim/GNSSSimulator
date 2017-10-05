@@ -61,4 +61,15 @@ namespace gnsssimulator {
 		return returnValue;
 	}
 
+	vector<gpstk::GPSWeekSecond> TrajectoryStore::listTime(void) {
+
+		vector<gpstk::GPSWeekSecond> timeVector;
+		for (TrajectoryMap::const_iterator it = this->TrajStore.begin(); it != this->TrajStore.end(); ++it) {
+			timeVector.push_back(it->first);
+		}
+		return timeVector;
+	}
+
+
+
 }

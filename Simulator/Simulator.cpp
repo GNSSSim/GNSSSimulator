@@ -11,16 +11,15 @@ using namespace gpstk;
 using namespace std;
 
 
-satDataContainer satDataContainer_c;		//Stores C1 and Ephemeris Data for the SVs
+satDataContainer satDataContainer_c;
 GPSEphemerisStore bceStore;
-gnsssimulator::TrajectoryStore trajStore;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 
 	/// Function Declarations
 	int ProcessFiles();
-	int ProcessTrajectoryFile();
+
 	/// End of Declarations
 	//Navigation_examples_1();
 
@@ -39,17 +38,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_13();
 	//Test_Trajectory_14();
 	//Test_Trajectory_15();
+	Test_Trajectory_16();
+	Test_Trajectory_17();
 
 	//makeSimplePseudoRange();
 
 	
-	
-	/// Read in RINEX files
-	//ProcessFiles();
-	/// Read Rover Trajectory file
-	ProcessTrajectoryFile();
-
 	/*
+	/// Read in RINEX files
+	ProcessFiles();
+
+
+
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
 	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
@@ -62,12 +62,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << e.what();
 	}
+	
 	*/
-
 	return 0;
 }
 
-// TODO: Rename to ProcessRinexFile and refactor code to handle Rinex dynamically.
 int ProcessFiles(void) throw(Exception) 
 {
 	try {
@@ -159,25 +158,6 @@ int ProcessFiles(void) throw(Exception)
 
 		return 1;
 	}
-}
-
-int ProcessTrajectoryFile(void){
-
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
-	gnsssimulator::TrajectoryHeader trajHeader;
-	gnsssimulator::TrajectoryData trajData;
-
-	trajFileIn >> trajHeader;
-	cout << trajHeader.coorSys << endl;
-
-	while (trajFileIn >> trajData) {
-		trajStore.addPosition(trajData);
-	}
-
-	cout << "NEXT EPOCH" << endl << trajStore.findPosition(gpstk::GPSWeekSecond(1956, 86400.1, gpstk::TimeSystem::GPS)).pos << endl;
-
-
-	return 0;
 }
 
 

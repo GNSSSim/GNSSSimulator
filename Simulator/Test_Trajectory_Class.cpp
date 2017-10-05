@@ -368,7 +368,6 @@ void Test_Trajectory_2(void) {
 		cout << pos_diff.getZ() << endl;
 	}
 
-
 	void Test_Trajectory_13(void) {
 	
 		gnsssimulator::TrajectoryStore test_TrajStore1, test_TrajStore2;
@@ -406,9 +405,6 @@ void Test_Trajectory_2(void) {
 		else{
 			cout << "Error. The two traj store should be the same." << endl;
 		}
-	
-	
-	
 	}
 
 	void Test_Trajectory_14(void) {
@@ -458,9 +454,6 @@ void Test_Trajectory_2(void) {
 		else {
 			cout << "Error. The two traj store should be the same." << endl;
 		}
-
-
-
 	}
 
 	void Test_Trajectory_15(void) {
@@ -510,8 +503,93 @@ void Test_Trajectory_2(void) {
 		else {
 			cout << "Error. The two traj store should not be the same." << endl;
 		}
+	}
+
+	void Test_Trajectory_16(void) {
+
+		gnsssimulator::TrajectoryStore test_TrajStore;
+		gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+		gpstk::Position pos1(0, 670000.000, 0);
+		gpstk::GPSWeekSecond gpsTime;
+		gpsTime.week = 1956;
+		gpsTime.sow = 1;
+
+		trajData1.gpsTime.week = 1956;
+		trajData1.gpsTime.sow = 1;
+		trajData1 += pos1;
+		trajData2.gpsTime.week = 1956;
+		trajData2.gpsTime.sow = 2;
+		trajData2 += pos1;
+		trajData3.gpsTime.week = 1956;
+		trajData3.gpsTime.sow = 3;
+		trajData3 += pos1;
+
+		test_TrajStore.addPosition(trajData1);
+		test_TrajStore.addPosition(trajData2);
+		test_TrajStore.addPosition(trajData3);
+
+		// Creating the reference vector with the stored times
+		gnsssimulator::TrajectoryData trajData4(trajData1), trajData5(trajData2), trajData6(trajData3);
+
+		vector<gpstk::GPSWeekSecond> referenceVector;
+		referenceVector.push_back(trajData4.gpsTime);
+		referenceVector.push_back(trajData5.gpsTime);
+		referenceVector.push_back(trajData6.gpsTime);
+
+		vector<gpstk::GPSWeekSecond> timeVector;
+
+		timeVector = test_TrajStore.listTime();
+
+		if (timeVector != referenceVector) {
+			cout << "Error. The two time vector should be the same" << endl;
+		}
+
+	}
 
 
+	void Test_Trajectory_17(void) {
+
+		gnsssimulator::TrajectoryStore test_TrajStore;
+		gnsssimulator::TrajectoryData trajData1, trajData2, trajData3, returnTraj;
+
+		gpstk::Position pos1(0, 670000.000, 0);
+		gpstk::GPSWeekSecond gpsTime;
+		gpsTime.week = 1956;
+		gpsTime.sow = 1;
+
+		trajData1.gpsTime.week = 1956;
+		trajData1.gpsTime.sow = 1;
+		trajData1 += pos1;
+		trajData2.gpsTime.week = 1956;
+		trajData2.gpsTime.sow = 2;
+		trajData2 += pos1;
+		trajData3.gpsTime.week = 1956;
+		trajData3.gpsTime.sow = 3;
+		trajData3 += pos1;
+
+		test_TrajStore.addPosition(trajData1);
+		test_TrajStore.addPosition(trajData2);
+		test_TrajStore.addPosition(trajData3);
+
+		// Creating the reference vector with the stored times
+		trajData3.gpsTime.week = 1956;
+		trajData3.gpsTime.sow = 300;
+
+		gnsssimulator::TrajectoryData trajData4(trajData1), trajData5(trajData2), trajData6(trajData3);
+
+		vector<gpstk::GPSWeekSecond> referenceVector;
+		referenceVector.push_back(trajData4.gpsTime);
+		referenceVector.push_back(trajData5.gpsTime);
+		referenceVector.push_back(trajData6.gpsTime);
+
+		vector<gpstk::GPSWeekSecond> timeVector;
+
+		timeVector = test_TrajStore.listTime();
+
+		if (timeVector == referenceVector) {
+			cout << "Error. The two time vector should not be the same" << endl;
+		}
 
 	}
 	
