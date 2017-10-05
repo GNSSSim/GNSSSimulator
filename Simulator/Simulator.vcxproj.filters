@@ -75,6 +75,9 @@
     <ClInclude Include="TrajectoryStore.hpp">
       <Filter>Source Files\Trajectory</Filter>
     </ClInclude>
+    <ClInclude Include="PRsolution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="TrajectoryStore.cpp">
       <Filter>Source Files\Trajectory</Filter>
+    </ClCompile>
+    <ClCompile Include="PRsolution.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,7 @@
 #include "TrajectoryHeader.hpp"
 #include "TrajectoryStream.hpp"
 #include "TrajectoryStore.hpp"
+#include "PRsolution.h"
 
 //GPSTK includes
 #include "Exception.hpp"

@@ -147,6 +147,7 @@
     <ClInclude Include="CoordinateFrameHandler.h" />
     <ClInclude Include="CoordinateFrames.h" />
     <ClInclude Include="Navigation_examples.h" />
+    <ClInclude Include="PRsolution.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rinexreader.h" />
     <ClInclude Include="Simulator.h" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="CoordinateFrameHandler.cpp" />
     <ClCompile Include="naigationExample_1.cpp" />
+    <ClCompile Include="PRsolution.cpp" />
     <ClCompile Include="rinexreader.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="stdafx.cpp">

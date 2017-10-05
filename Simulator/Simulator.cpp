@@ -14,6 +14,7 @@ using namespace std;
 satDataContainer satDataContainer_c;		//Stores C1 and Ephemeris Data for the SVs
 GPSEphemerisStore bceStore;
 gnsssimulator::TrajectoryStore trajStore;
+PRsolution prsolution;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -45,7 +46,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	
 	/// Read in RINEX files
-	//ProcessFiles();
+	ProcessFiles();
 	/// Read Rover Trajectory file
 	ProcessTrajectoryFile();
 
@@ -65,7 +66,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	*/
 
 	//DEBUG FOR PRSOLUTION
+	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
+	for (auto& it : traj_timevec) {
+		CivilTime civtime = it.convertToCommonTime();
+		cout << it << "  converted to civtime: " << civtime << endl;
 
+		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
+		cout << "Trajectory Position: " << data.pos << endl;
+
+		// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
+		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+		Position pos = sat_eph.svXvt(civtime).x;
+		cout << "Sat Position: " << pos << endl;
+
+		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;
+		cout << "Next Epoch: " << endl;
+	}
 
 	return 0;
 }
@@ -171,15 +187,10 @@ int ProcessTrajectoryFile(void){
 	gnsssimulator::TrajectoryData trajData;
 
 	trajFileIn >> trajHeader;
-	cout << trajHeader.coorSys << endl;
-
+	
 	while (trajFileIn >> trajData) {
 		trajStore.addPosition(trajData);
 	}
-
-	cout << "NEXT EPOCH" << endl << trajStore.findPosition(gpstk::GPSWeekSecond(1956, 86400.1, gpstk::TimeSystem::GPS)).pos << endl;
-
-
 	return 0;
 }
 
