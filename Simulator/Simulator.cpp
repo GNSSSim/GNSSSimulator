@@ -123,7 +123,7 @@ int ProcessFiles(void) throw(Exception)
 						C1 = Rdata.getObs((*it).first, indexC1).data;			//Get C1 Pseudorange observation
 						xvt_data = bceStore.getXvt((*it).first, civtime);		//Get XVT data
 
-						satDataContainer_c.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
+						//satDataContainer_c.assembleTrajectories(sat, civtime, xvt_data,C1);	//Pass data to storage interface
 						satDataContainer_c.assemblePseudoRangeContainer(sat, civtime, C1);
 						//cout << civtime << " " << sat << " " << C1 << " XVT: " << xvt_data << endl;	// TODO: delete later (debug cout)
 						
