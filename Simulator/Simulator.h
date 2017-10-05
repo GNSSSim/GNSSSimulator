@@ -8,8 +8,13 @@
 
 //Own includes
 #include "trajectoryReader.h"
-#include "rinexreader.h"
+#include "rinexreader.h"	// TODO: Remove this include
 #include "satDataContainer.h"
+#include "TrajectoryBase.hpp"
+#include "TrajectoryData.hpp"
+#include "TrajectoryHeader.hpp"
+#include "TrajectoryStream.hpp"
+#include "TrajectoryStore.hpp"
 
 //GPSTK includes
 #include "Exception.hpp"
