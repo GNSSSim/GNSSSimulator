@@ -126,7 +126,7 @@ int ProcessFiles(void) throw(Exception)
 
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
-				bceStore.addEphemeris(Rnavdata);			//TODO: Delete this EphemerisStore when trajectoryContainer is implemented for storage.
+				bceStore.addEphemeris(Rnavdata);			
 			}
 
 			while (istrm >> Rdata) {
