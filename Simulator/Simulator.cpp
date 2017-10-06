@@ -43,6 +43,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << Test_Trajectory_C1() << endl;
 	cout << Test_Trajectory_C1_missing() << endl;
 	cout << Test_Trajectory_C1_append() << endl;
+	cout << Test_Trajectory_C1_append_missing() << endl;
 
 
 	

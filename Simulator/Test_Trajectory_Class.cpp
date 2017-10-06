@@ -650,7 +650,7 @@ void Test_Trajectory_2(void) {
 		gnsssimulator::TrajectoryStream strm_in("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
 		gnsssimulator::TrajectoryStream strm_out("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt",std::ios::out);
 		gnsssimulator::TrajectoryStream strm_posttest("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt");
-
+		gnsssimulator::TrajectoryHeader head_post;
 
 		try
 		{
@@ -669,8 +669,8 @@ void Test_Trajectory_2(void) {
 			test_success = false;
 		}
 
-		strm_posttest >> head;
-		if (!head.isPRread)
+		strm_posttest >> head_post;
+		if (!head_post.isPRread)
 			test_success = false;
 
 
@@ -696,8 +696,9 @@ void Test_Trajectory_2(void) {
 				strm_out << data;
 			}
 		}
-		catch (const std::exception&)
+		catch (const std::exception &e)
 		{
+			cout << e.what() << endl;
 			test_success = false;
 		}
 
