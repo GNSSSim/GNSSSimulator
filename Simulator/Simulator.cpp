@@ -14,7 +14,7 @@ using namespace std;
 satDataContainer satDataContainer_c;		//Stores C1 and Ephemeris Data for the SVs
 GPSEphemerisStore bceStore;
 gnsssimulator::TrajectoryStore trajStore;
-PRsolution prsolution;
+gnsssimulator::PRsolution prsolution;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -69,19 +69,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
+		cout << "Next Epoch: " << endl;
 		cout << it << "  converted to civtime: " << civtime << endl;
 
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
-		cout << "Trajectory Position: " << data.pos << endl;
+		cout << "Rover Position:     " << data.pos << endl;
 
 		// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
-		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+		//OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), civtime);
 		Position pos = sat_eph.svXvt(civtime).x;
-		cout << "Sat Position: " << pos << endl;
+		cout << "Satellite Position: " << pos << endl;
 
-		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;
-		cout << "Next Epoch: " << endl;
+		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;	
 	}
+	cout << "Creating Rinex File. " << endl;
+	prsolution.createRinexFile();
 
 	return 0;
 }
@@ -182,7 +185,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
@@ -191,6 +194,7 @@ int ProcessTrajectoryFile(void){
 	while (trajFileIn >> trajData) {
 		trajStore.addPosition(trajData);
 	}
+	cout << "[FLAG: Success] Trajectory file parsing finished." << endl;
 	return 0;
 }
 

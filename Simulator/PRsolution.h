@@ -2,7 +2,13 @@
 
 #include "TrajectoryStore.hpp"
 #include "satDataContainer.h"
+
+#include "Rinex3ObsStream.hpp"
+
 #include <math.h>
+
+namespace gnsssimulator {
+
 
 class PRsolution {
 
@@ -15,6 +21,10 @@ public:
 	*/
 	double getPRSolution_abs(gpstk::Position&,gpstk::Position&);
 
+	/*	Write calculated solution to a valid Rinex file
+	*/
+	void createRinexFile(void);
+
 private:
 
 
@@ -22,3 +32,4 @@ private:
 	gpstk::Position trajPos, satPos;
 
 };
+}
