@@ -21,9 +21,7 @@ public:
 	*/
 	double getPRSolution_abs(gpstk::Position&,gpstk::Position&);
 
-	/*	Write calculated solution to a valid Rinex file
-	*/
-	void createRinexFile(void);
+
 
 private:
 

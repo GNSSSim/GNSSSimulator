@@ -86,8 +86,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;	
 	}
-	cout << "Creating Rinex File. " << endl;
-	prsolution.createRinexFile();
 
 	return 0;
 }
