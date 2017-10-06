@@ -20,6 +20,8 @@ namespace gnsssimulator
 		strm << fixed << setprecision(3) << pos.getY() << "  ";
 		strm << fixed << setprecision(3) << pos.getZ() << "  ";
 
+		strm << fixed << setprecision(3) << PRange;
+
 		strm << endl;
 		strm.lineNumber++;
 	}

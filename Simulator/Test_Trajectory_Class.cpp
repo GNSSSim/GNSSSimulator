@@ -649,6 +649,42 @@ void Test_Trajectory_2(void) {
 		gnsssimulator::TrajectoryData data;
 		gnsssimulator::TrajectoryStream strm_in("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
 		gnsssimulator::TrajectoryStream strm_out("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt",std::ios::out);
+		gnsssimulator::TrajectoryStream strm_posttest("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt");
+
+
+		try
+		{
+			strm_in >> head;
+			head.writePR = true;
+			strm_out << head;
+
+			while (strm_in >> data)
+			{
+				data.PRange = 9999.05;
+				strm_out << data;
+			}
+		}
+		catch (const std::exception&)
+		{
+			test_success = false;
+		}
+
+		strm_posttest >> head;
+		if (!head.isPRread)
+			test_success = false;
+
+
+		return test_success;
+	}
+
+	bool Test_Trajectory_C1_append_missing(void)
+	{
+		bool test_success = true;
+
+		gnsssimulator::TrajectoryHeader head;
+		gnsssimulator::TrajectoryData data;
+		gnsssimulator::TrajectoryStream strm_in("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
+		gnsssimulator::TrajectoryStream strm_out("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append_missing.txt", std::ios::out);
 
 		try
 		{
@@ -657,7 +693,6 @@ void Test_Trajectory_2(void) {
 
 			while (strm_in >> data)
 			{
-				data.PRange = 9999.05;
 				strm_out << data;
 			}
 		}

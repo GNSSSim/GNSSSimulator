@@ -19,7 +19,7 @@ namespace gnsssimulator {
 
 		/// Constructor
 		TrajectoryHeader(void) 
-			: valid(true), firstLineisRead(false), isPosFormatSet(false),isPRread(false), isHeaderEnd(false)
+			: valid(true), firstLineisRead(false), isPosFormatSet(false),isPRread(false),writePR(false), isHeaderEnd(false)
 			{}
 
 		/// Destructor
@@ -39,6 +39,7 @@ namespace gnsssimulator {
 		bool TrajectoryHeader::firstLineisRead;
 		bool TrajectoryHeader::valid;
 		gpstk::Position::CoordinateSystem coorSys;
+		bool TrajectoryHeader::writePR;
 
 	   
 

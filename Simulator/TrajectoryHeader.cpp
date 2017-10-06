@@ -86,6 +86,12 @@ namespace gnsssimulator {
 			strm << line << endl;
 			strm.lineNumber++;
 		}
+
+		if (writePR) {
+			line = pseudorangeC1String;
+			strm << line << endl;
+			strm.lineNumber++;
+		}
 		
 		line = endOfHeader;
 		strm << line << std::endl;
