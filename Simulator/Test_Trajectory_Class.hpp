@@ -18,3 +18,4 @@ void Test_Trajectory_15(void);
 void Test_Trajectory_16(void);
 void Test_Trajectory_17(void);
 bool Test_Trajectory_C1(void);
+bool Test_Trajectory_C1_missing(void);

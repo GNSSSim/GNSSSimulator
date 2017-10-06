@@ -598,12 +598,45 @@ void Test_Trajectory_2(void) {
 		bool test_error_flag = true;
 
 		gnsssimulator::TrajectoryHeader head;
+		gnsssimulator::TrajectoryData data;
 		gnsssimulator::TrajectoryStream strm("..\\Simulator\\TrajectoryTestFiles\\Test_TrajectoryFileExample_C1.txt");
 
 		strm >> head;
 
 		if (!head.isPRread)
+		{
+			cout << "Error readin C1 identifier in Trajectory Header" << endl;
 			test_error_flag = false;
+		}
+
+		while (strm >> data) {
+			if (data.PRange < 0)
+			{
+				test_error_flag = false;
+				break;
+			}
+			cout << data.gpsTime << " " << data.PRange << endl;
+		}
+
+		return test_error_flag;
+	}
+
+	bool Test_Trajectory_C1_missing(void)
+	{
+
+		bool test_error_flag = true;
+
+		gnsssimulator::TrajectoryHeader head;
+		gnsssimulator::TrajectoryData data;
+		gnsssimulator::TrajectoryStream strm("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
+
+		strm >> head;
+
+
+		while (strm >> data) {
+			if (data.PRange > 0)
+				test_error_flag = false;
+		}
 
 		return test_error_flag;
 	}
