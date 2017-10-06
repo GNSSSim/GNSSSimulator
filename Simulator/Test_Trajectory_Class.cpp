@@ -595,7 +595,7 @@ void Test_Trajectory_2(void) {
 
 	bool Test_Trajectory_C1(void)
 	{
-		bool test_error_flag = true;
+		bool test_success = true;
 
 		gnsssimulator::TrajectoryHeader head;
 		gnsssimulator::TrajectoryData data;
@@ -606,25 +606,25 @@ void Test_Trajectory_2(void) {
 		if (!head.isPRread)
 		{
 			cout << "Error readin C1 identifier in Trajectory Header" << endl;
-			test_error_flag = false;
+			test_success = false;
 		}
 
 		while (strm >> data) {
 			if (data.PRange < 0)
 			{
-				test_error_flag = false;
+				test_success = false;
 				break;
 			}
-			cout << data.gpsTime << " " << data.PRange << endl;
+			//cout << data.gpsTime << " " << data.PRange << endl;
 		}
 
-		return test_error_flag;
+		return test_success;
 	}
 
 	bool Test_Trajectory_C1_missing(void)
 	{
 
-		bool test_error_flag = true;
+		bool test_success = true;
 
 		gnsssimulator::TrajectoryHeader head;
 		gnsssimulator::TrajectoryData data;
@@ -635,9 +635,39 @@ void Test_Trajectory_2(void) {
 
 		while (strm >> data) {
 			if (data.PRange > 0)
-				test_error_flag = false;
+				test_success = false;
 		}
 
-		return test_error_flag;
+		return test_success;
+	}
+
+	bool Test_Trajectory_C1_append(void)
+	{
+		bool test_success = true;
+
+		gnsssimulator::TrajectoryHeader head;
+		gnsssimulator::TrajectoryData data;
+		gnsssimulator::TrajectoryStream strm_in("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
+		gnsssimulator::TrajectoryStream strm_out("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt",std::ios::out);
+
+		try
+		{
+			strm_in >> head;
+			strm_out << head;
+
+			while (strm_in >> data)
+			{
+				data.PRange = 9999.05;
+				strm_out << data;
+			}
+		}
+		catch (const std::exception&)
+		{
+			test_success = false;
+		}
+
+
+
+		return test_success;
 	}
 	
