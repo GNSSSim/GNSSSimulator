@@ -52,6 +52,8 @@ namespace gnsssimulator
 
 		getTime(line);
 		getPosition(line);
+		if(strm.header.isPRread)
+			getPRange(line);
 
 		return;
 	}
@@ -85,6 +87,22 @@ namespace gnsssimulator
 		
 		}
 		catch (std::exception &e)
+		{
+			gpstk::FFStreamError err("std::exception: " +
+				string(e.what()));
+			GPSTK_THROW(err);
+		}
+	}
+
+	void TrajectoryData::getPRange(const std::string & currentline) 
+		throw(gpstk::StringUtils::StringException, gpstk::FFStreamError)
+	{
+		try
+		{
+			double pseudorange = asDouble(currentline.substr(currentline.size() - 10));
+			this->PRange = pseudorange;
+		}
+		catch (const std::exception &e)
 		{
 			gpstk::FFStreamError err("std::exception: " +
 				string(e.what()));

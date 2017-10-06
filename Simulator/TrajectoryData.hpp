@@ -66,6 +66,7 @@ namespace gnsssimulator
 		gpstk::Position::CoordinateSystem coorSys = gpstk::Position::CoordinateSystem::Unknown;
 		gpstk::Position pos;
 		gpstk::GPSWeekSecond gpsTime;
+		double PRange;
 	
 		
 	private:
@@ -75,7 +76,8 @@ namespace gnsssimulator
 		void TrajectoryData::getTime(const std::string& currentLine)
 			throw(gpstk::StringUtils::StringException, gpstk::FFStreamError);
 
-		
+		void TrajectoryData::getPRange(const std::string& currentline)
+			throw(gpstk::StringUtils::StringException, gpstk::FFStreamError);
 
 	};  // class RinexNavData
 
