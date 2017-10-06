@@ -40,8 +40,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_13();
 	//Test_Trajectory_14();
 	//Test_Trajectory_15();
+	//Test_Trajectory_C1();
 
-	//makeSimplePseudoRange();
 
 	
 	

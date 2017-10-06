@@ -592,4 +592,16 @@ void Test_Trajectory_2(void) {
 		}
 
 	}
+
+	bool Test_Trajectory_C1(void)
+	{
+		bool test_error_flag = true;
+
+		gnsssimulator::TrajectoryHeader head;
+		gnsssimulator::TrajectoryStream strm("..\\Simulator\\TrajectoryTestFiles\\Test_TrajectoryFileExample_C1.txt");
+
+		strm >> head;
+
+		return test_error_flag;
+	}
 	
