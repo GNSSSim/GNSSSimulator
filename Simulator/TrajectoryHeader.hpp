@@ -19,7 +19,7 @@ namespace gnsssimulator {
 
 		/// Constructor
 		TrajectoryHeader(void) 
-			: valid(true), firstLineisRead(false), isPosFormatSet(false), isHeaderEnd(false)
+			: valid(true), firstLineisRead(false), isPosFormatSet(false),isPRread(false), isHeaderEnd(false)
 			{}
 
 		/// Destructor
@@ -34,6 +34,7 @@ namespace gnsssimulator {
 		virtual void dump(std::ostream& s) const;
 
 		bool TrajectoryHeader::isPosFormatSet;
+		bool TrajectoryHeader::isPRread;
 		bool TrajectoryHeader::isHeaderEnd;
 		bool TrajectoryHeader::firstLineisRead;
 		bool TrajectoryHeader::valid;
@@ -47,6 +48,7 @@ namespace gnsssimulator {
 		static const string TrajectoryHeader::endOfHeader;
 		static const string TrajectoryHeader::positionTypeLLHString;
 		static const string TrajectoryHeader::positionTypeECEFString;
+		static const string TrajectoryHeader::pseudorangeC1String;
 		static const string TrajectoryHeader::endofHeaderString;	
 
 	protected:

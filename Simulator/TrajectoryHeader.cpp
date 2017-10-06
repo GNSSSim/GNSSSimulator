@@ -14,6 +14,7 @@ namespace gnsssimulator {
 	const string TrajectoryHeader::endOfHeader = "END OF HEADER";
 	const string TrajectoryHeader::positionTypeLLHString = "Position LLH";
 	const string TrajectoryHeader::positionTypeECEFString = "Position ECEF";
+	const string TrajectoryHeader::pseudorangeC1String = "C1";
 	const string TrajectoryHeader::endofHeaderString = "END OF HEADER";
 
 	void TrajectoryHeader::reallyGetRecord(gpstk::FFStream& ffs)
@@ -53,6 +54,9 @@ namespace gnsssimulator {
 			else if (!isPosFormatSet && line == positionTypeECEFString) {
 				coorSys = gpstk::Position::CoordinateSystem::Cartesian;
 				isPosFormatSet = true;
+			}
+			else if (!isPRread && line == pseudorangeC1String) {
+				isPRread = true;
 			}
 			else if (line == endofHeaderString) {
 				isHeaderEnd = true;

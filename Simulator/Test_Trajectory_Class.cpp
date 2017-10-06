@@ -602,6 +602,9 @@ void Test_Trajectory_2(void) {
 
 		strm >> head;
 
+		if (!head.isPRread)
+			test_error_flag = false;
+
 		return test_error_flag;
 	}
 	
