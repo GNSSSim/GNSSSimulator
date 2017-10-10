@@ -78,6 +78,9 @@
     <ClInclude Include="PRsolution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Test_simulatePseudoRange.hpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="PRsolution.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test_simulatePseudoRange.cpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
