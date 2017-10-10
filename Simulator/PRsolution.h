@@ -4,6 +4,7 @@
 #include "satDataContainer.h"
 
 #include "Rinex3ObsStream.hpp"
+#include "Rinex3ObsHeader.hpp"
 
 #include <math.h>
 
@@ -25,11 +26,20 @@ public:
 	*/
 	void createRinexFile(void);
 
+	/* Get Direct Pseudorange from emission time, clock offset and observations
+	*/
+	double getPR_direct();
+
+	/*Get Pseudorange with iterative method*/
+	double getPR_iterative();
+
 private:
 
 
 
 	gpstk::Position trajPos, satPos;
+
+	double pr_it_treshold;
 
 };
 }
