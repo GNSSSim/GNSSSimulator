@@ -77,7 +77,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
 		//OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
-		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), civtime);
+		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4,
+			SatID::systemGPS),
+			civtime);
 		Position pos = sat_eph.svXvt(civtime).x;
 		cout << "Satellite Position: " << pos << endl;
 

@@ -59,6 +59,7 @@ public:
 	SatID getSatIDObject(int, SatID::SatelliteSystem );
 
 	/* Create a CivilianTime object from input time as arguments
+		@return:CivilTime
 	*/
 	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, double second);
 	
@@ -66,6 +67,7 @@ public:
 		Time can be any valid CivilianTime object. If Navigation Data
 		from RINEX file for the queried epoch is not available,
 		GPSTK uses built-in models to calculate Satellite position.
+		@return: Orbiteph
 	*/
 	OrbitEph getSatInfoAtEpoch(SatID&, CivilTime&);
 

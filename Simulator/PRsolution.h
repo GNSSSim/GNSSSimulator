@@ -25,11 +25,20 @@ public:
 	*/
 	void createRinexFile(void);
 
+	/* Get Direct Pseudorange from emission time, clock offset and observations
+	*/
+	double getPR_direct();
+
+	/*Get Pseudorange with iterative method*/
+	double getPR_iterative();
+
 private:
 
 
 
 	gpstk::Position trajPos, satPos;
+
+	double pr_it_treshold;
 
 };
 }
