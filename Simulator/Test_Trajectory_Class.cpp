@@ -593,7 +593,7 @@ void Test_Trajectory_2(void) {
 
 	}
 
-	bool Test_Trajectory_C1(void)
+	bool Test_Trajectory_C1(void)	// Read file header which contains C1 identifier and C1 data
 	{
 		bool test_success = true;
 
@@ -621,7 +621,7 @@ void Test_Trajectory_2(void) {
 		return test_success;
 	}
 
-	bool Test_Trajectory_C1_missing(void)
+	bool Test_Trajectory_C1_missing(void)		// Test if data is read in when header doesn't contain C1
 	{
 
 		bool test_success = true;
@@ -641,7 +641,7 @@ void Test_Trajectory_2(void) {
 		return test_success;
 	}
 
-	bool Test_Trajectory_C1_append(void)
+	bool Test_Trajectory_C1_append(void)		//Add C1 identifier and data to an existing trajectory file.
 	{
 		bool test_success = true;
 
@@ -650,7 +650,7 @@ void Test_Trajectory_2(void) {
 		gnsssimulator::TrajectoryStream strm_in("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample.txt");
 		gnsssimulator::TrajectoryStream strm_out("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt",std::ios::out);
 		gnsssimulator::TrajectoryStream strm_posttest("..\\Simulator\\TrajectoryTestFiles\\Test2_TrajectoryFileExample_C1_append.txt");
-		gnsssimulator::TrajectoryHeader head_post;
+		gnsssimulator::TrajectoryHeader head_post;		//Read the file in again
 
 		try
 		{
@@ -677,8 +677,8 @@ void Test_Trajectory_2(void) {
 		return test_success;
 	}
 
-	bool Test_Trajectory_C1_append_missing(void)
-	{
+	bool Test_Trajectory_C1_append_missing(void)		// Test if regular Trajectory creation without
+	{													// without C1 still works.
 		bool test_success = true;
 
 		gnsssimulator::TrajectoryHeader head;
