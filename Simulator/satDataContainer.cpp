@@ -79,6 +79,7 @@ OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_
 		throw "Sat has no observations at given time. Dark Side Error.";
 		return OrbitEph();
 	}
+	// TODO: Rewrite to utilize svXVT() function instead of getting Ephemeris for the epoch.
 	GPSEphemeris ephemeris = ephemerisStore.findEphemeris(query_sat,query_time);
 	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
 	return ephemeris;

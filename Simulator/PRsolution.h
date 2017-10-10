@@ -4,6 +4,7 @@
 #include "satDataContainer.h"
 
 #include "Rinex3ObsStream.hpp"
+#include "Rinex3ObsHeader.hpp"
 
 #include <math.h>
 
