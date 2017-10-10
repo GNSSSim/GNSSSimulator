@@ -20,8 +20,8 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 	/// Function Declarations
-	int ProcessFiles();
-	int ProcessTrajectoryFile();
+	//int ProcessFiles();
+	//int ProcessTrajectoryFile();
 	/// End of Declarations
 	//Navigation_examples_1();
 
@@ -41,15 +41,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Test_Trajectory_14();
 	//Test_Trajectory_15();
 
-	//makeSimplePseudoRange();
+	makeSimplePseudoRange();
 
 	
-	
+	/*
 	/// Read in RINEX files
 	ProcessFiles();
 	/// Read Rover Trajectory file
 	ProcessTrajectoryFile();
-
+	*/
 	/*		//DEBUG FOR RINEX PROCESS
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
@@ -64,7 +64,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << endl << e.what();
 	}
 	*/
-
+	/*
 	//DEBUG FOR PRSOLUTION
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	for (auto& it : traj_timevec) {
@@ -85,7 +85,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	cout << "Creating Rinex File. " << endl;
 	prsolution.createRinexFile();
-
+	*/
 	return 0;
 }
 
