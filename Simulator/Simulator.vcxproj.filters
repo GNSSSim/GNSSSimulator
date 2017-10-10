@@ -75,8 +75,8 @@
     <ClInclude Include="TrajectoryStore.hpp">
       <Filter>Source Files\Trajectory</Filter>
     </ClInclude>
-    <ClInclude Include="Test_simulatePseudoRange.hpp">
-      <Filter>Source Files\Trajectory</Filter>
+    <ClInclude Include="PRsolution.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,8 +116,8 @@
     <ClCompile Include="TrajectoryStore.cpp">
       <Filter>Source Files\Trajectory</Filter>
     </ClCompile>
-    <ClCompile Include="Test_simulatePseudoRange.cpp">
-      <Filter>Source Files\Trajectory</Filter>
+    <ClCompile Include="PRsolution.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
