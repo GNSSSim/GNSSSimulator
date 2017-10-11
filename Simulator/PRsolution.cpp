@@ -60,18 +60,29 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 #pragma region Data Manipulation
 	// TODO: Finish Data Frame creation and offload to out_stream
 	Triple roverpos, satpos;
+	std::vector<RinexDatum> datumvec;
 	RinexDatum datum;
 
-	ref_stream_in >> ref_data;
 	ref_stream_in >> ref_data;
 
 	for (auto& time_it : prsolutioncontainer) {
 		ref_data.time = time_it.first;
 		roverpos = time_it.second.first;
+		ref_data.obs.clear();
 		for (auto& sat_it : time_it.second.second) {
+			satpos = sat_it.second;
 
+			datum.data = getPRSolution_abs(roverpos, satpos);
+			datum.dataBlank = false;
+			datum.lli = 0;
+			datum.lliBlank = true;
+			datum.ssiBlank = false;
+			datum.ssi = 0;			//Signal Strength Indicator ( Rinex 3.0+) We don't care in our case
+			datumvec.clear();
+			datumvec.push_back(datum);
+			ref_data.obs[sat_it.first] = datumvec;
 		}
-
+		out_stream << ref_data;
 	}
 
 #pragma endregion

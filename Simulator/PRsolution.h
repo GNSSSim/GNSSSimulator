@@ -28,7 +28,9 @@ public:
 
 	/*	Write calculated C1 solution to a valid Rinex file
 		/Uses a template input Rinex observation header, which's
-		values are changed. Some fields may be invalid.
+		values are changed. Some fields may be invalid./
+		Call prepareRinexData to pass reference containing 
+		Rover and Sat positions before or Rinex creation fails!
 	*/
 	void createRinexFile(void);
 
