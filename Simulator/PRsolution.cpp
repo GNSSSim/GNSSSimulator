@@ -1,6 +1,14 @@
 #include "stdafx.h"
 #include "PRsolution.h"
 
+gnsssimulator::PRsolution::PRsolution()
+{
+}
+
+gnsssimulator::PRsolution::~PRsolution()
+{
+}
+
 double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Triple& in_trajpos, gpstk::Triple& in_satpos)
 {
 	double return_pr;
@@ -51,15 +59,19 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 
 #pragma region Data Manipulation
 	// TODO: Finish Data Frame creation and offload to out_stream
-	Triple roverpos,satpos;
+	Triple roverpos, satpos;
 	RinexDatum datum;
+
+	ref_stream_in >> ref_data;
+	ref_stream_in >> ref_data;
+
 	for (auto& time_it : prsolutioncontainer) {
 		ref_data.time = time_it.first;
 		roverpos = time_it.second.first;
 		for (auto& sat_it : time_it.second.second) {
 
 		}
-		
+
 	}
 
 #pragma endregion

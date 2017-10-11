@@ -14,6 +14,8 @@ namespace gnsssimulator {
 class PRsolution {
 
 public:
+	PRsolution();
+	~PRsolution();
 
 	typedef map<CivilTime, pair<Triple, map<SatID, Triple>>> PRSolutionContainer;
 
@@ -46,7 +48,7 @@ private:
 
 
 	gpstk::Position trajPos, satPos;
-	PRSolutionContainer& prsolutioncontainer;
+	PRSolutionContainer prsolutioncontainer;
 	double pr_it_treshold;
 
 };

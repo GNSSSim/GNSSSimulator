@@ -113,6 +113,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		prsolutionContainer[civtime] = solutionDataBlock;
 	}
 	cout << "Creating Rinex File. " << endl;
+	prsolution.prepareRinexData(prsolutionContainer);
 	prsolution.createRinexFile();
 
 	return 0;
