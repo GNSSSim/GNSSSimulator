@@ -17,7 +17,7 @@ double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Triple& in_trajpos, g
 void gnsssimulator::PRsolution::createRinexFile(void)
 {
 	gpstk::Rinex3ObsHeader ref_head;
-	gpstk::Rinex3ObsData out_data;
+	gpstk::Rinex3ObsData ref_data;
 	gpstk::Rinex3ObsStream ref_stream_in("..\\SimulatorTest\\TestFiles\\RINEX_obs\\mobs2530.17o");
 	gpstk::Rinex3ObsStream out_stream("..\\Simulator\\TrajectoryTestFiles\\generatedRINEX.11o",std::ios::out);
 	
@@ -47,13 +47,30 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 	ref_head.R2ObsTypes.push_back("C1");
 #pragma endregion
 
-#pragma region Data Manipulation
-	//aa
-	//aa
-#pragma endregion
-	
-	ref_head.dump(cout);
 	out_stream << ref_head;
 
+#pragma region Data Manipulation
+	// TODO: Finish Data Frame creation and offload to out_stream
+	Triple roverpos,satpos;
+	RinexDatum datum;
+	for (auto& time_it : prsolutioncontainer) {
+		ref_data.time = time_it.first;
+		roverpos = time_it.second.first;
+		for (auto& sat_it : time_it.second.second) {
+
+		}
+		
+	}
+
+#pragma endregion
+	
+	//ref_head.dump(cout);
+	
+
 	out_stream.close();
+}
+
+void gnsssimulator::PRsolution::prepareRinexData(PRSolutionContainer &container)
+{
+	prsolutioncontainer = container;
 }

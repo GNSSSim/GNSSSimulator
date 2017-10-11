@@ -15,6 +15,8 @@ class PRsolution {
 
 public:
 
+	typedef map<CivilTime, pair<Triple, map<SatID, Triple>>> PRSolutionContainer;
+
 	/* Get the calculated "Pseudorange" without any additional errors applied.
 		@param: Trajectory position
 		@param: Satellite position
@@ -28,6 +30,10 @@ public:
 	*/
 	void createRinexFile(void);
 
+	/* Pass the complete Data Container from whoch PseudoRanges can be calculated*/
+	void prepareRinexData(PRSolutionContainer&);
+	void prepareRinexData(PRSolutionContainer&, string additionalComments);
+
 	/* Get Direct Pseudorange from emission time, clock offset and observations
 	*/
 	double getPR_direct();
@@ -40,7 +46,7 @@ private:
 
 
 	gpstk::Position trajPos, satPos;
-	
+	PRSolutionContainer& prsolutioncontainer;
 	double pr_it_treshold;
 
 };

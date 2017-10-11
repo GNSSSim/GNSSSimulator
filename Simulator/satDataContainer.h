@@ -21,7 +21,6 @@ using namespace gpstk;
 
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
-typedef std::map<std::pair<CivilTime,Triple>, std::map<SatID,std::pair<Triple,double>>> PRSolutionContainer;
 
 
 class satDataContainer {
@@ -84,9 +83,7 @@ public:
 	*/
 	double getPseudorangeatEpoch(SatID&, CivilTime&);
 
-	/* Get reference to the pseudorangeSolutionContainer
-	*/
-	PRSolutionContainer& getPRSolContainerReference(void);
+	//typedef std::map<Civtime,> RoverSolutionEpoch;
 
 private:
 	
@@ -97,10 +94,7 @@ private:
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
 
-	/* Contains the Pseudoranges for each epoch,time relative to Rover
-		@return: std::map<std::pair<CivilTime,Triple>, std::map<SatID,std::pair<Triple,double>>>
-	*/
-	PRSolutionContainer pseudorangeSolutionContainer;
+
 	
 	
 

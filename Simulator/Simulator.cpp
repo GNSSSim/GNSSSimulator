@@ -16,6 +16,10 @@ GPSEphemerisStore bceStore;
 gnsssimulator::TrajectoryStore trajStore;
 gnsssimulator::PRsolution prsolution;
 
+//typedef map<CivilTime, pair<Triple, map<SatID, Triple>>> PRSolutionContainer;
+typedef map<SatID, Triple> SatDataEpoch;
+typedef pair<Triple, SatDataEpoch> SolutionDataBlock;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -70,12 +74,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//DEBUG FOR PRSOLUTION
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
-
-	pair<CivilTime, Triple> roverPair;
 	double Prange;
-	pair<Triple, double> satsol;
-	map<SatID, pair<Triple,double>> satprsolution;
 	
+	SatDataEpoch satDataEpoch;
+	SolutionDataBlock solutionDataBlock;
+	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;
 
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
@@ -85,19 +88,16 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
 		cout << "Rover Position:     " << data.pos << endl << endl;
-		roverPair.first = civtime;
-		roverPair.second = data.pos;
+
+
 
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
 			try
 			{
 				Xvt xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-				Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
-				satsol.first = xvt_data.x;
-				satsol.second = Prange;
-				satprsolution[satid_it] = satsol;
+				Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);				
 
-				
+				satDataEpoch[satid_it] = xvt_data.x;
 
 				cout << " Sat ID: " << satid_it << " Position: "
 					<< xvt_data.x << " PseudoRange: " << Prange
@@ -108,7 +108,9 @@ int _tmain(int argc, _TCHAR* argv[])
 				//cout << "[Warning] Can't get OrbitEph for " << satid_it << " at: " << civtime << endl;
 			}
 		}
-		//satDataContainer_c.getPRSolContainerReference().at(roverPair) = satprsolution;
+		solutionDataBlock.first = data.pos;
+		solutionDataBlock.second = satDataEpoch;
+		prsolutionContainer[civtime] = solutionDataBlock;
 	}
 	cout << "Creating Rinex File. " << endl;
 	prsolution.createRinexFile();

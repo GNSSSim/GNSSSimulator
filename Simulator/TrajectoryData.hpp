@@ -60,6 +60,7 @@ namespace gnsssimulator
 		bool compare(const TrajectoryData&) const;
 		bool operator==(const TrajectoryData& ) const;
 		bool operator!=(const TrajectoryData& ) const;
+		
 
 		TrajectoryData& operator+=(gpstk::Position&);
 

@@ -69,6 +69,7 @@ namespace gnsssimulator
 		return !this->compare(other);
 	}
 
+
 	TrajectoryData& TrajectoryData::operator+=(gpstk::Position& newpos) {
 		this->pos = newpos;
 		this->coorSys = newpos.getCoordinateSystem();
