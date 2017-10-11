@@ -21,6 +21,7 @@ using namespace gpstk;
 
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
+typedef std::map<std::pair<CivilTime,Triple>, std::map<SatID,std::pair<Triple,double>>> PRSolutionContainer;
 
 
 class satDataContainer {
@@ -44,6 +45,12 @@ public:
 		@return The <vector> containing all the epoch times for the given SatID
 	*/
 	std::vector<CivilTime> getEpochVectorforSat(SatID&);
+
+	/* Get the list of stored SVs as a vector*/
+	std::vector<SatID> getSatIDvectorlist(void);
+
+	/* Get the ephemerisStore fro satDataContainer*/
+	GPSEphemerisStore& getEphemerisStore();
 
 	/* Check if a given epoch is outside of the associated epoch observation vector
 	* Returns TRUE if satellite is not observable in the given epoch.
@@ -77,6 +84,10 @@ public:
 	*/
 	double getPseudorangeatEpoch(SatID&, CivilTime&);
 
+	/* Get reference to the pseudorangeSolutionContainer
+	*/
+	PRSolutionContainer& getPRSolContainerReference(void);
+
 private:
 	
 	GPSEphemerisStore ephemerisStore;
@@ -85,6 +96,11 @@ private:
 	/* Contains the C1 Pseudorange for every RINEX epoch for each satellite
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
+
+	/* Contains the Pseudoranges for each epoch,time relative to Rover
+		@return: std::map<std::pair<CivilTime,Triple>, std::map<SatID,std::pair<Triple,double>>>
+	*/
+	PRSolutionContainer pseudorangeSolutionContainer;
 	
 	
 

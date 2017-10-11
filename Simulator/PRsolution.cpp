@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PRsolution.h"
 
-double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Position& in_trajpos, gpstk::Position& in_satpos)
+double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Triple& in_trajpos, gpstk::Triple& in_satpos)
 {
 	double return_pr;
 	gpstk::Position pos_diff = in_trajpos - in_satpos;
@@ -23,6 +23,7 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 	
 	ref_stream_in >> ref_head;
 
+#pragma region Header Manipulation
 	ref_head.fileProgram = "GNSS Simulator PR";
 	ref_head.agency = "---";
 
@@ -41,13 +42,17 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 	obsvec.push_back(obsID);
 	ref_head.mapObsTypes.clear();
 	ref_head.mapObsTypes["G"] = obsvec;
-	ref_head.dump(cout);
 
 	ref_head.R2ObsTypes.clear();
 	ref_head.R2ObsTypes.push_back("C1");
+#pragma endregion
 
+#pragma region Data Manipulation
+	//aa
+	//aa
+#pragma endregion
 	
-
+	ref_head.dump(cout);
 	out_stream << ref_head;
 
 	out_stream.close();

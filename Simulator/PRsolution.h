@@ -20,9 +20,11 @@ public:
 		@param: Satellite position
 		@return: double pseudorange
 	*/
-	double getPRSolution_abs(gpstk::Position&,gpstk::Position&);
+	double getPRSolution_abs(gpstk::Triple&,gpstk::Triple&);
 
-	/*	Write calculated solution to a valid Rinex file
+	/*	Write calculated C1 solution to a valid Rinex file
+		/Uses a template input Rinex observation header, which's
+		values are changed. Some fields may be invalid.
 	*/
 	void createRinexFile(void);
 
@@ -38,7 +40,7 @@ private:
 
 
 	gpstk::Position trajPos, satPos;
-
+	
 	double pr_it_treshold;
 
 };

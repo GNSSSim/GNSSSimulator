@@ -42,6 +42,20 @@ std::vector<CivilTime> satDataContainer::getEpochVectorforSat(SatID& querySat)
 	return outVector;
 }
 
+std::vector<SatID> satDataContainer::getSatIDvectorlist(void)
+{
+	std::vector<SatID> return_vec;
+	for (auto& it : pseudoRangeContainer) {
+		return_vec.push_back(it.first);
+	}
+	return return_vec;
+}
+
+GPSEphemerisStore & satDataContainer::getEphemerisStore()
+{
+	return ephemerisStore;
+}
+
 SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
 {
 	//SV's are ordered
@@ -91,4 +105,9 @@ double satDataContainer::getPseudorangeatEpoch(SatID &querysat, CivilTime &query
 	return_range = pseudoRangeContainer.at(querysat).at(querytime);
 
 	return return_range;
+}
+
+PRSolutionContainer & satDataContainer::getPRSolContainerReference(void)
+{
+	return pseudorangeSolutionContainer;
 }
