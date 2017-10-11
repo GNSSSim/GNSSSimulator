@@ -23,6 +23,9 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 	
 	ref_stream_in >> ref_head;
 
+	ref_head.fileProgram = "GNSS Simulator PR";
+	ref_head.agency = "---";
+
 	ref_head.commentList.clear();
 	ref_head.commentList.push_back("C1 modelled using GNSSSIM");
 	ref_head.commentList.push_back("https://github.com/GNSSSim/GNSSSimulator");

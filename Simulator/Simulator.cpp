@@ -50,7 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// Read Rover Trajectory file
 	ProcessTrajectoryFile();
 
-	/*		//DEBUG FOR RINEX PROCESS
+			//DEBUG FOR RINEX PROCESS
 	cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
 	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
@@ -63,28 +63,28 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << e.what();
 	}
-	*/
+	
 
 	//DEBUG FOR PRSOLUTION
-	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
-	for (auto& it : traj_timevec) {
-		CivilTime civtime = it.convertToCommonTime();
-		cout << "Next Epoch: " << endl;
-		cout << it << "  converted to civtime: " << civtime << endl;
+	//vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
+	//for (auto& it : traj_timevec) {
+	//	CivilTime civtime = it.convertToCommonTime();
+	//	cout << "Next Epoch: " << endl;
+	//	cout << it << "  converted to civtime: " << civtime << endl;
 
-		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
-		cout << "Rover Position:     " << data.pos << endl;
+	//	gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
+	//	cout << "Rover Position:     " << data.pos << endl;
 
-		// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
-		//OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
-		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4,
-			SatID::systemGPS),
-			civtime);
-		Position pos = sat_eph.svXvt(civtime).x;
-		cout << "Satellite Position: " << pos << endl;
+	//	// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
+	//	//OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
+	//	OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4,
+	//		SatID::systemGPS),
+	//		civtime);
+	//	Position pos = sat_eph.svXvt(civtime).x;
+	//	cout << "Satellite Position: " << pos << endl;
 
-		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;	
-	}
+	//	cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;	
+	//}
 	cout << "Creating Rinex File. " << endl;
 	prsolution.createRinexFile();
 
