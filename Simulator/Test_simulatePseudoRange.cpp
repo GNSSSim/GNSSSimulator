@@ -32,16 +32,25 @@ void makeSimplePseudoRange(void) {
 	CommonTime civtime;
 
 	gpstk::GPSWeekSecond gpsTime;
-	gpsTime.week = 1955;
-	gpsTime.sow = 432000;
+	gpsTime.week = 1955; // 1955 // 931
+	gpsTime.sow = 432000+532;
 
 	rnffs >> hdr;
 
 	hdr.dump(cout);
-
+	int loop = 0;
 	// Storing the ephemeris in "bcstore"
-	while (rnffs >> rne) bcestore.addEphemeris(rne);
-
+	while (rnffs >> rne) { 
+		//rne.dump(cout);
+		cout << loop << endl;
+		
+		if (loop == 44) {
+			cout << "Here comes the error. "<< endl;
+			break;
+		}
+		loop += 1;
+		bcestore.addEphemeris(rne); }
+	
 	// Setting the criteria for looking up ephemeris
 	//bcestore.SearchNear();
 
@@ -51,7 +60,8 @@ void makeSimplePseudoRange(void) {
 		try {
 
 			Xvt xvt_data = bcestore.getXvt(myID, gpsTime);
-			cout << xvt_data << endl;
+			cout << "Sat Id: " << myID.id << endl;
+			cout << xvt_data << endl << endl;
 
 		}
 		catch (...)
