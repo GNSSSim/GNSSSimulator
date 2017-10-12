@@ -45,9 +45,13 @@ public:
 	/*Get Pseudorange with iterative method*/
 	double getPR_iterative();
 
+	/*Get the Calculated Signal Travel Time*/
+	double getSignal_tt();
+
 private:
-
-
+	const int C_light = 299792458;	//Speed of light [m/s]
+	double signal_tt;	//Signal Travel Time for the full PseudoRange
+	void calculate_signaltt(Triple&,Triple&);
 
 	gpstk::Position trajPos, satPos;
 	PRSolutionContainer prsolutioncontainer;

@@ -17,6 +17,9 @@ double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Triple& in_trajpos, g
 	double ydiff = pos_diff.Y();
 	double zdiff = pos_diff.Z();
 
+	//Signal Travel Time
+	calculate_signaltt(in_satpos, in_trajpos);
+
 	return_pr = std::sqrt(std::pow(xdiff,2)+std::pow(ydiff,2)+std::pow(zdiff,2));
 
 	return return_pr;
@@ -96,4 +99,18 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 void gnsssimulator::PRsolution::prepareRinexData(PRSolutionContainer &container)
 {
 	prsolutioncontainer = container;
+}
+
+double gnsssimulator::PRsolution::getSignal_tt()
+{
+	return signal_tt;
+}
+
+void gnsssimulator::PRsolution::calculate_signaltt(Triple& rcv, Triple& sat)
+{
+	double nom = std::sqrt(std::pow((sat[0] - rcv[0]), 2) +
+		std::pow((sat[1] - rcv[1]), 2) +
+		std::pow((sat[2] - rcv[2]), 2));
+
+	signal_tt = nom / C_light;
 }

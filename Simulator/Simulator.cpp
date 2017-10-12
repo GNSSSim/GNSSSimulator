@@ -28,7 +28,7 @@ typedef pair<Triple, SatDataEpoch> SolutionDataBlock;
 int _tmain(int argc, _TCHAR* argv[])
 {
 	cout << "CONFIG: " << "ProcessRinex " << ProcessRinex << " ProcessTrajectory: " << ProcessTrajectory <<
-		" Calculate PR Solution: " << Solution_to_RINEX << " Run Tests: " << Run_Tests << endl;
+		" Solution to RINEX: " << Solution_to_RINEX << " Run Tests: " << Run_Tests << endl;
 
 	/// Function Declarations
 	int ProcessFiles();
@@ -83,8 +83,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	}*/
 	
 
-	//DEBUG FOR PRSOLUTION
-
 #pragma region Pseudorange Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
@@ -108,12 +106,13 @@ int _tmain(int argc, _TCHAR* argv[])
 			try
 			{
 				Xvt xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-				Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+				Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);		
 
 				satDataEpoch[satid_it] = xvt_data.x;
 
 				cout << " Sat ID: " << satid_it << " Position: "
 					<< xvt_data.x << " PseudoRange: " << Prange
+					<< " Signal tt: " << prsolution.getSignal_tt()
 					<< endl;
 			}
 			catch (const gpstk::InvalidRequest& e)
