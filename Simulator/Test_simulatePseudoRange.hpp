@@ -27,6 +27,11 @@
 #include "Rinex3NavData.hpp"
 #include "Rinex3NavStream.hpp"
 
+#include "RinexNavBase.hpp"
+#include "RinexNavHeader.hpp"
+#include "RinexNavData.hpp"
+#include "RinexNavStream.hpp"
+
 #include "SP3Header.hpp"
 #include "SP3Data.hpp"
 #include "SP3Stream.hpp"

@@ -14,7 +14,7 @@ namespace gnsssimulator
 
 		strm.precision(6);
 		strm << fixed << setprecision(0) << gpsTime.getWeek() << "   ";
-		strm << fixed << setprecision(1) << gpsTime.getSOW() << setprecision(4) << "  ";
+		strm << fixed << setprecision(1) << gpsTime.getSOW() << setprecision(4) << "   ";
 
 		strm << fixed << setprecision(3) << pos.getX() << "  ";
 		strm << fixed << setprecision(3) << pos.getY() << "  ";
@@ -97,9 +97,9 @@ namespace gnsssimulator
 	{
 		try
 		{
-			double coor1 = asDouble(currentLine.substr(15, 13));
-			double coor2 = asDouble(currentLine.substr(28, 13));
-			double coor3 = asDouble(currentLine.substr(41, 13));
+			double coor1 = asDouble(currentLine.substr(17, 13));
+			double coor2 = asDouble(currentLine.substr(30, 13));
+			double coor3 = asDouble(currentLine.substr(43, 13));
 
 			this->pos = gpstk::Position(	coor1,	coor2,	coor3, 	coorSys,  NULL );
 			this->pos = this->pos.transformTo(this->coorSys);

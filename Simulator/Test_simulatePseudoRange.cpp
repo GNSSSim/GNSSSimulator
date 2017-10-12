@@ -14,8 +14,8 @@ using namespace gnsssimulator;
 
 void makeSimplePseudoRange(void) {
 
-	string ephFilewPath = "..\\Simulator\\RinexFiles\\brdc1810.17n";
-	Rinex3NavStream rnffs(ephFilewPath.c_str());    // Open ephemerides data file
+	string ephFilewPath = "..\\Simulator\\RinexFiles\\brdc1820.17n"; // "..\\Simulator\\RinexFiles\\brdc1810.17n"; // "..\\Simulator\\RinexFiles\\brdc1820.17n";
+	RinexNavStream rnffs(ephFilewPath.c_str());    // Open ephemerides data file
 
 	rnffs.open(ephFilewPath.c_str(), ios::in);
 
@@ -24,8 +24,8 @@ void makeSimplePseudoRange(void) {
 		return;
 	}
 
-	Rinex3NavData rne;
-	Rinex3NavHeader hdr;
+	RinexNavData rne;
+	RinexNavHeader hdr;
 	GPSEphemerisStore bcestore;
 	SatID myID(1 , SatID::SatelliteSystem::systemGPS);
 	
@@ -33,28 +33,29 @@ void makeSimplePseudoRange(void) {
 
 	gpstk::GPSWeekSecond gpsTime;
 	gpsTime.week = 1955; // 1955 // 931
-	gpsTime.sow = 432000+532;
+	gpsTime.sow = 518400+532; // 432000 // 432000+86400 = 518400
 
 	rnffs >> hdr;
 
-	hdr.dump(cout);
+	//hdr.dump(cout);
 	int loop = 0;
 	// Storing the ephemeris in "bcstore"
-	while (rnffs >> rne) { 
-		//rne.dump(cout);
-		cout << loop << endl;
-		
-		if (loop == 44) {
-			cout << "Here comes the error. "<< endl;
-			break;
+	while (rnffs >> rne) {		
+		try {
+			bcestore.addEphemeris(rne);
+			loop += 1;
+		}catch (...) {
+			cout << loop << endl;
+			cout << "This eph data caused an error" << endl << endl;
+			//rne.dump(cout);
+			loop += 1;
 		}
-		loop += 1;
-		bcestore.addEphemeris(rne); }
+	}
 	
 	// Setting the criteria for looking up ephemeris
 	//bcestore.SearchNear();
 
-	for (size_t i = 1; i < 32; i++) {
+	/*for (size_t i = 1; i < 32; i++) {
 
 		myID.id = i;
 		try {
@@ -68,5 +69,29 @@ void makeSimplePseudoRange(void) {
 		{
 			cout << "Error. Probably we did not find the satId." << endl;
 		}
+	}*/
+
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryFiles\\SimpleTraj_1955_518400-518404.txt");
+	gnsssimulator::TrajectoryStream trajFileOut("..\\Simulator\\TrajectoryFiles\\SimpleTraj_1955_518400-518404__Out.txt", std::ios::out);
+	gnsssimulator::TrajectoryHeader trajHeader;
+	gnsssimulator::TrajectoryData trajData;
+	gnsssimulator::TrajectoryData testPos;
+	trajFileIn >> trajHeader;
+	trajFileOut << trajHeader;
+
+	gnsssimulator::TrajectoryStore TrajStore;
+	cout << "Next epoch" << endl;
+	while (trajFileIn >> trajData) {
+		TrajStore.addPosition(trajData);
+		testPos = TrajStore.findPosition(trajData.gpsTime);
+
+		cout << endl << "Next epoch" << endl;
+		trajFileOut << trajData;
+		cout << testPos;
 	}
+
+	trajFileIn.close();
+	trajFileOut.close();
+
+
 }
