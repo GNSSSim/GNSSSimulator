@@ -31,6 +31,7 @@ public:
 
 	/* When reading in RINEX line by line, pass the pseudorange for each epoch 
 		for each Satellite
+		@Effect: Container[Satid][Civiltime] = double
 	*/
 	void assemblePseudoRangeContainer(SatID, CivilTime, double);
 	

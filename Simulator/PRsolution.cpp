@@ -88,7 +88,7 @@ void gnsssimulator::PRsolution::createRinexFile(void)
 #pragma endregion
 	
 	//ref_head.dump(cout);
-	
+	cout << "[Success] Rinex Created." << endl;
 
 	out_stream.close();
 }
