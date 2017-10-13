@@ -42,6 +42,20 @@ std::vector<CivilTime> satDataContainer::getEpochVectorforSat(SatID& querySat)
 	return outVector;
 }
 
+std::vector<SatID> satDataContainer::getSatIDvectorlist(void)
+{
+	std::vector<SatID> return_vec;
+	for (auto& it : pseudoRangeContainer) {
+		return_vec.push_back(it.first);
+	}
+	return return_vec;
+}
+
+GPSEphemerisStore & satDataContainer::getEphemerisStore()
+{
+	return ephemerisStore;
+}
+
 SatID satDataContainer::getSatIDObject(int i, SatID::SatelliteSystem sys = SatID::SatelliteSystem::systemGPS)
 {
 	//SV's are ordered
@@ -79,6 +93,7 @@ OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_
 		throw "Sat has no observations at given time. Dark Side Error.";
 		return OrbitEph();
 	}
+	// TODO: Rewrite to utilize svXVT() function instead of getting Ephemeris for the epoch.
 	GPSEphemeris ephemeris = ephemerisStore.findEphemeris(query_sat,query_time);
 	//returnEph = ephemerisStore.findEphemeris(query_sat, query_time);
 	return ephemeris;
@@ -91,3 +106,4 @@ double satDataContainer::getPseudorangeatEpoch(SatID &querysat, CivilTime &query
 
 	return return_range;
 }
+

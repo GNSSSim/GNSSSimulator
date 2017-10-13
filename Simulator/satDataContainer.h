@@ -31,6 +31,7 @@ public:
 
 	/* When reading in RINEX line by line, pass the pseudorange for each epoch 
 		for each Satellite
+		@Effect: Container[Satid][Civiltime] = double
 	*/
 	void assemblePseudoRangeContainer(SatID, CivilTime, double);
 	
@@ -44,6 +45,12 @@ public:
 		@return The <vector> containing all the epoch times for the given SatID
 	*/
 	std::vector<CivilTime> getEpochVectorforSat(SatID&);
+
+	/* Get the list of stored SVs as a vector*/
+	std::vector<SatID> getSatIDvectorlist(void);
+
+	/* Get the ephemerisStore fro satDataContainer*/
+	GPSEphemerisStore& getEphemerisStore();
 
 	/* Check if a given epoch is outside of the associated epoch observation vector
 	* Returns TRUE if satellite is not observable in the given epoch.
@@ -59,6 +66,7 @@ public:
 	SatID getSatIDObject(int, SatID::SatelliteSystem );
 
 	/* Create a CivilianTime object from input time as arguments
+		@return:CivilTime
 	*/
 	CivilTime getCivilTimeObject(int year, int month, int day, int hour, int minute, double second);
 	
@@ -66,6 +74,7 @@ public:
 		Time can be any valid CivilianTime object. If Navigation Data
 		from RINEX file for the queried epoch is not available,
 		GPSTK uses built-in models to calculate Satellite position.
+		@return: Orbiteph
 	*/
 	OrbitEph getSatInfoAtEpoch(SatID&, CivilTime&);
 
@@ -75,6 +84,8 @@ public:
 	*/
 	double getPseudorangeatEpoch(SatID&, CivilTime&);
 
+	//typedef std::map<Civtime,> RoverSolutionEpoch;
+
 private:
 	
 	GPSEphemerisStore ephemerisStore;
@@ -83,6 +94,8 @@ private:
 	/* Contains the C1 Pseudorange for every RINEX epoch for each satellite
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
+
+
 	
 	
 

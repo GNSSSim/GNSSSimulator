@@ -7,6 +7,11 @@
 #include "Test_Trajectory_Class.hpp"
 #include "Test_simulatePseudoRange.hpp"
 
+const int ProcessRinex = 1;
+const int ProcessTrajectory = 1;
+const int Solution_to_RINEX = 0;
+const int Run_Tests = 1;
+
 using namespace gpstk;
 using namespace std;
 
@@ -16,76 +21,161 @@ GPSEphemerisStore bceStore;
 gnsssimulator::TrajectoryStore trajStore;
 gnsssimulator::PRsolution prsolution;
 
+//typedef map<CivilTime, pair<Triple, map<SatID, Triple>>> PRSolutionContainer;
+typedef map<SatID, Triple> SatDataEpoch;
+typedef pair<Triple, SatDataEpoch> SolutionDataBlock;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	cout << "CONFIG: " << "ProcessRinex " << ProcessRinex << " ProcessTrajectory: " << ProcessTrajectory <<
+		" Solution to RINEX: " << Solution_to_RINEX << " Run Tests: " << Run_Tests << endl;
 
 	/// Function Declarations
 	int ProcessFiles();
 	int ProcessTrajectoryFile();
+	bool Test_ReProcess_Solution_Rinex();
 	/// End of Declarations
-	//Navigation_examples_1();
+	if (Run_Tests) {
+		//Navigation_examples_1();
 
-	/*Test_Trajectory_1();
-	Test_Trajectory_2();
-	Test_Trajectory_3();
-	Test_Trajectory_4();
-	Test_Trajectory_5();
-	Test_Trajectory_6();
-	Test_Trajectory_7();
-	Test_Trajectory_8();
-	Test_Trajectory_9();
-	Test_Trajectory_10();
-	Test_Trajectory_11();
-	Test_Trajectory_12();
-	Test_Trajectory_13();
-	Test_Trajectory_14();
-	Test_Trajectory_15();*/
+		//Test_Trajectory_1();
+		//Test_Trajectory_2();
+		//Test_Trajectory_3();
+		//Test_Trajectory_4();
+		//Test_Trajectory_5();
+		//Test_Trajectory_6();
+		//Test_Trajectory_7();
+		//Test_Trajectory_8();
+		//Test_Trajectory_9();
+		//Test_Trajectory_10();
+		//Test_Trajectory_11();
+		//Test_Trajectory_12();
+		//Test_Trajectory_13();
+		//Test_Trajectory_14();
+		//Test_Trajectory_15();
 
-	//makeSimplePseudoRange();
-
+		//makeSimplePseudoRange();
+	}
 	
 	
 	/// Read in RINEX files
-	ProcessFiles();
+	if (ProcessRinex)
+		ProcessFiles();
 	/// Read Rover Trajectory file
-	ProcessTrajectoryFile();
-	
-	/*		//DEBUG FOR RINEX PROCESS
-	cout << endl << endl << "------------" << endl;
+	if (ProcessTrajectory)
+		ProcessTrajectoryFile();
+
+			//DEBUG FOR RINEX PROCESS
+	/*cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
-	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30.0001);
+	CivilTime query_time = satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 37.456789);
+	SatID query_sat = satDataContainer_c.getSatIDObject(4, SatID::systemGPS);
 	try
 	{
-		query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), query_time);
-		cout << query_ephemeris.svXvt(query_time) << endl;
+		query_ephemeris = satDataContainer_c.getSatInfoAtEpoch(query_sat, query_time);
+		cout << "EPHQuery: " << query_ephemeris.svXvt(query_time) << endl;
+		Xvt xvt_data = satDataContainer_c.getEphemerisStore().getXvt(query_sat, query_time);
+		cout << "StoreQuery: " << xvt_data.x << endl;
 	}
 	catch (const std::exception& e)
 	{
 		cout << endl << e.what();
-	}
-	*/
-	/*
-	//DEBUG FOR PRSOLUTION
+	}*/
+	
+
+#pragma region Pseudorange 0th Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
+	double Prange;
+
+	SatDataEpoch satDataEpoch;												// Sat Data map<SatID,SatPosition>
+	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
+	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
+
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
+		cout << setw(30) << endl;
 		cout << "Next Epoch: " << endl;
 		cout << it << "  converted to civtime: " << civtime << endl;
 
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
-		cout << "Rover Position:     " << data.pos << endl;
+		cout << "Rover Position:     " << data.pos << endl << endl;
 
-		// TODO: set trajectoryfile to match epochs of RINEX, as getSatInfoAtEpoch crashes when trying to query a time which is out of "bounds"
-		//OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), satDataContainer_c.getCivilTimeObject(2017, 9, 10, 1, 13, 30));
-		OrbitEph sat_eph = satDataContainer_c.getSatInfoAtEpoch(satDataContainer_c.getSatIDObject(4, SatID::systemGPS), civtime);
-		Position pos = sat_eph.svXvt(civtime).x;
-		cout << "Satellite Position: " << pos << endl;
+		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
+			try
+			{
+				Xvt xvt_data;
+				try
+				{
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					satDataEpoch[satid_it] = xvt_data.x;
+				}
+				catch (...)
+				{
+					// TODO: Put a default value for satDataEpoch
+					Triple def(1.0e7, 1.0e7, 1.0e7);
+					satDataEpoch[satid_it] = def;
+				}
+				
 
-		cout << "Calculated PR: " << prsolution.getPRSolution_abs(data.pos, pos) << endl << endl;	
+				cout << " Sat ID: " << satid_it << " Position: "
+					<< satDataEpoch.at(satid_it) << " PseudoRange: " << Prange
+					<< " Signal tt: " << prsolution.getSignal_tt()
+					<< endl;
+			}
+			catch (const gpstk::InvalidRequest& e)
+			{				
+				cout << "[Warning] Can't get OrbitEph for " << satid_it << " at: " << civtime << endl;
+			}
+		}
+		solutionDataBlock.first = data.pos;
+		solutionDataBlock.second = satDataEpoch;
+		prsolutionContainer[civtime] = solutionDataBlock;
 	}
-	cout << "Creating Rinex File. " << endl;
-	prsolution.createRinexFile();
-	*/
+#pragma endregion
+
+#pragma region PseudoRange RaimCompute Solution
+	PRSolution2 RaimSolver;
+	//PRSolution RaimSolver1;
+	vector<double> prvector;
+	ZeroTropModel zeroTrop;
+	TropModel *tropModelPtr = &zeroTrop;
+	for (auto& it : traj_timevec) {
+		CivilTime civtime = it.convertToCommonTime();
+		prvector.clear();
+		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
+			try
+			{
+				//prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
+				Triple roverpos = prsolutionContainer[civtime].first;
+				Triple satPos = prsolutionContainer[civtime].second[satid_it];
+				double pr = prsolution.getPRSolution_abs(roverpos,satPos);
+				prvector.push_back(pr);
+			}
+			catch (...)
+			{
+				//prvector.push_back(0.0);
+				//cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+			}
+			
+		}
+		cout << "RaimCompute started." << endl;
+		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.Solution[0] << " " << RaimSolver.Solution[1] << "  " << RaimSolver.Solution[2] << endl;
+	}
+
+#pragma endregion
+
+	if (Solution_to_RINEX) {
+		cout << "Creating Rinex File. " << endl;
+		prsolution.prepareRinexData(prsolutionContainer);
+		prsolution.createRinexFile();
+	}
+
+	if (Run_Tests) {
+		cout << "Solution Reprocess ?= Original Rinex Process: " << Test_ReProcess_Solution_Rinex() << endl;
+	}
+
 	return 0;
 }
 
@@ -185,7 +275,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
@@ -198,4 +288,56 @@ int ProcessTrajectoryFile(void){
 	return 0;
 }
 
+bool Test_ReProcess_Solution_Rinex(void)
+{
+	bool test_success = 1;
 
+	Rinex3ObsStream stream;
+	Rinex3ObsHeader head;
+	Rinex3ObsData data;
+	satDataContainer satDataCont_Test;
+	SatID satid;
+	double pr;
+	stream.open("..\\Simulator\\TrajectoryTestFiles\\generatedRINEX.11o", ios::in);
+
+	if (!stream.is_open())
+		!test_success;
+	try
+	{
+		stream >> head;
+		int indexC1 = head.getObsIndex("C1");
+
+		while (stream >> data) {
+			CivilTime civtime(data.time);
+			for (auto& it : data.obs) {
+				satid = it.first;
+				pr = data.getObs(satid, indexC1).data;
+				satDataCont_Test.assemblePseudoRangeContainer(satid, civtime, pr);
+			}
+		}
+	}
+	catch (...)
+	{
+		test_success = 0;
+	}
+	try
+	{
+		double test_pr, original_pr;
+		CivilTime civtime;
+		for (auto& satid_it : satDataCont_Test.getSatIDvectorlist()) {
+			for (auto& time_it : satDataCont_Test.getEpochVectorforSat(satid_it)) {
+				test_pr = satDataCont_Test.getPseudorangeatEpoch(satid_it, time_it);
+				original_pr = satDataContainer_c.getPseudorangeatEpoch(satid_it, time_it);
+				if (test_pr != original_pr)
+					test_success = 0;
+			}
+			
+		}
+	}
+	catch (...)
+	{
+		test_success = 0;
+	}
+
+	return test_success;
+}

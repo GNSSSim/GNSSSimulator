@@ -57,6 +57,9 @@
 #include "EphemerisRange.hpp"
 #include "Position.hpp"
 
+#include "PRSolution2.hpp"
+#include "PRSolution.hpp"
+
 //GPSTK ext lib includes
 #include "GPSEphemerisStore.hpp"
 #include "GPSEphemeris.hpp"
@@ -65,7 +68,11 @@
 class Simulator
 {
 public:
+
+protected:
+
 	
 private:
+	//bool Test_ReProcess_Solution_Rinex(void);
 	
 };
