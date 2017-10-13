@@ -110,7 +110,7 @@ void gnsssimulator::PRsolution::calculate_signaltt(Triple& rcv, Triple& sat)
 {
 	double nom = std::sqrt(std::pow((sat[0] - rcv[0]), 2) +
 		std::pow((sat[1] - rcv[1]), 2) +
-		std::pow((sat[2] - rcv[2]), 2));
+		std::pow((sat[2] - rcv[2]), 2));		//Geometric range
 
 	signal_tt = nom / C_light;
 }
