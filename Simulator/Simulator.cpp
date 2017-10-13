@@ -108,17 +108,18 @@ int _tmain(int argc, _TCHAR* argv[])
 				{
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					satDataEpoch[satid_it] = xvt_data.x;
 				}
-				catch (const std::exception&)
+				catch (...)
 				{
 					// TODO: Put a default value for satDataEpoch
-					Triple def(0.0, 0.0, 0.0);
+					Triple def(1.0e7, 1.0e7, 1.0e7);
 					satDataEpoch[satid_it] = def;
 				}
-				satDataEpoch[satid_it] = xvt_data.x;
+				
 
 				cout << " Sat ID: " << satid_it << " Position: "
-					<< xvt_data.x << " PseudoRange: " << Prange
+					<< satDataEpoch.at(satid_it) << " PseudoRange: " << Prange
 					<< " Signal tt: " << prsolution.getSignal_tt()
 					<< endl;
 			}
@@ -141,18 +142,26 @@ int _tmain(int argc, _TCHAR* argv[])
 	TropModel *tropModelPtr = &zeroTrop;
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
+		prvector.clear();
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
 			try
 			{
-				prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
+				//prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
+				Triple roverpos = prsolutionContainer[civtime].first;
+				Triple satPos = prsolutionContainer[civtime].second[satid_it];
+				double pr = prsolution.getPRSolution_abs(roverpos,satPos);
+				prvector.push_back(pr);
 			}
 			catch (...)
 			{
-				prvector.push_back(0.0);
+				//prvector.push_back(0.0);
 				//cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
 			}
+			
 		}
+		cout << "RaimCompute started." << endl;
 		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.Solution[0] << " " << RaimSolver.Solution[1] << "  " << RaimSolver.Solution[2] << endl;
 	}
 
 #pragma endregion
