@@ -82,7 +82,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << endl << e.what();
 	}*/
 	
-
+	// Calculate base pseudoranges and assign them to the container
 #pragma region Pseudorange 0th Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
@@ -107,13 +107,15 @@ int _tmain(int argc, _TCHAR* argv[])
 				try
 				{
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	// TODO: make signal_tt 0 when getxvt results in error
 					satDataEpoch[satid_it] = xvt_data.x;
 				}
 				catch (...)
 				{
 					// TODO: Put a default value for satDataEpoch
-					Triple def(1.0e7, 1.0e7, 1.0e7);
+					//Triple def(1.0e7, 1.0e7, 1.0e7);
+					Triple def(NULL, NULL, NULL);
+					Prange = 0;
 					satDataEpoch[satid_it] = def;
 				}
 				
@@ -134,7 +136,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 #pragma endregion
 
+	//Calculate Site position using built-in RAIM
 #pragma region PseudoRange RaimCompute Solution
+	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution.txt", std::ios::out);	//Output file
 	PRSolution2 RaimSolver;
 	//PRSolution RaimSolver1;
 	vector<double> prvector;
@@ -161,9 +165,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		cout << "RaimCompute started." << endl;
 		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
-		cout << RaimSolver.Solution[0] << " " << RaimSolver.Solution[1] << "  " << RaimSolver.Solution[2] << endl;
+		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
+			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
+			std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		ostrm << RaimSolver.Solution[0] << " " << RaimSolver.Solution[1] << " " << RaimSolver.Solution[2] << endl;
+		
 	}
-
+	ostrm.close();
 #pragma endregion
 
 	if (Solution_to_RINEX) {
@@ -275,7 +283,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_sub30s.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
