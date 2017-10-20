@@ -84,7 +84,7 @@ public:
 	*/
 	double getPseudorangeatEpoch(SatID&, CivilTime&);
 
-	//typedef std::map<Civtime,> RoverSolutionEpoch;
+	PseudoRangeContainer getPseudorangeContainer();
 
 private:
 	

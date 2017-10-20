@@ -107,3 +107,8 @@ double satDataContainer::getPseudorangeatEpoch(SatID &querysat, CivilTime &query
 	return return_range;
 }
 
+PseudoRangeContainer satDataContainer::getPseudorangeContainer()
+{
+	return pseudoRangeContainer;
+}
+
