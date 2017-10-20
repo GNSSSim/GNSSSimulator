@@ -91,6 +91,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
 
+	double Error_overcorr = 0;
+
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
 		cout << setw(30) << endl;
@@ -106,6 +108,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				Xvt xvt_data;
 				try
 				{
+					civtime = it.convertToCommonTime();	//Reset civtime
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
+					Error_overcorr = xvt_data.clkbias + xvt_data.relcorr;
+					civtime.second += Error_overcorr; // Add error because PRSol2 automatically calculates with these;
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	// TODO: make signal_tt 0 when getxvt results in error
 					satDataEpoch[satid_it] = xvt_data.x;
@@ -144,27 +150,50 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<double> prvector;
 	ZeroTropModel zeroTrop;
 	TropModel *tropModelPtr = &zeroTrop;
+	CivilTime correctedCivtime;
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
 		prvector.clear();
+		Xvt xvt_data;	//For error correction
+		double errorcorr;
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
-			try
-			{
+
+				double pr;
+
+				// Correct the time with ClockBias and Relativity
+				
+				try
+				{
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
+					errorcorr = xvt_data.getClockBias() + xvt_data.getRelativityCorr();
+				}
+				catch (gpstk::InvalidRequest& e)
+				{
+					errorcorr = 0.0;
+				}
+				correctedCivtime = civtime;
+				correctedCivtime.second += errorcorr;
+
 				//prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
 				Triple roverpos = prsolutionContainer[civtime].first;
 				Triple satPos = prsolutionContainer[civtime].second[satid_it];
-				double pr = prsolution.getPRSolution_abs(roverpos,satPos);
+				
+				//double pr = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
+				try
+				{
+					pr = satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime);
+				}
+				catch (const std::exception&)
+				{
+					pr = 0.0;
+				}	//Might solve the issue
 				prvector.push_back(pr);
 			}
-			catch (...)
-			{
-				//prvector.push_back(0.0);
-				//cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
-			}
+
 			
-		}
+
 		cout << "RaimCompute started." << endl;
-		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.RAIMCompute(correctedCivtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
