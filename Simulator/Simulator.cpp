@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// End of Declarations
 	if (Run_Tests) {
 		//Navigation_examples_1();
-
+		
 		//Test_Trajectory_1();
 		//Test_Trajectory_2();
 		//Test_Trajectory_3();
@@ -113,7 +113,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					Error_overcorr = xvt_data.clkbias + xvt_data.relcorr;
 					civtime.second += Error_overcorr; // Add error because PRSol2 automatically calculates with these;
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	// TODO: make signal_tt 0 when getxvt results in error
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 					satDataEpoch[satid_it] = xvt_data.x;
 				}
 				catch (...)
@@ -158,7 +158,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		double errorcorr;
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
 
-				double pr;
+				double pr_obs;
+				double pr_calc;
 
 				// Correct the time with ClockBias and Relativity
 				
@@ -171,33 +172,36 @@ int _tmain(int argc, _TCHAR* argv[])
 				{
 					errorcorr = 0.0;
 				}
-				correctedCivtime = civtime;
-				correctedCivtime.second += errorcorr;
+				// corrected time was here 10.24
+				
 
 				//prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
 				Triple roverpos = prsolutionContainer[civtime].first;
 				Triple satPos = prsolutionContainer[civtime].second[satid_it];
-				
-				//double pr = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
-				try
+				pr_calc = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
+
+				try		// TODO: obs rinex pr is not needed
 				{
-					pr = satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime);
+					pr_obs = satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime);
 				}
 				catch (const std::exception&)
 				{
-					pr = 0.0;
-				}	//Might solve the issue
-				prvector.push_back(pr);
-			}
+					pr_obs = 0.0;
+				}
 
+				prvector.push_back(pr_calc);
+			}
+		correctedCivtime = civtime;
+		//correctedCivtime.second += errorcorr;
 			
 
 		cout << "RaimCompute started." << endl;
-		cout << RaimSolver.RAIMCompute(correctedCivtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
-		ostrm << RaimSolver.Solution[0] << " " << RaimSolver.Solution[1] << " " << RaimSolver.Solution[2] << endl;
+		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
+			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		
 	}
 	ostrm.close();
@@ -312,7 +316,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_sub30s.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
