@@ -102,18 +102,39 @@ int _tmain(int argc, _TCHAR* argv[])
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
 		cout << "Rover Position:     " << data.pos << endl << endl;
 
-		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
+		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) { // TODO 
 			try
 			{
 				Xvt xvt_data;
 				try
 				{
 					civtime = it.convertToCommonTime();	//Reset civtime
-					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime); // TODO satDataContainer_c nem szukseges
+					
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);// TODO satDataContainer_c nem szukseges
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					
+					CivilTime civtime_temp = civtime;
+					// iterative
+					double t_trans = Prange / 300000000;
+					civtime_temp.second = civtime.second - t_trans; // TODO minutes rollover
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+
+					double t_trans = Prange / 300000000;
+					civtime_temp.second = civtime.second - t_trans;
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+
+					double t_trans = Prange / 300000000;
+					civtime_temp.second = civtime.second - t_trans;
+					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					//
+
 					Error_overcorr = xvt_data.clkbias + xvt_data.relcorr;
 					civtime.second += Error_overcorr; // Add error because PRSol2 automatically calculates with these;
-					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					// TODO eredeti civtime kell. meg korrekcio elott
 					satDataEpoch[satid_it] = xvt_data.x;
 				}
 				catch (...)
@@ -150,13 +171,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<double> prvector;
 	ZeroTropModel zeroTrop;
 	TropModel *tropModelPtr = &zeroTrop;
-	CivilTime correctedCivtime;
+	CivilTime correctedCivtime; // TODO nevezek fura, felrevezeto
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
 		prvector.clear();
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
-		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) {
+		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) { // TODO mint a fenntieknel
 
 				double pr_obs;
 				double pr_calc;

@@ -44,7 +44,7 @@ std::vector<CivilTime> satDataContainer::getEpochVectorforSat(SatID& querySat)
 
 std::vector<SatID> satDataContainer::getSatIDvectorlist(void)
 {
-	std::vector<SatID> return_vec;
+	std::vector<SatID> return_vec; // TODO
 	for (auto& it : pseudoRangeContainer) {
 		return_vec.push_back(it.first);
 	}
