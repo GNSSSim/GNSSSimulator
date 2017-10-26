@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Navigation_examples">
+      <UniqueIdentifier>{8e8470cb-af79-4c68-8fe2-b8cf0bb45b83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Trajectory">
+      <UniqueIdentifier>{b673a22b-a335-4b77-8dc6-e53a0d3ba6b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Trajectory\Test">
+      <UniqueIdentifier>{84a2868e-2451-4144-8676-1fdc597c70cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,9 +33,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="trajectoryReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CoordinateFrames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -35,6 +41,45 @@
     </ClInclude>
     <ClInclude Include="CoordinateFrameHandler.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rinexreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Navigation_examples.h">
+      <Filter>Source Files\Navigation_examples</Filter>
+    </ClInclude>
+    <ClInclude Include="trajectoryReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrajectoryBase.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
+    <ClInclude Include="TrajectoryHeader.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
+    <ClInclude Include="TrajectoryStream.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
+    <ClInclude Include="Test_Trajectory_Class.hpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TrajectoryData.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
+    <ClInclude Include="satDataContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrajectoryStore.hpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClInclude>
+    <ClInclude Include="PRsolution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test_simulatePseudoRange.hpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -50,8 +95,43 @@
     <ClCompile Include="CoordinateFrameHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rinexreader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="naigationExample_1.cpp">
+      <Filter>Source Files\Navigation_examples</Filter>
+    </ClCompile>
+    <ClCompile Include="TrajectoryHeader.cpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClCompile>
+    <ClCompile Include="TrajectoryStream.cpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClCompile>
+    <ClCompile Include="Test_Trajectory_Class.cpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TrajectoryData.cpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClCompile>
+    <ClCompile Include="satDataContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrajectoryStore.cpp">
+      <Filter>Source Files\Trajectory</Filter>
+    </ClCompile>
+    <ClCompile Include="PRsolution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test_simulatePseudoRange.cpp">
+      <Filter>Source Files\Trajectory\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Simulator.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

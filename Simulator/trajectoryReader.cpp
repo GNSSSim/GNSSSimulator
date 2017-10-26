@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "trajectoryReader.h"
 
-
+// TODO: Remove this class
 //using namespace std;
 trajectoryReader::trajectoryReader(){
 	this->fileNamewPath = "This_File_is_not_exist_and_should_not_be_exist_424242_69696969_21212121";
