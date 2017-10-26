@@ -123,7 +123,11 @@ int _tmain(int argc, _TCHAR* argv[])
 							civtime_temp.second = 60.0 + civtime_temp.second;		// + because second is negative here
 							if (civtime_temp.minute <= 0) {		//Minute rollover
 								civtime_temp.hour -= 1;
-								civtime_temp.minute = 60 + civtime_temp.minute;	//Same as above
+								civtime_temp.minute = 60 + civtime_temp.minute;		//Same as above
+								if (civtime_temp.hour <= 0) {	//Hour rollover
+									civtime_temp.day -= 1;
+									civtime_temp.hour = 24 + civtime_temp.hour;
+								}
 							}
 						}
 
@@ -140,9 +144,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				catch (...)
 				{
-					Triple def(NULL, NULL, NULL);
+					Triple def(NULL, NULL, NULL); // TODO rossz de meg nem leeht kivenni
 					Prange = 0;
 					satDataEpoch[satid_it] = def;
+
 				}
 				
 
@@ -183,7 +188,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				// Correct the time with ClockBias and Relativity
 				
-				try
+				/*try 
 				{
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
 					errorcorr = xvt_data.getClockBias() + xvt_data.getRelativityCorr();
@@ -191,7 +196,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				catch (gpstk::InvalidRequest& e)
 				{
 					errorcorr = 0.0;
-				}
+				}*/
 				// corrected time was here 10.24
 				
 
@@ -288,7 +293,7 @@ int ProcessFiles(void) throw(Exception)
 
 			// Store Ephemeris Data
 			while (inavstrm >> Rnavdata) {
-				bceStore.addEphemeris(Rnavdata);			
+				bceStore.addEphemeris(Rnavdata);	
 			}
 
 			while (istrm >> Rdata) {

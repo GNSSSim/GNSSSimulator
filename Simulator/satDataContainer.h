@@ -22,7 +22,6 @@ using namespace gpstk;
 // v2 map
 typedef std::map<SatID, std::map<CivilTime, double>> PseudoRangeContainer;
 
-
 class satDataContainer {
 
 public:
@@ -94,6 +93,7 @@ private:
 	/* Contains the C1 Pseudorange for every RINEX epoch for each satellite
 	*/
 	PseudoRangeContainer pseudoRangeContainer;
+
 
 
 	
