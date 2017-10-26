@@ -1,0 +1,64 @@
+09/10/2017 01:13:30 GPS
+GPS 1     Pseudorange:  2.66498e+07
+09/10/2017 01:13:30 GPS
+GPS 2     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 3     Pseudorange:  2.17591e+07
+09/10/2017 01:13:30 GPS
+GPS 4     Pseudorange:  2.48858e+07
+09/10/2017 01:13:30 GPS
+GPS 5     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 6     Pseudorange:  2.42992e+07
+09/10/2017 01:13:30 GPS
+GPS 7     Pseudorange:  2.16432e+07
+09/10/2017 01:13:30 GPS
+GPS 8     Pseudorange:  2.5858e+07
+09/10/2017 01:13:30 GPS
+GPS 9     Pseudorange:  2.09489e+07
+09/10/2017 01:13:30 GPS
+GPS 10     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 11     Pseudorange:  2.68587e+07
+09/10/2017 01:13:30 GPS
+GPS 12     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 13     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 14     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 15     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 16     Pseudorange:  2.17186e+07
+09/10/2017 01:13:30 GPS
+GPS 17     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 18     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 19     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 20     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 21     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 22     Pseudorange:  2.37442e+07
+09/10/2017 01:13:30 GPS
+GPS 23     Pseudorange:  2.0358e+07
+09/10/2017 01:13:30 GPS
+GPS 24     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 25     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 26     Pseudorange:  2.31753e+07
+09/10/2017 01:13:30 GPS
+GPS 27     Pseudorange:  2.52407e+07
+09/10/2017 01:13:30 GPS
+GPS 28     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 29     Pseudorange:  6.37018e+06
+09/10/2017 01:13:30 GPS
+GPS 30     Pseudorange:  2.46232e+07
+09/10/2017 01:13:30 GPS
+GPS 31     Pseudorange:  2.64543e+07
+09/10/2017 01:13:30 GPS
+GPS 32     Pseudorange:  6.37018e+06

@@ -110,7 +110,9 @@ int _tmain(int argc, _TCHAR* argv[])
 				{
 					CivilTime civtime_temp = civtime;
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);// TODO satDataContainer_c nem szukseges
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);				// TODO check against template satidvector in satdatacontainer
+
+
 					/// Iterative Satellite Position Solution
 					for (int i = 0;i < 3;i++) {
 						double t_transmission = Prange / prsolution.C_light;
@@ -170,6 +172,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Calculate Site position using built-in RAIM
 #pragma region PseudoRange RaimCompute Solution
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution.txt", std::ios::out);	//Output file
+	ofstream ostrm_log("..\\Simulator\\Log\\RAIM_pre_LOG.txt", std::ios::out); // Outut LOG
 	PRSolution2 RaimSolver;
 	//PRSolution RaimSolver1;
 	vector<double> prvector;
@@ -178,6 +181,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	CivilTime correctedCivtime; // TODO nevezek fura, felrevezeto
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
+		/// Civtime Log
+		ostrm_log << civtime << endl;
+
 		prvector.clear();
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
@@ -215,11 +221,16 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 
 				prvector.push_back(pr_calc);
+
+				///Logging
+				
+				ostrm_log << satid_it << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
+
 			}
 		//correctedCivtime = civtime;
 		//correctedCivtime.second += errorcorr;
 			
-
+		cout << "Log created." << endl;
 		cout << "RaimCompute started." << endl;
 		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
