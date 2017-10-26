@@ -98,7 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << setw(30) << endl;
 		cout << "Next Epoch: " << endl;
 		cout << it << "  converted to civtime: " << civtime << endl;
-
+		/// Rover Position
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
 		cout << "Rover Position:     " << data.pos << endl << endl;
 
@@ -108,16 +108,31 @@ int _tmain(int argc, _TCHAR* argv[])
 				Xvt xvt_data;
 				try
 				{
-					civtime = it.convertToCommonTime();	//Reset civtime
-					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime); // TODO satDataContainer_c nem szukseges
-					
+					CivilTime civtime_temp = civtime;
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);// TODO satDataContainer_c nem szukseges
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
-					
-					CivilTime civtime_temp = civtime;
-					// iterative
-					double t_trans = Prange / 300000000;
-					civtime_temp.second = civtime.second - t_trans; // TODO minutes rollover
+					/// Iterative Satellite Position Solution
+					for (int i = 0;i < 3;i++) {
+						double t_transmission = Prange / prsolution.C_light;
+
+						// Handle civtime_temp with rollover		// TODO: hour-day rollover
+						civtime_temp.second = civtime.second - t_transmission;
+						if (civtime_temp.second <= 0) {
+							civtime_temp.minute -= 1;
+							civtime_temp.second = 60.0 + civtime_temp.second;		// + because second is negative here
+							if (civtime_temp.minute <= 0) {		//Minute rollover
+								civtime_temp.hour -= 1;
+								civtime_temp.minute = 60 + civtime_temp.minute;	//Same as above
+							}
+						}
+						//Get new XVT Position data
+						xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+						//Calculate new Prange
+						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+					}
+					/*
+					double t_transmi = Prange / 300000000;
+					civtime_temp.second = civtime.second - t_trans; 
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 
@@ -130,7 +145,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					civtime_temp.second = civtime.second - t_trans;
 					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
-					//
+					*/
 
 					Error_overcorr = xvt_data.clkbias + xvt_data.relcorr;
 					civtime.second += Error_overcorr; // Add error because PRSol2 automatically calculates with these;
