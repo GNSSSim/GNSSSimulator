@@ -231,6 +231,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		//correctedCivtime.second += errorcorr;
 			
 		cout << "Log created." << endl;
+		/*
 		cout << "RaimCompute started." << endl;
 		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
@@ -238,7 +239,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
 			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
-		
+		*/
 	}
 	ostrm.close();
 #pragma endregion
