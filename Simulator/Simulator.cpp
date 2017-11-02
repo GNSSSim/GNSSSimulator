@@ -119,7 +119,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						double t_transmission = Prange / prsolution.C_light;
 
 						/// Handle civtime_temp with rollover		// TODO: hour-day rollover
-						civtime_temp.second = civtime_temp.second - t_transmission;
+						civtime_temp.second = civtime.second - t_transmission;
 
 						if (civtime_temp.second <= 0) {
 							civtime_temp.minute -= 1;
@@ -140,12 +140,13 @@ int _tmain(int argc, _TCHAR* argv[])
 						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 						//cout << "pr : " << Prange << endl;
 					}
-					civtime = civtime_temp;		//Try civtime assignment
+					
 					
 					satDataEpoch[satid_it] = xvt_data.x;
 				}
 				catch (...)	//Satellites that do not have OrbitEph - we don't need those
 				{
+					/// Lekérdezés beépített - nem kell try catch // TODO asdasd
 					//Triple def(NULL, NULL, NULL); // TODO Delete this catch(...)
 					//Prange = 0;
 					//satDataEpoch[satid_it] = def;
