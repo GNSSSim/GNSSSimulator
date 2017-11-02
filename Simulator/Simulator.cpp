@@ -90,6 +90,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	SatDataEpoch satDataEpoch;												// Sat Data map<SatID,SatPosition>
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
+	vector<SatID> goodSatVector;
 
 	double Error_overcorr = 0;
 
@@ -114,11 +115,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 					/// Iterative Satellite Position Solution
-					for (int i = 0;i < 3;i++) {
+					for (int i = 0;i < 5;i++) {
 						double t_transmission = Prange / prsolution.C_light;
 
 						/// Handle civtime_temp with rollover		// TODO: hour-day rollover
-						civtime_temp.second = civtime.second - t_transmission;
+						civtime_temp.second = civtime_temp.second - t_transmission;
 
 						if (civtime_temp.second <= 0) {
 							civtime_temp.minute -= 1;
@@ -137,18 +138,17 @@ int _tmain(int argc, _TCHAR* argv[])
 						xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
 						///Calculate new Prange
 						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+						//cout << "pr : " << Prange << endl;
 					}
-
-					//Error_overcorr = xvt_data.clkbias + xvt_data.relcorr;
-					//civtime.second += Error_overcorr; // Add error because PRSol2 automatically calculates with these;
-					// TODO eredeti civtime kell. meg korrekcio elott
+					civtime = civtime_temp;		//Try civtime assignment
+					
 					satDataEpoch[satid_it] = xvt_data.x;
 				}
-				catch (...)
+				catch (...)	//Satellites that do not have OrbitEph - we don't need those
 				{
-					Triple def(NULL, NULL, NULL); // TODO rossz de meg nem leeht kivenni
-					Prange = 0;
-					satDataEpoch[satid_it] = def;
+					//Triple def(NULL, NULL, NULL); // TODO Delete this catch(...)
+					//Prange = 0;
+					//satDataEpoch[satid_it] = def;
 
 				}
 				
@@ -158,14 +158,19 @@ int _tmain(int argc, _TCHAR* argv[])
 					<< " Signal tt: " << prsolution.getSignal_tt()
 					<< endl;
 			}
-			catch (const gpstk::InvalidRequest& e)
+			catch (...)		//const gpstk::InvalidRequest& e
 			{				
-				cout << "[Warning] Can't get OrbitEph for " << satid_it << " at: " << civtime << endl;
+				//cout << "[Warning] Can't get OrbitEph for " << satid_it << " at: " << civtime << endl;
 			}
 		}
 		solutionDataBlock.first = data.pos;
 		solutionDataBlock.second = satDataEpoch;
 		prsolutionContainer[civtime] = solutionDataBlock;
+	}
+
+	for (auto &x: satDataEpoch)		//Create the good sat vector that only contains SatID with valid OrbitEphs
+	{
+		goodSatVector.push_back(x.first);
 	}
 #pragma endregion
 
@@ -187,33 +192,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		prvector.clear();
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
-		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) { // TODO mint a fenntieknel
+		for (auto& satid_it : satDataEpoch) { // satDataContainer_c.getSatIDvectorlist()
 
 				double pr_obs;
 				double pr_calc;
 
-				// Correct the time with ClockBias and Relativity
-				
-				/*try 
-				{
-					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);
-					errorcorr = xvt_data.getClockBias() + xvt_data.getRelativityCorr();
-				}
-				catch (gpstk::InvalidRequest& e)
-				{
-					errorcorr = 0.0;
-				}*/
-				// corrected time was here 10.24
-				
-
-				//prvector.push_back(satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime));
 				Triple roverpos = prsolutionContainer[civtime].first;
-				Triple satPos = prsolutionContainer[civtime].second[satid_it];
+				Triple satPos = prsolutionContainer[civtime].second[satid_it.first];
 				pr_calc = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
 
 				try		// TODO: obs rinex pr is not needed
 				{
-					pr_obs = satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime);
+					//pr_obs = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
 				}
 				catch (const std::exception&)
 				{
@@ -224,22 +214,20 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				///Logging
 				
-				ostrm_log << satid_it << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
+				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
 
 			}
-		//correctedCivtime = civtime;
-		//correctedCivtime.second += errorcorr;
 			
 		cout << "Log created." << endl;
-		/*
+		
 		cout << "RaimCompute started." << endl;
-		cout << RaimSolver.RAIMCompute(civtime, satDataContainer_c.getSatIDvectorlist(), prvector, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
 			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
-		*/
+		
 	}
 	ostrm.close();
 #pragma endregion
