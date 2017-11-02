@@ -124,10 +124,10 @@ int _tmain(int argc, _TCHAR* argv[])
 						if (civtime_temp.second <= 0) {
 							civtime_temp.minute -= 1;
 							civtime_temp.second = 60.0 + civtime_temp.second;		// + because second is negative here
-							if (civtime_temp.minute <= 0) {		//Minute rollover
+							if (civtime_temp.minute <= 0) {		//Hour rollover
 								civtime_temp.hour -= 1;
 								civtime_temp.minute = 60 + civtime_temp.minute;		//Same as above
-								if (civtime_temp.hour <= 0) {	//Hour rollover
+								if (civtime_temp.hour <= 0) {	//Day rollover 
 									civtime_temp.day -= 1;
 									civtime_temp.hour = 24 + civtime_temp.hour;
 								}
