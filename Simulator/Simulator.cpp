@@ -81,7 +81,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << e.what();
 	}*/
-	
+	//bceStore.dump(cout, 3);
+
 	// Calculate base pseudoranges and assign them to the container
 #pragma region Pseudorange 0th Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
@@ -111,8 +112,27 @@ int _tmain(int argc, _TCHAR* argv[])
 				try
 				{
 					CivilTime civtime_temp = civtime;
+					// Testing if time validity is the same with getXVT
+					GPSEphemeris eph;
+					try
+					{
+						eph = bceStore.findEphemeris(satid_it, civtime);
+					}
+					catch (...)
+					{
+
+					}
+
+					if (eph.isValid(civtime))
+						cout << satid_it << "  YAY This shit is valid!" << endl;
+					else
+						cout << satid_it << "  BUMMER This shit is NOT valid!" << endl;
+					cout << eph.svXvt(civtime).x << "   " << bceStore.getXvt(satid_it, civtime).x << endl;
+					// End of validity test - It gives the same satellites.
+
 					xvt_data = bceStore.getXvt(satid_it, civtime);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);				// TODO check against template satidvector in satdatacontainer
+					
 					CivilTime initialtime = bceStore.getInitialTime(satid_it);
 					CivilTime finaltime = bceStore.getFinalTime(satid_it);
 					satObsInterval[satid_it] = make_pair(initialtime, finaltime);
@@ -138,16 +158,16 @@ int _tmain(int argc, _TCHAR* argv[])
 						}
 						
 							///Get new XVT Position data
-							xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+							xvt_data = bceStore.getXvt(satid_it, civtime_temp);
 							///Calculate new Prange
 							Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 							//cout << "pr : " << Prange << endl;
-						
-						
+							
+					
 					}
 					
 					//if (bceStore.isPresent(satid_it)) {		//Only checks if sat is present in the store
-						satDataEpoch[satid_it] = xvt_data.x;
+						//satDataEpoch[satid_it] = xvt_data.x;
 					//}
 				}
 				catch (...)	//Satellites that do not have OrbitEph - we don't need those - throw Exception from getXvt()
@@ -159,9 +179,14 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				}
 				
-
-				cout << " Sat ID: " << satid_it << " InitialTIme: "
-					<< satObsInterval.at(satid_it).first << "  FinalTime:" << satObsInterval.at(satid_it).second << " PseudoRange: " << Prange
+				bool containsInterval = false;
+				if (civtime > satObsInterval.at(satid_it).first && civtime < satObsInterval.at(satid_it).second)
+				//if(bceStore.findEphemeris())
+				{
+					containsInterval = true;
+					satDataEpoch[satid_it] = xvt_data.x;
+				}
+				cout << " Sat ID: " << satid_it << "Contains Interval: "<< containsInterval << " PseudoRange: " << Prange
 					<< " Signal tt: " << prsolution.getSignal_tt()
 					<< endl;
 			}
@@ -225,7 +250,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				///Logging
 				
-				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
+				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc <<
+					" Data interval: " << satObsInterval.at(satid_it.first).first << "  |  " <<
+					satObsInterval.at(satid_it.first).second << endl;
 
 			}
 			
