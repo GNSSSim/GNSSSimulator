@@ -92,9 +92,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
 	vector<SatID> goodSatVector;
-	map<SatID, pair<CivilTime, CivilTime>> satObsInterval;					// Holds the first and last valid observation data
-
-	double Error_overcorr = 0;
+	double elevation = 0.0;														// Elevation value of Sat from Rover
+	
 
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
@@ -112,36 +111,16 @@ int _tmain(int argc, _TCHAR* argv[])
 				try
 				{
 					CivilTime civtime_temp = civtime;
-					// Testing if time validity is the same with getXVT
-					GPSEphemeris eph;
-					try
-					{
-						eph = bceStore.findEphemeris(satid_it, civtime);
-					}
-					catch (...)
-					{
-
-					}
-
-					if (eph.isValid(civtime))
-						cout << satid_it << "  YAY This shit is valid!" << endl;
-					else
-						cout << satid_it << "  BUMMER This shit is NOT valid!" << endl;
-					cout << eph.svXvt(civtime).x << "   " << bceStore.getXvt(satid_it, civtime).x << endl;
-					// End of validity test - It gives the same satellites.
+					
 
 					xvt_data = bceStore.getXvt(satid_it, civtime);
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);				// TODO check against template satidvector in satdatacontainer
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	
 					
-					CivilTime initialtime = bceStore.getInitialTime(satid_it);
-					CivilTime finaltime = bceStore.getFinalTime(satid_it);
-					satObsInterval[satid_it] = make_pair(initialtime, finaltime);
-
 					/// Iterative Satellite Position Solution
 					for (int i = 0;i < 5;i++) {
 						double t_transmission = Prange / prsolution.C_light;
 
-						/// Handle civtime_temp with rollover		// TODO: hour-day rollover
+						/// Handle civtime_temp with rollover		
 						civtime_temp.second = civtime.second - t_transmission;
 
 						if (civtime_temp.second <= 0) {
@@ -159,36 +138,32 @@ int _tmain(int argc, _TCHAR* argv[])
 						
 							///Get new XVT Position data
 							xvt_data = bceStore.getXvt(satid_it, civtime_temp);
+							///Calculate elevation angle from rover position 
+							Position SatPos(xvt_data), SitePos(data.pos);
+							elevation = SitePos.elevation(SatPos);
+							if (elevation <= 25.0)
+								throw std::invalid_argument(" Elevation is below threshold.");
 							///Calculate new Prange
 							Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 							//cout << "pr : " << Prange << endl;
 							
 					
 					}
-					
-					//if (bceStore.isPresent(satid_it)) {		//Only checks if sat is present in the store
-						//satDataEpoch[satid_it] = xvt_data.x;
-					//}
-				}
-				catch (...)	//Satellites that do not have OrbitEph - we don't need those - throw Exception from getXvt()
-				{
-					/// Lekérdezés beépített - nem kell try catch 
-					//Triple def(NULL, NULL, NULL); // TODO Delete this catch(...)
-					//Prange = 0;
-					//satDataEpoch[satid_it] = def;
+					/// End of PR Iteration
+
+					satDataEpoch[satid_it] = xvt_data.x;
+
+					cout << " Sat ID: " << satid_it << " Pseudorange: " << Prange <<
+						" Signal tt: " << prsolution.getSignal_tt()
+						<< " Elevation: " << elevation << endl;
 
 				}
-				
-				bool containsInterval = false;
-				if (civtime > satObsInterval.at(satid_it).first && civtime < satObsInterval.at(satid_it).second)
-				//if(bceStore.findEphemeris())
-				{
-					containsInterval = true;
-					satDataEpoch[satid_it] = xvt_data.x;
+				catch (...)	//Satellites that do not have OrbitEph - we don't need those - throw Exception from getXvt()
+				{			
+					//Valami
 				}
-				cout << " Sat ID: " << satid_it << "Contains Interval: "<< containsInterval << " PseudoRange: " << Prange
-					<< " Signal tt: " << prsolution.getSignal_tt()
-					<< endl;
+				
+				
 			}
 			catch (...)		//const gpstk::InvalidRequest& e
 			{				
@@ -250,9 +225,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				///Logging
 				
-				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc <<
-					" Data interval: " << satObsInterval.at(satid_it.first).first << "  |  " <<
-					satObsInterval.at(satid_it.first).second << endl;
+				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
 
 			}
 			
