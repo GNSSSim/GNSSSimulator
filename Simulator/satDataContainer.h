@@ -82,7 +82,7 @@ public:
 		that were stored in the RINEX file.
 		@ Return double [meters]
 	*/
-	double getPseudorangeatEpoch(SatID&, CivilTime&);
+	double getPseudorangeatEpoch(SatID, CivilTime&);
 
 	PseudoRangeContainer getPseudorangeContainer();
 

@@ -99,7 +99,7 @@ OrbitEph satDataContainer::getSatInfoAtEpoch(SatID& query_sat, CivilTime& query_
 	return ephemeris;
 }
 
-double satDataContainer::getPseudorangeatEpoch(SatID &querysat, CivilTime &querytime)
+double satDataContainer::getPseudorangeatEpoch(SatID querysat, CivilTime &querytime)
 {
 	double return_range;
 	return_range = pseudoRangeContainer.at(querysat).at(querytime);
