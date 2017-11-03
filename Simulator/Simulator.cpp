@@ -91,6 +91,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
 	vector<SatID> goodSatVector;
+	map<SatID, pair<CivilTime, CivilTime>> satObsInterval;					// Holds the first and last valid observation data
 
 	double Error_overcorr = 0;
 
@@ -110,9 +111,11 @@ int _tmain(int argc, _TCHAR* argv[])
 				try
 				{
 					CivilTime civtime_temp = civtime;
-					xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime);// TODO satDataContainer_c nem szukseges
+					xvt_data = bceStore.getXvt(satid_it, civtime);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);				// TODO check against template satidvector in satdatacontainer
-
+					CivilTime initialtime = bceStore.getInitialTime(satid_it);
+					CivilTime finaltime = bceStore.getFinalTime(satid_it);
+					satObsInterval[satid_it] = make_pair(initialtime, finaltime);
 
 					/// Iterative Satellite Position Solution
 					for (int i = 0;i < 5;i++) {
@@ -133,20 +136,23 @@ int _tmain(int argc, _TCHAR* argv[])
 								}
 							}
 						}
-
-						///Get new XVT Position data
-						xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
-						///Calculate new Prange
-						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
-						//cout << "pr : " << Prange << endl;
+						
+							///Get new XVT Position data
+							xvt_data = satDataContainer_c.getEphemerisStore().getXvt(satid_it, civtime_temp);
+							///Calculate new Prange
+							Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+							//cout << "pr : " << Prange << endl;
+						
+						
 					}
 					
-					
-					satDataEpoch[satid_it] = xvt_data.x;
+					//if (bceStore.isPresent(satid_it)) {		//Only checks if sat is present in the store
+						satDataEpoch[satid_it] = xvt_data.x;
+					//}
 				}
-				catch (...)	//Satellites that do not have OrbitEph - we don't need those
+				catch (...)	//Satellites that do not have OrbitEph - we don't need those - throw Exception from getXvt()
 				{
-					/// Lekérdezés beépített - nem kell try catch // TODO asdasd
+					/// Lekérdezés beépített - nem kell try catch 
 					//Triple def(NULL, NULL, NULL); // TODO Delete this catch(...)
 					//Prange = 0;
 					//satDataEpoch[satid_it] = def;
@@ -154,8 +160,8 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				
 
-				cout << " Sat ID: " << satid_it << " Position: "
-					<< satDataEpoch.at(satid_it) << " PseudoRange: " << Prange
+				cout << " Sat ID: " << satid_it << " InitialTIme: "
+					<< satObsInterval.at(satid_it).first << "  FinalTime:" << satObsInterval.at(satid_it).second << " PseudoRange: " << Prange
 					<< " Signal tt: " << prsolution.getSignal_tt()
 					<< endl;
 			}
@@ -172,6 +178,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (auto &x: satDataEpoch)		//Create the good sat vector that only contains SatID with valid OrbitEphs
 	{
 		goodSatVector.push_back(x.first);
+
 	}
 #pragma endregion
 
@@ -181,6 +188,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ofstream ostrm_log("..\\Simulator\\Log\\RAIM_pre_LOG.txt", std::ios::out); // Outut LOG
 	PRSolution2 RaimSolver;
 	//PRSolution RaimSolver1;
+	
 	vector<double> prvector;
 	ZeroTropModel zeroTrop;
 	TropModel *tropModelPtr = &zeroTrop;
@@ -197,10 +205,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				double pr_obs;
 				double pr_calc;
+				//const SatID &currSat = satid_it.first;
 
 				Triple roverpos = prsolutionContainer[civtime].first;
 				Triple satPos = prsolutionContainer[civtime].second[satid_it.first];
 				pr_calc = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
+				//pr_calc = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
 
 				try		// TODO: obs rinex pr is not needed
 				{
