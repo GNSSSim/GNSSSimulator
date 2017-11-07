@@ -9,7 +9,7 @@
 
 const int ProcessRinex = 1;
 const int ProcessTrajectory = 1;
-const int Solution_to_RINEX = 0;
+const int Solution_to_RINEX = 1;
 const int Run_Tests = 1;
 
 using namespace gpstk;
@@ -104,6 +104,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		gnsssimulator::TrajectoryData data = trajStore.findPosition(it);
 		cout << "Rover Position:     " << data.pos << endl << endl;
 
+		satDataEpoch.clear();
+
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) { // TODO modify to get satvectorlist from NAV rinex instead of OBS rinex
 			try
 			{
@@ -117,7 +119,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	
 					
 					/// Iterative Satellite Position Solution
-					for (int i = 0;i < 5;i++) {
+					for (int i = 0;i < 3;i++) {
 						double t_transmission = Prange / prsolution.C_light;
 
 						/// Handle civtime_temp with rollover		
@@ -150,7 +152,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					
 					}
 					/// End of PR Iteration
-
+					
 					satDataEpoch[satid_it] = xvt_data.x;
 
 					cout << " Sat ID: " << satid_it << " Pseudorange: " << Prange <<
@@ -160,7 +162,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				catch (...)	//Satellites that do not have OrbitEph - we don't need those - throw Exception from getXvt()
 				{			
-					//Valami
+					
 				}
 				
 				
@@ -201,7 +203,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		prvector.clear();
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
-		for (auto& satid_it : satDataEpoch) { // satDataContainer_c.getSatIDvectorlist()
+		for (auto& satid_it : satDataEpoch) { // satDataContainer_c.getSatIDvectorlist()	// TODO satdataepoch nem jó
 
 				double pr_obs;
 				double pr_calc;
@@ -352,7 +354,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
