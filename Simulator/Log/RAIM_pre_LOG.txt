@@ -1,7 +1,7 @@
 09/10/2017 01:13:30 GPS
-GPS 3     Pseudorange:  21759065.2193937
-GPS 7     Pseudorange:  21643218.10310569
-GPS 9     Pseudorange:  20948871.06168409
-GPS 16     Pseudorange:  21718560.75100511
-GPS 23     Pseudorange:  20357992.06857866
-GPS 26     Pseudorange:  23175279.6030869
+GPS 3     Pseudorange:  21779924.232
+GPS 7     Pseudorange:  21551889.002
+GPS 9     Pseudorange:  20816940.309
+GPS 16     Pseudorange:  21707456.18
+GPS 23     Pseudorange:  20423103.937
+GPS 26     Pseudorange:  23304271.726

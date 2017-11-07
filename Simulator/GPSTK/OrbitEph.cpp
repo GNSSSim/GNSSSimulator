@@ -115,7 +115,7 @@ namespace gpstk {
       double meana;           // mean anomaly
       double F,G;             // temporary real variables
       double alat,talat,c2al,s2al,du,dr,di,U,R,truea,AINC;
-      double ANLON,cosu,sinu,xip,yip,can,san,cinc,sinc;
+      double cosu,ANLON,sinu,xip,yip,can,san,cinc,sinc;
       double xef,yef,zef,dek,dlk,div,domk,duv,drv;
       double dxp,dyp,vxef,vyef,vzef;
 

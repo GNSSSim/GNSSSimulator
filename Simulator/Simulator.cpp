@@ -87,7 +87,8 @@ int _tmain(int argc, _TCHAR* argv[])
 #pragma region Pseudorange 0th Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
-
+	//map<GPSWeekSecond,vector<double>> prvector;								// Final RAIMCompute PR container
+	
 	SatDataEpoch satDataEpoch;												// Sat Data map<SatID,SatPosition>
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
@@ -155,6 +156,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					
 					satDataEpoch[satid_it] = xvt_data.x;
 
+
 					cout << " Sat ID: " << satid_it << " Pseudorange: " << Prange <<
 						" Signal tt: " << prsolution.getSignal_tt()
 						<< " Elevation: " << elevation << endl;
@@ -172,6 +174,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				//cout << "[Warning] Can't get OrbitEph for " << satid_it << " at: " << civtime << endl;
 			}
 		}
+		
 		solutionDataBlock.first = data.pos;
 		solutionDataBlock.second = satDataEpoch;
 		prsolutionContainer[civtime] = solutionDataBlock;
@@ -190,8 +193,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	ofstream ostrm_log("..\\Simulator\\Log\\RAIM_pre_LOG.txt", std::ios::out); // Outut LOG
 	PRSolution2 RaimSolver;
 	//PRSolution RaimSolver1;
-	
 	vector<double> prvector;
+	
 	ZeroTropModel zeroTrop;
 	TropModel *tropModelPtr = &zeroTrop;
 	CivilTime correctedCivtime; // TODO nevezek fura, felrevezeto
@@ -212,7 +215,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				Triple roverpos = prsolutionContainer[civtime].first;
 				Triple satPos = prsolutionContainer[civtime].second[satid_it.first];
 				pr_calc = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
-				//pr_calc = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
+				pr_calc = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
 
 				try		// TODO: obs rinex pr is not needed
 				{
@@ -234,6 +237,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Log created." << endl;
 		
 		cout << "RaimCompute started." << endl;
+		RaimSolver.NSatsReject = 0;
 		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
