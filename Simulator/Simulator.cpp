@@ -196,10 +196,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		prsolutionContainer[civtime] = solutionDataBlock;
 	}
 	ostrm_log << "END OF 0th" << endl;
-	for (auto &x: satDataEpoch)		//Create the good sat vector that only contains SatID with valid OrbitEphs
+	for (auto &x: satDataEpoch)		// TODO Remove this for()
 	{
-		goodSatVector.push_back(x.first);
-
+		//goodSatVector.push_back(x.first);
 	}
 #pragma endregion
 
@@ -223,12 +222,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		ostrm_log << civtime << endl;
 
 		prvector.clear();
+		goodSatVector.clear();
+
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
 		GPSWeekSecond outputtime(civtime);
 		ostrm << "Epoch " << outputtime << endl;
 
-		for (auto& satid_it : satDataEpoch) { // satDataContainer_c.getSatIDvectorlist()	// TODO satdataepoch nem jó
+		for (auto& satid_it : prsolutionContainer.at(civtime).second) { // satDataContainer_c.getSatIDvectorlist()	// TODO satdataepoch nem jó
 
 				double pr_obs;
 				double pr_calc;
@@ -241,12 +242,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				prvector.push_back(pr_calc);
 				prvector_obs.push_back(pr_obs);
+
+				goodSatVector.push_back(satid_it.first);
 				///Logging
 				
 				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
 				ostrm << satid_it.first << " " << std::setprecision(20) << pr_calc << endl;
 			}
 			
+
 		cout << "Log created." << endl;
 		
 		cout << "RaimCompute started." << endl;
@@ -256,7 +260,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		cout << " Solution Deviance : " << sqrt(pow(roverpos[0] - RaimSolver.Solution[0], 2) + pow(roverpos[1] - RaimSolver.Solution[1], 2) + pow(roverpos[2] - RaimSolver.Solution[2], 2)) << endl;
-		//RaimSolver.NSatsReject = 0;
+		RaimSolver.NSatsReject = 0;
 		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_obs, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
