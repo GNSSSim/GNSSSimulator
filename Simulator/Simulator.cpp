@@ -85,14 +85,18 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Calculate base pseudoranges and assign them to the container
 #pragma region Pseudorange 0th Solution
+	ofstream ostrm_log("..\\Simulator\\Log\\RAIM_pre_LOG.txt", std::ios::out); // Outut LOG
+
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
+	double t_transmission;
 	//map<GPSWeekSecond,vector<double>> prvector;								// Final RAIMCompute PR container
 	
 	SatDataEpoch satDataEpoch;												// Sat Data map<SatID,SatPosition>
 	SolutionDataBlock solutionDataBlock;									//+RoverPos : Pair<Triple,SatDataEpoch>
 	gnsssimulator::PRsolution::PRSolutionContainer prsolutionContainer;		// The whole solution container
 	vector<SatID> goodSatVector;
+	vector<double> prvector_corr;
 	double elevation = 0.0;														// Elevation value of Sat from Rover
 	
 
@@ -107,25 +111,33 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		satDataEpoch.clear();
 
+		//civtime.second -= 18.0;
 		for (auto& satid_it : satDataContainer_c.getSatIDvectorlist()) { // TODO modify to get satvectorlist from NAV rinex instead of OBS rinex
 			try
 			{
 				Xvt xvt_data;
+				
 				try
 				{
+					
 					CivilTime civtime_temp = civtime;
-					
 
-					xvt_data = bceStore.getXvt(satid_it, civtime);
-					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	
-					
+					xvt_data = bceStore.getXvt(satid_it, civtime_temp);
+					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	//Initial Pseudorange Guess
+
+					//ostrm_log << satid_it.id << endl;
+
 					/// Iterative Satellite Position Solution
-					for (int i = 0;i < 3;i++) {
-						double t_transmission = Prange / prsolution.C_light;
+					for (int i = 0;i < 5;i++) {
+						t_transmission = Prange / prsolution.C_light;				//Calculate Transmission time
+						if (i == 4) {
+							t_transmission += xvt_data.clkbias + xvt_data.relcorr;	//Overcorrect at last iteration
+						}
 
 						/// Handle civtime_temp with rollover		
-						civtime_temp.second = civtime.second - t_transmission;
+						civtime_temp.second = civtime.second + 18.0 - t_transmission;
 
+						/// Time rollover
 						if (civtime_temp.second <= 0) {
 							civtime_temp.minute -= 1;
 							civtime_temp.second = 60.0 + civtime_temp.second;		// + because second is negative here
@@ -137,25 +149,29 @@ int _tmain(int argc, _TCHAR* argv[])
 									civtime_temp.hour = 24 + civtime_temp.hour;
 								}
 							}
-						}
+						}						
 						
-							///Get new XVT Position data
-							xvt_data = bceStore.getXvt(satid_it, civtime_temp);
-							///Calculate elevation angle from rover position 
-							Position SatPos(xvt_data), SitePos(data.pos);
-							elevation = SitePos.elevation(SatPos);
-							if (elevation <= 25.0)
-								throw std::invalid_argument(" Elevation is below threshold.");
-							///Calculate new Prange
-							Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
-							//cout << "pr : " << Prange << endl;
+						///Get new XVT Position data
+						xvt_data = bceStore.getXvt(satid_it, civtime_temp);
+
+						///Calculate elevation angle from rover position 
+						Position SatPos(xvt_data), SitePos(data.pos);
+						elevation = SitePos.elevation(SatPos);
+						if (elevation <= 25.0)
+							throw std::invalid_argument(" Elevation is below threshold.");
+
+						///Calculate new Prange
+						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
+						//ostrm_log << Prange << t_transmission << "  ";
+						
+						
 							
 					
 					}
 					/// End of PR Iteration
-					
-					satDataEpoch[satid_it] = xvt_data.x;
 
+					satDataEpoch[satid_it] = xvt_data.x;
+					prvector_corr.push_back(Prange);
 
 					cout << " Sat ID: " << satid_it << " Pseudorange: " << Prange <<
 						" Signal tt: " << prsolution.getSignal_tt()
@@ -179,7 +195,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		solutionDataBlock.second = satDataEpoch;
 		prsolutionContainer[civtime] = solutionDataBlock;
 	}
-
+	ostrm_log << "END OF 0th" << endl;
 	for (auto &x: satDataEpoch)		//Create the good sat vector that only contains SatID with valid OrbitEphs
 	{
 		goodSatVector.push_back(x.first);
@@ -190,14 +206,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Calculate Site position using built-in RAIM
 #pragma region PseudoRange RaimCompute Solution
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution.txt", std::ios::out);	//Output file
-	ofstream ostrm_log("..\\Simulator\\Log\\RAIM_pre_LOG.txt", std::ios::out); // Outut LOG
+	ostrm_log << " RAIMCOMPUTE LOG" << endl;
 	PRSolution2 RaimSolver;
 	//PRSolution RaimSolver1;
 	vector<double> prvector;
+	vector<double> prvector_obs;
 	
 	ZeroTropModel zeroTrop;
 	TropModel *tropModelPtr = &zeroTrop;
-	CivilTime correctedCivtime; // TODO nevezek fura, felrevezeto
+
+	Triple roverpos, satPos;
+
 	for (auto& it : traj_timevec) {
 		CivilTime civtime = it.convertToCommonTime();
 		/// Civtime Log
@@ -206,44 +225,45 @@ int _tmain(int argc, _TCHAR* argv[])
 		prvector.clear();
 		Xvt xvt_data;	//For error correction
 		double errorcorr;
+		GPSWeekSecond outputtime(civtime);
+		ostrm << "Epoch " << outputtime << endl;
+
 		for (auto& satid_it : satDataEpoch) { // satDataContainer_c.getSatIDvectorlist()	// TODO satdataepoch nem jó
 
 				double pr_obs;
 				double pr_calc;
 				//const SatID &currSat = satid_it.first;
 
-				Triple roverpos = prsolutionContainer[civtime].first;
-				Triple satPos = prsolutionContainer[civtime].second[satid_it.first];
+				roverpos = prsolutionContainer[civtime].first;
+				satPos = prsolutionContainer[civtime].second[satid_it.first];
 				pr_calc = prsolution.getPRSolution_abs(roverpos,satPos);	// TODO: Might cause the 40km issue
-				pr_calc = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
-
-				try		// TODO: obs rinex pr is not needed
-				{
-					//pr_obs = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
-				}
-				catch (const std::exception&)
-				{
-					pr_obs = 0.0;
-				}
+				pr_obs = satDataContainer_c.getPseudorangeatEpoch(satid_it.first, civtime);
 
 				prvector.push_back(pr_calc);
-
+				prvector_obs.push_back(pr_obs);
 				///Logging
 				
 				ostrm_log << satid_it.first << "     Pseudorange:  " << setprecision(16) << pr_calc << endl;
-
+				ostrm << satid_it.first << " " << std::setprecision(20) << pr_calc << endl;
 			}
 			
 		cout << "Log created." << endl;
 		
 		cout << "RaimCompute started." << endl;
-		RaimSolver.NSatsReject = 0;
-		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector, bceStore, tropModelPtr) << endl;
+		RaimSolver.NSatsReject = -1;
+		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_obs, bceStore, tropModelPtr) << endl;
+		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
+			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
+			std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		//RaimSolver.NSatsReject = 0;
+		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_corr, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
 			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		/// Output Rover Position at Epoch
+		ostrm << "Rover " << roverpos[0] << " " << roverpos[1] << " " << roverpos[2] << endl;		
 		
 	}
 	ostrm.close();
@@ -358,7 +378,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
