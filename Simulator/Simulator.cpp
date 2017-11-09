@@ -255,11 +255,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		cout << " Solution Deviance : " << sqrt(pow(roverpos[0] - RaimSolver.Solution[0], 2) + pow(roverpos[1] - RaimSolver.Solution[1], 2) + pow(roverpos[2] - RaimSolver.Solution[2], 2)) << endl;
 		//RaimSolver.NSatsReject = 0;
-		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_corr, bceStore, tropModelPtr) << endl;
+		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_obs, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		cout << " Solution Deviance : " << sqrt(pow(roverpos[0] - RaimSolver.Solution[0], 2) + pow(roverpos[1] - RaimSolver.Solution[1], 2) + pow(roverpos[2] - RaimSolver.Solution[2], 2)) << endl;
 		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
 			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		/// Output Rover Position at Epoch
