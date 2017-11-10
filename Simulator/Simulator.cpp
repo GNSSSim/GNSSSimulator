@@ -90,6 +90,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
 	double t_transmission;
+	double wt;
+	GPSEllipsoid ell;
 	//map<GPSWeekSecond,vector<double>> prvector;								// Final RAIMCompute PR container
 	
 	SatDataEpoch satDataEpoch;												// Sat Data map<SatID,SatPosition>
@@ -124,6 +126,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 					xvt_data = bceStore.getXvt(satid_it, civtime_temp);
 					Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);	//Initial Pseudorange Guess
+					//Prange = satDataContainer_c.getPseudorangeatEpoch(satid_it, civtime);
 
 					//ostrm_log << satid_it.id << endl;
 
@@ -157,18 +160,24 @@ int _tmain(int argc, _TCHAR* argv[])
 						///Calculate elevation angle from rover position 
 						Position SatPos(xvt_data), SitePos(data.pos);
 						elevation = SitePos.elevation(SatPos);
-						if (elevation <= 25.0)
+						if (elevation <= 10.0)
 							throw std::invalid_argument(" Elevation is below threshold.");
+						/// Correct with Earth Rotation
+						wt = ell.angVelocity() * t_transmission;
+						Xvt temp_data;
+						temp_data.x[0] = xvt_data.x[0] * ::cos(wt) + xvt_data.x[1] * ::sin(wt);
+						temp_data.x[1] = -xvt_data.x[0] * ::sin(wt) + xvt_data.x[1] * ::cos(wt);
+						temp_data.x[2] = xvt_data.x[2];
+						xvt_data.x = temp_data.x;
+						/// End of Earth Rotation correction
 
 						///Calculate new Prange
 						Prange = prsolution.getPRSolution_abs(data.pos, xvt_data.x);
 						//ostrm_log << Prange << t_transmission << "  ";
-						
-						
-							
-					
 					}
 					/// End of PR Iteration
+					
+
 
 					satDataEpoch[satid_it] = xvt_data.x;
 					prvector_corr.push_back(Prange);
@@ -254,14 +263,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Log created." << endl;
 		
 		cout << "RaimCompute started." << endl;
-		RaimSolver.NSatsReject = -1;
+		/*RaimSolver.NSatsReject = -1;
 		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_obs, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		cout << " Solution Deviance : " << sqrt(pow(roverpos[0] - RaimSolver.Solution[0], 2) + pow(roverpos[1] - RaimSolver.Solution[1], 2) + pow(roverpos[2] - RaimSolver.Solution[2], 2)) << endl;
-		RaimSolver.NSatsReject = 0;
-		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector_obs, bceStore, tropModelPtr) << endl;
+*/
+		//RaimSolver.NSatsReject = 0;
+		cout << RaimSolver.RAIMCompute(civtime, goodSatVector, prvector, bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
