@@ -138,14 +138,51 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	if(psdrange<0)
 		return false;
 
-	tx += psdrange/this->C_MPS;
+	tx -= psdrange/this->C_MPS;
 	
 	PVT = this->getSatXvt(tx, satId);
-	tx += PVT.clkbias + PVT.relcorr;
+	tx -= (PVT.clkbias + PVT.relcorr);
 
 	PVT = this->getSatXvt(tx, satId);
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+
+
+	// time of flight (sec)
+	//if (n_iterate == 0)
+	GPSEllipsoid ell;
+	double rho, wt, svxyz[3];
+	rho = psdrange / this->C_MPS;             // initial guess: 70ms
+
+		//else
+			//rho = RSS(SVP(i, 0) - Sol(0), SVP(i, 1) - Sol(1), SVP(i, 2) - Sol(2))
+			/// ell.c();
+
+	// correct for earth rotation
+	wt = ell.angVelocity()*rho;             // radians
+	svxyz[0] = ::cos(wt)*PVT.x[0] + ::sin(wt)*PVT.x[1];
+	svxyz[1] = -::sin(wt)*PVT.x[0] + ::cos(wt)*PVT.x[1];
+	svxyz[2] = PVT.x[2];
+
+	PVT.x[0] = svxyz[0];
+	PVT.x[1] = svxyz[1];
+	PVT.x[2] = svxyz[2];
+
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+
+	tx -= psdrange / this->C_MPS;
+
+	PVT = this->getSatXvt(tx, satId);
+	tx -= (PVT.clkbias + PVT.relcorr);
+
+	PVT = this->getSatXvt(tx, satId);
+
+	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+
+	// corrected pseudorange (m)
+	//CRange(n) = SVP(i, 3);
 
 	return true;
 }
