@@ -16,7 +16,7 @@ double gnsssimulator::PRsolution::getPRSolution_abs(gpstk::Triple& in_trajpos, g
 	double xdiff = pos_diff.X();
 	double ydiff = pos_diff.Y();
 	double zdiff = pos_diff.Z();
-
+	
 	//Signal Travel Time
 	calculate_signaltt(in_satpos, in_trajpos);
 

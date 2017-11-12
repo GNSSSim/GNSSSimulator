@@ -6,6 +6,7 @@
 #include "Navigation_examples.h"
 #include "Test_Trajectory_Class.hpp"
 #include "Test_simulatePseudoRange.hpp"
+#include "test_PseudoRangeCalculator.h"
 
 const int ProcessRinex = 1;
 const int ProcessTrajectory = 1;
@@ -25,7 +26,18 @@ gnsssimulator::PRsolution prsolution;
 typedef map<SatID, Triple> SatDataEpoch;
 typedef pair<Triple, SatDataEpoch> SolutionDataBlock;
 
-int _tmain(int argc, _TCHAR* argv[])
+
+int _tmain(int argc, _TCHAR* argv[]) {
+
+	//PseudoRangeCalculator_test1();
+	//PseudoRangeCalculator_test2();
+	//PseudoRangeCalculator_test3();
+	PseudoRangeCalculator_test4();
+	//PseudoRangeCalculator_test5();
+	return 0;
+}
+
+/*int _tmain(int argc, _TCHAR* argv[])
 {
 	cout << "CONFIG: " << "ProcessRinex " << ProcessRinex << " ProcessTrajectory: " << ProcessTrajectory <<
 		" Solution to RINEX: " << Solution_to_RINEX << " Run Tests: " << Run_Tests << endl;
@@ -64,7 +76,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// Read Rover Trajectory file
 	if (ProcessTrajectory)
 		ProcessTrajectoryFile();
-
+		
 			//DEBUG FOR RINEX PROCESS
 	/*cout << endl << endl << "------------" << endl;
 	OrbitEph query_ephemeris;
@@ -80,11 +92,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	catch (const std::exception& e)
 	{
 		cout << endl << e.what();
-	}*/
+	}
 	//bceStore.dump(cout, 3);
 
 	// Calculate base pseudoranges and assign them to the container
-#pragma region Pseudorange 0th Solution
+	#pragma region Pseudorange 0th Solution
 	vector<GPSWeekSecond>traj_timevec = trajStore.listTime();
 	double Prange;
 
@@ -240,6 +252,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
 			<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		cout << "Size of sat vector:" << goodSatVector.size() << endl;
+		cout << "Number of godd satelite are used in the solution: " << RaimSolver.Nsvs << endl;
 		
 	}
 	ostrm.close();
@@ -254,9 +268,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	if (Run_Tests) {
 		cout << "Solution Reprocess ?= Original Rinex Process: " << Test_ReProcess_Solution_Rinex() << endl;
 	}
+	
 
 	return 0;
-}
+}*/
 
 // TODO: Rename to ProcessRinexFile and refactor code to handle Rinex dynamically.
 int ProcessFiles(void) throw(Exception) 
