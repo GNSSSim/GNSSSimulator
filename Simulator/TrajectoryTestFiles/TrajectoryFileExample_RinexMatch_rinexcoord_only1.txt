@@ -2,4 +2,3 @@ GNSS Trajectory File
 Position ECEF
 END OF HEADER
 1966   4410	   -4130636.58  2894953.12   -3890530.44 
-
