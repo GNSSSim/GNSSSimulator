@@ -141,13 +141,17 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	tx -= psdrange/this->C_MPS;
 	
 	PVT = this->getSatXvt(tx, satId);
-	tx -= (PVT.clkbias + PVT.relcorr);
+	/*//tx -= (PVT.clkbias + PVT.relcorr);		//??? Ez miért kell ???
 
 	PVT = this->getSatXvt(tx, satId);
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+	*/
+	tx -= (PVT.clkbias + PVT.relcorr);		
 
+	PVT = this->getSatXvt(tx, satId);
 
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
 	// time of flight (sec)
 	//if (n_iterate == 0)
 	GPSEllipsoid ell;
