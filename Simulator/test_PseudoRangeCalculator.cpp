@@ -294,8 +294,7 @@ int PseudoRangeCalculator_test6(void) {
 
 	CommonTime comTime = traj_time[0].convertToCommonTime();
 	GPSWeekSecond gpsweeksec(comTime);
-	CivilTime civtime(comTime);
-	cout << civtime << endl;
+	CivilTime civtime(comTime);	
 	
 	double out_elevation;
 	SatID testId(1, SatID::systemGPS);
@@ -314,6 +313,7 @@ int PseudoRangeCalculator_test6(void) {
 
 		civtime = time_it;
 		gpsweeksec = civtime.convertToCommonTime();
+		cout << civtime << endl;
 		ostrm << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
 
 		satIdVec.clear();
@@ -348,7 +348,7 @@ int PseudoRangeCalculator_test6(void) {
 			calculated_roverPos.setEllipsoidModel(wgs84ellmodel);*/
 			roverPos.setReferenceFrame(ReferenceFrame::WGS84);
 			calculated_roverPos.setReferenceFrame(ReferenceFrame::WGS84);
-			cout << "Position difference: " << roverPos - calculated_roverPos << endl;
+			cout << "Position difference: " << roverPos - calculated_roverPos << endl << endl;
 			ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
 	}
 	ostrm.close();
