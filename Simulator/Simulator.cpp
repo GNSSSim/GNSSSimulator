@@ -32,8 +32,9 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	//PseudoRangeCalculator_test1();
 	//PseudoRangeCalculator_test2();
 	//PseudoRangeCalculator_test3();
-	PseudoRangeCalculator_test4();
+	//PseudoRangeCalculator_test4();
 	//PseudoRangeCalculator_test5();
+	PseudoRangeCalculator_test6();
 	return 0;
 }
 
