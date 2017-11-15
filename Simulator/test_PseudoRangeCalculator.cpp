@@ -263,7 +263,7 @@ int PseudoRangeCalculator_test5(void) {
 int PseudoRangeCalculator_test6(void) {
 	int returnValue = true;
 
-	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord.txt";
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_bigdata.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
@@ -348,7 +348,9 @@ int PseudoRangeCalculator_test6(void) {
 			calculated_roverPos.setEllipsoidModel(wgs84ellmodel);*/
 			roverPos.setReferenceFrame(ReferenceFrame::WGS84);
 			calculated_roverPos.setReferenceFrame(ReferenceFrame::WGS84);
-			cout << "Position difference: " << roverPos - calculated_roverPos << endl << endl;
+			cout << "Position difference: " << roverPos - calculated_roverPos << " Abs diff: " <<
+				sqrt(pow((roverPos[0] - calculated_roverPos[0]), 2) + pow((roverPos[1] - calculated_roverPos[1]), 2) + pow((roverPos[2] - calculated_roverPos[2]), 2))
+				<< endl << endl;
 			ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
 	}
 	ostrm.close();
