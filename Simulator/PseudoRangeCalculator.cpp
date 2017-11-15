@@ -141,17 +141,16 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	tx -= psdrange/this->C_MPS;
 	
 	PVT = this->getSatXvt(tx, satId);
-	/*//tx -= (PVT.clkbias + PVT.relcorr);		//??? Ez miért kell ???
 
+	/*//tx -= (PVT.clkbias + PVT.relcorr);											//??? Ez miért kell ???
 	PVT = this->getSatXvt(tx, satId);
-
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 	*/
-	tx -= (PVT.clkbias + PVT.relcorr);		
 
+	tx -= (PVT.clkbias + PVT.relcorr);											//Így ~4 cm a hiba
 	PVT = this->getSatXvt(tx, satId);
-
 	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+
 	// time of flight (sec)
 	//if (n_iterate == 0)
 	GPSEllipsoid ell;
@@ -176,15 +175,14 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	if (psdrange<0)
 		return false;
 
+	//tx = Tr;				//Ezzel fél centivel nagyobb a hiba, miért?
 	tx -= psdrange / this->C_MPS;
-
 	PVT = this->getSatXvt(tx, satId);
 	tx -= (PVT.clkbias + PVT.relcorr);
-
 	PVT = this->getSatXvt(tx, satId);
 
-	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
-
+	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);		//Ennek mi a fizikai jelentösége es miert müködik?
+	//psdrange = this->calcPseudoRangeNaive(trajData,PVT);			//Ez miert ad 40km hibat?
 	// corrected pseudorange (m)
 	//CRange(n) = SVP(i, 3);
 
