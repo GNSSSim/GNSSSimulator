@@ -11,7 +11,7 @@ clearvars;
 %% Config
 % Todo: Parse config output file from GNSSSIM
 
-filename = 'C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\TrajectoryTestFiles\output_RaimSolution.txt';
+filename = 'C:\Local WorkSpace\Cpp\GnssSimulator\Simulator\TrajectoryTestFiles\output_RaimSolution_test.txt';
 fileID = fopen(filename,'r');
 
 epoch_iterator = 1;
@@ -56,6 +56,8 @@ while ~feof(fileID)
     elseif  epochend            % Last Epoch Data - ECEF Solution
        continue;
     elseif ~solutionread && ~roverposread && ~epochend                    % GPS ID - Pseudorange
+%         [sys gpsID Prange satposx satposy satposz] = strread(tline,'%s %u %f %f %f %f');
+%         SolutionMatrix(epoch_iterator-1,1:5) = [gpsID Prange satposx satposy satposz];
         [sys gpsID Prange] = strread(tline,'%s %u %f');
         SolutionMatrix(epoch_iterator-1,1:2) = [gpsID Prange];
     end
@@ -91,8 +93,11 @@ for id_it = 1:32                                                            %Loo
     end
 end
 
-%% Evaluate and plot Data
+%% Evaluate and plot Data %%
+%
+%
 %% Pseudorange and Solution Deviance
+figure;
 Cellsize = size(FinalCell);
 Cellsize = Cellsize(1,1);
 %%%%%% Plot Pseudoranges for PRNs %%%%%%
@@ -116,7 +121,7 @@ Solution_Deviation = arrayfun(@sqrt,(navsol_cell(:,3)-rover_cell(:,3)).^2+(navso
 
 yyaxis right
 
-plot(navsol_cell(:,2),Solution_Deviation,'x:','DisplayName','Solution Deviance')
+plot(navsol_cell(:,2),Solution_Deviation,'o:','DisplayName','Solution Deviance')
 legend('-DynamicLegend','location','best');
 title('Visualization of Pseudorange variations and absolute Solution deviance');
 xlabelformat = sprintf('GPS Time axis for GpsWeek %d ',navsol_cell(1,1));
@@ -127,4 +132,14 @@ ylabel('Deviance of the navigation solution [m]');
 hold off;
  
 %% Satellite Trajectory Plot
+% figure;
+% plot3(rover_cell(:,3),rover_cell(:,4),rover_cell(:,5),'rx');
+% hold on;
+% for satid_it = 1:Cellsize
+%     if ~isempty(FinalCell{satid_it})
+%         data = FinalCell{satid_it,2};
+%         %posMatrix =
+%     end
+% end
+
 
