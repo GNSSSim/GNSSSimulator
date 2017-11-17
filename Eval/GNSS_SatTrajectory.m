@@ -72,16 +72,16 @@ for satit = 1:TMsize
     
     graphlegend = sprintf('PRN: %d',satit);
     
-    for datait = 1:Datasize
-        currx = Datacell{datait,1};
-        curry = Datacell{datait,2};
-        currz = Datacell{datait,3};
+    %for datait = 1:Datasize
+        currx = cell2mat(Datacell(:,1));
+        curry = cell2mat(Datacell(:,2));
+        currz = cell2mat(Datacell(:,3));
         
-        
+        % TODO: plot vectors instead of single values....speed up things.
         plot3(currx,curry,currz,'x-','DisplayName',graphlegend);
         %plot3(currx,curry,currz,'x-')
         hold on;
         legend('-DynamicLegend','location','best');
         
-    end
+   % end
 end
