@@ -1,10 +1,13 @@
 %% GNSS Simulator Data Evaluator 0.1
-% Important variables: 
+% Plots the Pseudorange and Navigation solution deviaton.
+%% Important variables: 
 %   navsol_cell     Navigation Solution for each epoch
 %   rover_cell      Rover position for each epoch
-%   eval_cell       Contains parsed data - bad format for plotting
+%   eval_cell       Contains parsed data - bad format for plotting, needs
+%                   reworking
+%   SolutionMatrix  Contains the solutions sorted by epoch and gpsID.
 %   FinalCell       Contains transformed parse data - good format for plot
-%   
+
 
 clearvars;
 
@@ -26,11 +29,11 @@ while ~feof(fileID)
     currline = sprintf('%s %u %f %s',tline);
     try
         
-        if ~solutionread
-            [solx soly solz] = strread(tline,'%f %f %f');
+        if ~solutionread                                                    %% If solution is read, only one more parse(Rover pos) until next epoch
+            [solx soly solz] = strread(tline,'%f %f %f');                   % try-catch -> if solution fails, there are still data to be read
             solutionread = 1;
             navsol_cell(epochnum+1,1:5) = [gpsweek gpssec solx soly solz];
-        elseif ~roverposread && solutionread
+        elseif ~roverposread && solutionread                                    %% Rover position, last line in epoch
             [tempvar roverx rovery roverz] = strread(tline,'%s %f %f %f');
             rover_cell(epochnum+1,1:5) = [gpsweek gpssec roverx rovery roverz];
             roverposread = 1;
@@ -40,7 +43,7 @@ while ~feof(fileID)
         if epochend
             eval_cell(epochnum+1,1:3) = [gpsweek gpssec {SolutionMatrix}];  % Cell to fill with all the data
             solutionread = 0;
-            roverposread = 0;
+            roverposread = 0;                                               % Last line in epoch is read, proceed to next line
             epoch_iterator = 1;
             epochnum = epochnum + 1;
             SolutionMatrix = [];
@@ -53,9 +56,9 @@ while ~feof(fileID)
     
     if epoch_iterator == 1      % Header
         [head gpsweek gpssec sys] = strread(tline,'%s %u %f %s');
-    elseif  epochend            % Last Epoch Data - ECEF Solution
+    elseif  epochend            % Last Epoch Data - ECEF Solution %% This line might be redundant.
        continue;
-    elseif ~solutionread && ~roverposread && ~epochend                    % GPS ID - Pseudorange
+    elseif ~solutionread && ~roverposread && ~epochend                    % GPS ID - Pseudorange -> Data line, ~middle of epoch
 %         [sys gpsID Prange satposx satposy satposz] = strread(tline,'%s %u %f %f %f %f');
 %         SolutionMatrix(epoch_iterator-1,1:5) = [gpsID Prange satposx satposy satposz];
         [sys gpsID Prange] = strread(tline,'%s %u %f');
