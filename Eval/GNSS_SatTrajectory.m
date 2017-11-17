@@ -70,7 +70,7 @@ for satit = 1:TMsize
     Datasize = size(Datacell);
     Datasize = Datasize(1);
     
-    graphlegend = sprintf('PRN: %d',satit);
+    graphlegend = sprintf('PRN: %d',TrajectoryMatrix{satit,1});
     
     %for datait = 1:Datasize
         currx = cell2mat(Datacell(:,1));
