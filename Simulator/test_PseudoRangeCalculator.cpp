@@ -267,7 +267,7 @@ int PseudoRangeCalculator_test6(void) {
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
-
+	ofstream ostrm_sattraj("..\\Simulator\\TrajectoryTestFiles\\output_satTrajectory.txt", std::ios::out);
 
 	PseudoRangeCalculator psdRangeCalc;
 	psdRangeCalc.ProcessTrajectoryFile(trajFileNamewPath.c_str());
@@ -295,6 +295,8 @@ int PseudoRangeCalculator_test6(void) {
 	CommonTime comTime = traj_time[0].convertToCommonTime();
 	GPSWeekSecond gpsweeksec(comTime);
 	CivilTime civtime(comTime);	
+	CivilTime out_civtime;		//For trajectory output
+	bool out_trajectory_done = 0;
 	
 	double out_elevation;
 	SatID testId(1, SatID::systemGPS);
@@ -315,6 +317,7 @@ int PseudoRangeCalculator_test6(void) {
 		gpsweeksec = civtime.convertToCommonTime();
 		cout << civtime << endl;
 		ostrm << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
+		//ostrm_sattraj << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
 
 		satIdVec.clear();
 		psdrangeVec.clear();
@@ -326,8 +329,19 @@ int PseudoRangeCalculator_test6(void) {
 				satIdVec.push_back(tempid);
 
 				ostrm << tempid << " " << std::setprecision(12) << psdrange << endl;
+				/// Get properly preformatted Trajectory output
+				if (!out_trajectory_done) {
+					for (auto& out_time : traj_time) {
+						out_civtime = out_time;
+						Xvt currpos_log = psdRangeCalc.bceStore.getXvt(testId, out_civtime);
+						ostrm_sattraj << testId.id << " " << std::setprecision(12) << currpos_log.x[0] << " "
+							<< currpos_log.x[1] << " " << currpos_log.x[2] << endl;
+					}				
+				}
+				/// End of Trajectory Log
 			}
 		}
+		out_trajectory_done = 1;
 
 			cout << RaimSolver.RAIMCompute(civtime, satIdVec, psdrangeVec, psdRangeCalc.bceStore, tropModelPtr) << endl;
 			cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
