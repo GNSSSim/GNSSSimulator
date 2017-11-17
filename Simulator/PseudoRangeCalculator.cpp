@@ -181,7 +181,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	tx -= (PVT.clkbias + PVT.relcorr);
 	PVT = this->getSatXvt(tx, satId);
 
-	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);		//Ennek mi a fizikai jelentösége es miert müködik?
+	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);		
 	//psdrange = this->calcPseudoRangeNaive(trajData,PVT);			//Ez miert ad 40km hibat?
 	// corrected pseudorange (m)
 	//CRange(n) = SVP(i, 3);
