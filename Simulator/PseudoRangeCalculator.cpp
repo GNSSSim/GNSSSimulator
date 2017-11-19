@@ -61,12 +61,12 @@ void PseudoRangeCalculator::ProcessEphemerisFile(const char* fileNamewPath) {
 	isEphemerisRead = true;
 }
 
-bool PseudoRangeCalculator::isSatVisible(const CommonTime time, const SatID satId, double& elevation) {
+bool PseudoRangeCalculator::isSatVisible(const Position pos,const CommonTime time, const SatID satId, double& elevation) {
 	Xvt xvt_data;
-	return isSatVisible(time, satId, elevation, xvt_data);
+	return isSatVisible(pos, time, satId, elevation, xvt_data);
 }
 
-bool PseudoRangeCalculator::isSatVisible(const CommonTime time, const SatID satId, double& elevation, Xvt& xvt_data) {
+bool PseudoRangeCalculator::isSatVisible(const Position SitePos, const CommonTime time, const SatID satId, double& elevation, Xvt& xvt_data) {
 	if (isEphemerisRead == false || isTrajectoryRead == false) {
 		cout << "Ephemeris or Trajectory file is not processed. " << endl;
 		return false;
@@ -75,16 +75,11 @@ bool PseudoRangeCalculator::isSatVisible(const CommonTime time, const SatID satI
 	if (bceStore.isPresent(satId) == false) {
 		return false;
 	}
-	GPSWeekSecond gpsweeksecs(time);
-	TrajectoryData trajData = trajStore.findPosition(gpsweeksecs);
-	if (&trajData == NULL) {
-		return false;
-	}
 
 	WGS84Ellipsoid wgs84ellmodel;
 
 	xvt_data = bceStore.getXvt(satId, time);
-	Position SatPos(xvt_data), SitePos(trajData.pos);
+	Position SatPos(xvt_data);
 	/*SatPos.setEllipsoidModel(&wgs84ellmodel);
 	SitePos.setEllipsoidModel(&wgs84ellmodel);
 	SitePos.setReferenceFrame(wgs84ellmodel);*/
@@ -96,14 +91,14 @@ bool PseudoRangeCalculator::isSatVisible(const CommonTime time, const SatID satI
 	return true;
 }
 
-Xvt PseudoRangeCalculator::getSatXvt(const CommonTime time, const SatID satId) {
+Xvt PseudoRangeCalculator::getSatXvt(const Position pos, const CommonTime time, const SatID satId) {
 	Xvt retXvt;
 	double elevation;
 	if (bceStore.isPresent(satId) == false) {
 		throw;
 	}
 	try {
-		this->isSatVisible(time, satId, elevation, retXvt);
+		this->isSatVisible(pos, time, satId, elevation, retXvt);
 		if (elevation < this->elevationLimitinDegree) {
 			throw -1;
 		}
@@ -119,70 +114,70 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	Xvt PVT;
 	CommonTime tx;
 	tx = Tr;
+	double rho;
 
 	GPSWeekSecond gpsweeksecs(Tr);
 	TrajectoryData trajData = trajStore.findPosition(gpsweeksecs);
+	Position roverPos(trajData.pos);
 	if (&trajData == NULL) {
 		return false;
 	}
 
 	try {
-		PVT = this->getSatXvt(Tr, satId);
+		PVT = this->getSatXvt(roverPos, Tr, satId);
 	}
 	catch (...) {
 		psdrange = -1;
 		return false;
 	}
 
+	//psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	//if(psdrange<0)
+	//	return false;
+         										
+	tx = Tr;
+	PVT = this->getSatXvt(roverPos, tx, satId);
 	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	if(psdrange<0)
+	if (psdrange<0)
 		return false;
 
 	tx -= psdrange/this->C_MPS;
 	
-	PVT = this->getSatXvt(tx, satId);
-	tx -= (PVT.clkbias + PVT.relcorr);
-
-	PVT = this->getSatXvt(tx, satId);
-
-	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
-
-
-	// time of flight (sec)
-	//if (n_iterate == 0)
-	GPSEllipsoid ell;
-	double rho, wt, svxyz[3];
-	rho = psdrange / this->C_MPS;             // initial guess: 70ms
-
-		//else
-			//rho = RSS(SVP(i, 0) - Sol(0), SVP(i, 1) - Sol(1), SVP(i, 2) - Sol(2))
-			/// ell.c();
-
-	// correct for earth rotation
-	wt = ell.angVelocity()*rho;             // radians
-	svxyz[0] = ::cos(wt)*PVT.x[0] + ::sin(wt)*PVT.x[1];
-	svxyz[1] = -::sin(wt)*PVT.x[0] + ::cos(wt)*PVT.x[1];
-	svxyz[2] = PVT.x[2];
-
-	PVT.x[0] = svxyz[0];
-	PVT.x[1] = svxyz[1];
-	PVT.x[2] = svxyz[2];
+	PVT = this->getSatXvt(roverPos, tx, satId);
 
 	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
 	if (psdrange<0)
 		return false;
 
+	rho = (psdrange) / this->C_MPS;             											
+	this->earthRotationCorrection(rho, &PVT);
+
+
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+	tx = Tr;
 	tx -= psdrange / this->C_MPS;
 
-	PVT = this->getSatXvt(tx, satId);
-	tx -= (PVT.clkbias + PVT.relcorr);
+	PVT = this->getSatXvt(roverPos, tx, satId);
 
-	PVT = this->getSatXvt(tx, satId);
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+
+	rho = (psdrange) / this->C_MPS;           										
+	this->earthRotationCorrection(rho, &PVT);
+
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+	tx = Tr;
+	tx -= psdrange / this->C_MPS;
+
+	PVT = this->getSatXvt(roverPos, tx, satId);
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 
-	// corrected pseudorange (m)
-	//CRange(n) = SVP(i, 3);
 
 	return true;
 }
@@ -208,4 +203,18 @@ double PseudoRangeCalculator::calcPseudoRangeNaive(const TrajectoryData trajData
 
 
 	return psdrange;
+}
+
+void PseudoRangeCalculator::earthRotationCorrection(const double rho, Xvt* PVT) {
+	double wt, svxyz[3];
+	GPSEllipsoid ell;
+
+	wt = ell.angVelocity()*rho;             // radians
+	svxyz[0] = ::cos(wt)*PVT->x[0] + ::sin(wt)*PVT->x[1];
+	svxyz[1] = -::sin(wt)*PVT->x[0] + ::cos(wt)*PVT->x[1];
+	svxyz[2] = PVT->x[2];
+
+	PVT->x[0] = svxyz[0];
+	PVT->x[1] = svxyz[1];
+	PVT->x[2] = svxyz[2];
 }

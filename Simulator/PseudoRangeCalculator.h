@@ -28,7 +28,7 @@ public:
 
 	void ProcessTrajectoryFile(const char*);
 	void ProcessEphemerisFile(const char*);
-	bool isSatVisible(const CommonTime, const SatID, double&);
+	bool isSatVisible(const Position, const CommonTime, const SatID, double&);
 	bool calcPseudoRange(const CommonTime, const SatID, double&);
 	
 
@@ -41,7 +41,8 @@ public:
 private:
 	const double C_MPS = 2.99792458e8;
 	double calcPseudoRangeNaive(const TrajectoryData, const Xvt);
-	bool isSatVisible(const CommonTime, const SatID, double&, Xvt&);
-	Xvt getSatXvt(const CommonTime, const SatID);
+	bool isSatVisible(const Position, const CommonTime, const SatID, double&, Xvt&);
+	Xvt getSatXvt(const Position, const CommonTime, const SatID);
+	void earthRotationCorrection(const double, Xvt*);
 };
 
