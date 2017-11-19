@@ -123,6 +123,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		return false;
 	}
 
+	// Here we filter out the sats with low elevation
 	try {
 		PVT = this->getSatXvt(roverPos, Tr, satId);
 	}
@@ -131,9 +132,6 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		return false;
 	}
 
-	//psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	//if(psdrange<0)
-	//	return false;
          										
 	tx = Tr;
 	PVT = this->getSatXvt(roverPos, tx, satId);
@@ -141,44 +139,32 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	if (psdrange<0)
 		return false;
 
-	tx -= psdrange/this->C_MPS;
+	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+
+	for( int i = 0;i < 5; i++){
+
+		tx = Tr;
+		tx -= psdrange / this->C_MPS;
+		PVT = this->getSatXvt(roverPos, tx, satId);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		rho = (psdrange) / this->C_MPS;
+		this->earthRotationCorrection(rho, &PVT);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	}
 	
-	PVT = this->getSatXvt(roverPos, tx, satId);
-
-	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	if (psdrange<0)
-		return false;
-
-	rho = (psdrange) / this->C_MPS;             											
-	this->earthRotationCorrection(rho, &PVT);
-
-
-	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	if (psdrange<0)
-		return false;
-	tx = Tr;
-	tx -= psdrange / this->C_MPS;
-
-	PVT = this->getSatXvt(roverPos, tx, satId);
-
-	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	if (psdrange<0)
-		return false;
-
-	rho = (psdrange) / this->C_MPS;           										
-	this->earthRotationCorrection(rho, &PVT);
-
-	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
-	if (psdrange<0)
-		return false;
-	tx = Tr;
-	tx -= psdrange / this->C_MPS;
-
-	PVT = this->getSatXvt(roverPos, tx, satId);
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 
-
+	cout << endl << "next sat "<< endl << endl;
 	return true;
 }
 
