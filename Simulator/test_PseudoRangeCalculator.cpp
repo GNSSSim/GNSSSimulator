@@ -270,10 +270,11 @@ int PseudoRangeCalculator_test5(void) {
 	return returnValue;
 }
 
+
 int PseudoRangeCalculator_test6(void) {
 	int returnValue = true;
 
-	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_bigdata.txt";
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
@@ -357,8 +358,8 @@ int PseudoRangeCalculator_test6(void) {
 			cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 				std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 				std::setprecision(12) << RaimSolver.Solution[2] << endl;
-			ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
-				<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
+			ostrm << std::setprecision(20) << RaimSolver.Solution[0] << " " << std::setprecision(20) << RaimSolver.Solution[1]
+				<< " " << std::setprecision(20) << RaimSolver.Solution[2] << endl;
 			cout << "Size of sat vector:" << satIdVec.size() << endl;
 			cout << "Number of good satelite are used in the solution: " << RaimSolver.Nsvs << endl;
 
@@ -376,6 +377,125 @@ int PseudoRangeCalculator_test6(void) {
 				sqrt(pow((roverPos[0] - calculated_roverPos[0]), 2) + pow((roverPos[1] - calculated_roverPos[1]), 2) + pow((roverPos[2] - calculated_roverPos[2]), 2))
 				<< endl << endl;
 			ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
+	}
+	ostrm.close();
+
+	return true;
+}
+
+int PseudoRangeCalculator_test7(void) {
+	int returnValue = true;
+
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
+	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
+
+	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
+	ofstream ostrm_sattraj("..\\Simulator\\TrajectoryTestFiles\\output_satTrajectory.txt", std::ios::out);
+
+	PseudoRangeCalculator psdRangeCalc;
+	psdRangeCalc.ProcessTrajectoryFile(trajFileNamewPath.c_str());
+	psdRangeCalc.ProcessEphemerisFile(navFileNamewPath.c_str());
+
+
+	TrajectoryStream trajFileIn(trajFileNamewPath.c_str()); //("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt");
+	TrajectoryHeader trajHeader;
+	TrajectoryData trajData;
+	TrajectoryStore test_trajStore;
+
+	trajFileIn >> trajHeader;
+
+	while (trajFileIn >> trajData) {
+		try {
+			test_trajStore.addPosition(trajData);
+		}
+		catch (...) {
+			cout << "Reading Trajectory data was not successfull " << endl;
+		}
+	}
+	vector<GPSWeekSecond> traj_time = test_trajStore.listTime();
+
+	CommonTime comTime = traj_time[0].convertToCommonTime();
+	GPSWeekSecond gpsweeksec(comTime);
+	CivilTime civtime(comTime);
+	cout << civtime << endl;
+
+	TrajectoryData roverTraj = test_trajStore.findPosition(traj_time[0]);
+	Position firstroverPos(roverTraj.pos);
+
+	double out_elevation;
+	SatID testId(1, SatID::systemGPS);
+	
+	for (auto& time_it : traj_time) {
+		civtime = time_it;
+		gpsweeksec = civtime.convertToCommonTime();
+		vector<double> psdrangeVec;
+		vector<SatID> satIdVec;
+		vector<double> tropDelays;
+		double psdrange;
+
+		ostrm << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
+
+		CommonTime comTime_temp = civtime.convertToCommonTime();
+		GPSWeekSecond gpsweeksec_temp(comTime_temp);
+		TrajectoryData trajPos = test_trajStore.findPosition(gpsweeksec_temp);
+		Position roverPos = trajPos.pos;
+		Position recpos(roverPos);
+		recpos = recpos.asGeodetic();
+
+		PRSolution2 RaimSolver;
+		RaimSolver.NSatsReject = 0;
+
+		ZeroTropModel zeroTrop;
+		NeillTropModel neillTrop;
+		neillTrop.setReceiverLatitude(recpos.geodeticLatitude());
+		neillTrop.setReceiverHeight(25.0);
+		neillTrop.setDayOfYear(civtime);
+
+		psdrangeVec.clear();
+		satIdVec.clear();
+		tropDelays.clear();
+
+		for (int i = 1; i <= 32; i++) {
+			testId.id = i;
+			if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
+				psdrangeVec.push_back(psdrange);
+				SatID tempid(testId);
+				satIdVec.push_back(tempid);
+
+				/// Logging psdrange
+				ostrm << tempid << " " << std::setprecision(20) << psdrange << endl;
+
+				/// End of Logging
+			}
+		}
+			
+
+		//TropModel *tropModelPtr = &zeroTrop;
+		TropModel *tropModelPtr = &neillTrop;
+		//psdRangeCalc.CalculateTropModelDelays(recpos, comTime_temp, satIdVec, &neillTrop, tropDelays);
+		
+		cout << RaimSolver.RAIMCompute(civtime, satIdVec, psdrangeVec, psdRangeCalc.bceStore, tropModelPtr) << endl;
+		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
+			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
+			std::setprecision(12) << RaimSolver.Solution[2] << endl;
+		ostrm << std::setprecision(20) << RaimSolver.Solution[0] << " " << std::setprecision(20) << RaimSolver.Solution[1]
+			<< " " << std::setprecision(20) << RaimSolver.Solution[2] << endl;
+		cout << "Size of sat vector:" << satIdVec.size() << endl;
+		cout << "Number of good satelite are used in the solution: " << RaimSolver.Nsvs << endl;
+
+		
+		Position calculated_roverPos(RaimSolver.Solution[0], RaimSolver.Solution[1], RaimSolver.Solution[2]);
+
+		/*WGS84Ellipsoid* wgs84ellmodel;
+		calculated_roverPos.setEllipsoidModel(wgs84ellmodel);*/
+		roverPos.setReferenceFrame(ReferenceFrame::WGS84);
+		calculated_roverPos.setReferenceFrame(ReferenceFrame::WGS84);
+		Position diff;
+
+		diff = roverPos - calculated_roverPos;
+		cout << std::setprecision(7) <<
+			"Position difference: " << diff.getX() << " " << diff.getY() << " " << diff.getZ() << endl;
+		ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
 	}
 	ostrm.close();
 
