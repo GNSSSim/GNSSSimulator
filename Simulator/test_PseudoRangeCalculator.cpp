@@ -62,12 +62,15 @@ int PseudoRangeCalculator_test3(void) {
 	CivilTime civtime(comTime);
 	cout << civtime << endl;
 
+	TrajectoryData roverTraj = test_trajStore.findPosition(traj_time[0]);
+	Position roverPos(roverTraj.pos);
+
 	double out_elevation;
 	SatID testId(1, SatID::systemGPS);
 	for (int i = 1; i <= 32; i++) {
 		testId.id = i;
 		try {
-			cout << "Sat " << i << " is visible? " << psdRangeCalc.isSatVisible(civtime, testId, out_elevation) << " elavation: " << out_elevation << endl;
+			cout << "Sat " << i << " is visible? " << psdRangeCalc.isSatVisible(roverPos,civtime, testId, out_elevation) << " elavation: " << out_elevation << endl;
 		}
 		catch (...) {
 			cout << "Sat " << i << " is visible? " << "false" << endl;
@@ -112,12 +115,15 @@ int PseudoRangeCalculator_test4(void) {
 	CivilTime civtime(comTime);
 	cout << civtime << endl;
 
+	TrajectoryData roverTraj = test_trajStore.findPosition(traj_time[0]);
+	Position firstroverPos(roverTraj.pos);
+
 	double out_elevation;
 	SatID testId(1, SatID::systemGPS);
 	for (int i = 1; i <= 32; i++) {
 		testId.id = i;
 		try {
-			cout << "Sat " << i << " is visible? " << psdRangeCalc.isSatVisible(civtime, testId, out_elevation) << " elavation: " << out_elevation << endl;
+			cout << "Sat " << i << " is visible? " << psdRangeCalc.isSatVisible(firstroverPos, civtime, testId, out_elevation) << " elavation: " << out_elevation << endl;
 		}
 		catch (...) {
 			cout << "Sat " << i << " is visible? " << "false" << endl;
@@ -164,7 +170,11 @@ int PseudoRangeCalculator_test4(void) {
 	calculated_roverPos.setEllipsoidModel(wgs84ellmodel);*/
 	roverPos.setReferenceFrame(ReferenceFrame::WGS84);
 	calculated_roverPos.setReferenceFrame(ReferenceFrame::WGS84);
-	cout << "Position difference: " << roverPos - calculated_roverPos << endl;
+	Position diff;
+
+	diff = roverPos - calculated_roverPos;
+	cout << std::setprecision(7) <<
+	"Position difference: " << diff.getX() << " " << diff.getY() << " " << diff.getZ() << endl;
 
 	ostrm.close();
 
