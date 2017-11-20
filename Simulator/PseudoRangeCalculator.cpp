@@ -115,7 +115,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	CommonTime tx;
 	tx = Tr;
 	double rho;
-
+	
 	GPSWeekSecond gpsweeksecs(Tr);
 	TrajectoryData trajData = trajStore.findPosition(gpsweeksecs);
 	Position roverPos(trajData.pos);
@@ -132,7 +132,6 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		return false;
 	}
 
-         										
 	tx = Tr;
 	PVT = this->getSatXvt(roverPos, tx, satId);
 	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
@@ -218,6 +217,8 @@ bool PseudoRangeCalculator::calcPseudoRangeTrop(const CommonTime Tr, const SatID
 			return false;
 
 		psdrange += CalculateTropModelDelays(roverPos, tx, PVT, tropptr);
+		//psdrange += 200000.0;	//Pseudorange Bias
+
 		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 	}
 
