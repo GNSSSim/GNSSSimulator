@@ -445,6 +445,8 @@ int PseudoRangeCalculator_test7(void) {
 		PRSolution2 RaimSolver;
 		RaimSolver.NSatsReject = 0;
 
+		IonoModel ionoModel;
+		
 		ZeroTropModel zeroTrop;
 		NeillTropModel neillTrop;
 		neillTrop.setReceiverLatitude(recpos.geodeticLatitude());
@@ -455,9 +457,11 @@ int PseudoRangeCalculator_test7(void) {
 		satIdVec.clear();
 		tropDelays.clear();
 
+
 		for (int i = 1; i <= 32; i++) {
 			testId.id = i;
 			if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
+			//if (psdRangeCalc.calcPseudoRange(time_it.convertToCommonTime(), testId, psdrange)) {
 				psdrangeVec.push_back(psdrange);
 				SatID tempid(testId);
 				satIdVec.push_back(tempid);

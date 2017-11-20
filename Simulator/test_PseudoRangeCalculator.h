@@ -2,6 +2,7 @@
 #include "PseudoRangeCalculator.h"
 #include "PRSolution2.hpp"
 #include "PRSolution.hpp"
+#include "IonoModel.hpp"
 
 int PseudoRangeCalculator_test1(void);
 int PseudoRangeCalculator_test2(void);
