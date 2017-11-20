@@ -269,3 +269,115 @@ int PseudoRangeCalculator_test5(void) {
 
 	return returnValue;
 }
+
+int PseudoRangeCalculator_test6(void) {
+	int returnValue = true;
+
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_bigdata.txt";
+	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
+
+	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
+	ofstream ostrm_sattraj("..\\Simulator\\TrajectoryTestFiles\\output_satTrajectory.txt", std::ios::out);
+
+	PseudoRangeCalculator psdRangeCalc;
+	psdRangeCalc.ProcessTrajectoryFile(trajFileNamewPath.c_str());
+	psdRangeCalc.ProcessEphemerisFile(navFileNamewPath.c_str());
+
+
+
+	TrajectoryStream trajFileIn(trajFileNamewPath.c_str()); //("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt");
+	TrajectoryHeader trajHeader;
+	TrajectoryData trajData;
+	TrajectoryStore test_trajStore;
+
+	trajFileIn >> trajHeader;
+
+	while (trajFileIn >> trajData) {
+		try {
+			test_trajStore.addPosition(trajData);
+		}
+		catch (...) {
+			cout << "Reading Trajectory data was not successfull " << endl;
+		}
+	}
+	vector<GPSWeekSecond> traj_time = test_trajStore.listTime();
+
+	CommonTime comTime = traj_time[0].convertToCommonTime();
+	GPSWeekSecond gpsweeksec(comTime);
+	CivilTime civtime(comTime);	
+	CivilTime out_civtime;		//For trajectory output
+	bool out_trajectory_done = 0;
+	
+	double out_elevation;
+	SatID testId(1, SatID::systemGPS);
+
+	vector<double> psdrangeVec;
+	vector<SatID> satIdVec;
+	double psdrange;
+
+	PRSolution2 RaimSolver;
+	RaimSolver.NSatsReject = 0;
+	ZeroTropModel zeroTrop;
+	TropModel *tropModelPtr = &zeroTrop;
+
+	///Beginning of Traj_time iteration
+	for (auto& time_it : traj_time) {
+
+		civtime = time_it;
+		gpsweeksec = civtime.convertToCommonTime();
+		cout << civtime << endl;
+		ostrm << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
+		//ostrm_sattraj << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
+
+		satIdVec.clear();
+		psdrangeVec.clear();
+		for (int i = 1; i <= 32; i++) {
+			testId.id = i;
+			if (psdRangeCalc.calcPseudoRange(civtime.convertToCommonTime(), testId, psdrange)) {
+				psdrangeVec.push_back(psdrange);
+				SatID tempid(testId);
+				satIdVec.push_back(tempid);
+
+				ostrm << tempid << " " << std::setprecision(12) << psdrange << endl;
+				/// Get properly preformatted Trajectory output
+				if (!out_trajectory_done) {
+					for (auto& out_time : traj_time) {
+						out_civtime = out_time;
+						Xvt currpos_log = psdRangeCalc.bceStore.getXvt(testId, out_civtime);
+						ostrm_sattraj << testId.id << " " << std::setprecision(12) << currpos_log.x[0] << " "
+							<< currpos_log.x[1] << " " << currpos_log.x[2] << endl;
+					}				
+				}
+				/// End of Trajectory Log
+			}
+		}
+		out_trajectory_done = 1;
+
+			cout << RaimSolver.RAIMCompute(civtime, satIdVec, psdrangeVec, psdRangeCalc.bceStore, tropModelPtr) << endl;
+			cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
+				std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
+				std::setprecision(12) << RaimSolver.Solution[2] << endl;
+			ostrm << std::setprecision(12) << RaimSolver.Solution[0] << " " << std::setprecision(12) << RaimSolver.Solution[1]
+				<< " " << std::setprecision(12) << RaimSolver.Solution[2] << endl;
+			cout << "Size of sat vector:" << satIdVec.size() << endl;
+			cout << "Number of good satelite are used in the solution: " << RaimSolver.Nsvs << endl;
+
+			CommonTime comTime_temp = civtime.convertToCommonTime();
+			GPSWeekSecond gpsweeksec_temp(comTime_temp);
+			TrajectoryData trajPos = test_trajStore.findPosition(gpsweeksec_temp);
+			Position roverPos = trajPos.pos;
+			Position calculated_roverPos(RaimSolver.Solution[0], RaimSolver.Solution[1], RaimSolver.Solution[2]);
+
+			/*WGS84Ellipsoid* wgs84ellmodel;
+			calculated_roverPos.setEllipsoidModel(wgs84ellmodel);*/
+			roverPos.setReferenceFrame(ReferenceFrame::WGS84);
+			calculated_roverPos.setReferenceFrame(ReferenceFrame::WGS84);
+			cout << "Position difference: " << roverPos - calculated_roverPos << " Abs diff: " <<
+				sqrt(pow((roverPos[0] - calculated_roverPos[0]), 2) + pow((roverPos[1] - calculated_roverPos[1]), 2) + pow((roverPos[2] - calculated_roverPos[2]), 2))
+				<< endl << endl;
+			ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
+	}
+	ostrm.close();
+
+	return true;
+}
