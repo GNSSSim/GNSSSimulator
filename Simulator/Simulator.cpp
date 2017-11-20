@@ -34,7 +34,8 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	//PseudoRangeCalculator_test3();
 	//PseudoRangeCalculator_test4();
 	//PseudoRangeCalculator_test5();
-	PseudoRangeCalculator_test6();
+	//PseudoRangeCalculator_test6();
+	PseudoRangeCalculator_test7();
 	return 0;
 }
 
@@ -370,7 +371,7 @@ int ProcessFiles(void) throw(Exception)
 
 int ProcessTrajectoryFile(void){
 
-	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt");
+	gnsssimulator::TrajectoryStream trajFileIn("..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt");
 	gnsssimulator::TrajectoryHeader trajHeader;
 	gnsssimulator::TrajectoryData trajData;
 
