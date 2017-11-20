@@ -135,14 +135,6 @@ ylabel('Deviance of the navigation solution [m]');
 hold off;
  
 %% Satellite Trajectory Plot
-% figure;
-% plot3(rover_cell(:,3),rover_cell(:,4),rover_cell(:,5),'rx');
-% hold on;
-% for satid_it = 1:Cellsize
-%     if ~isempty(FinalCell{satid_it})
-%         data = FinalCell{satid_it,2};
-%         %posMatrix =
-%     end
-% end
+GNSS_SatTrajectory;
 
 
