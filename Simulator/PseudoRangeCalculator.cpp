@@ -168,6 +168,66 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	return true;
 }
 
+bool PseudoRangeCalculator::calcPseudoRangeTrop(const CommonTime Tr, const SatID satId, double & psdrange, TropModel* tropptr)
+{
+	Xvt PVT;
+	CommonTime tx;
+	tx = Tr;
+	double rho;
+
+	GPSWeekSecond gpsweeksecs(Tr);
+	TrajectoryData trajData = trajStore.findPosition(gpsweeksecs);
+	Position roverPos(trajData.pos);
+	if (&trajData == NULL) {
+		return false;
+	}
+
+	// Here we filter out the sats with low elevation
+	try {
+		PVT = this->getSatXvt(roverPos, Tr, satId);
+	}
+	catch (...) {
+		psdrange = -1;
+		return false;
+	}
+
+
+	tx = Tr;
+	PVT = this->getSatXvt(roverPos, tx, satId);
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+
+	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+
+	for (int i = 0;i < 5; i++) {
+
+		tx = Tr;
+		tx -= psdrange / this->C_MPS;
+		PVT = this->getSatXvt(roverPos, tx, satId);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		rho = (psdrange) / this->C_MPS;
+		this->earthRotationCorrection(rho, &PVT);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		psdrange += CalculateTropModelDelays(roverPos, tx, PVT, tropptr);
+		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	}
+
+
+	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+
+	cout << endl << "next sat " << endl << endl;
+	return true;
+}
+
 void PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, const CommonTime time, const vector<SatID> satVec, TropModel * tropmdl, vector<double>& delays)
 {
 	Xvt satPos;
@@ -175,6 +235,15 @@ void PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, cons
 		satPos = this->getSatXvt(recPos, time, currentSat);
 		delays.push_back(tropmdl->correction(recPos, satPos, time));
 	}
+}
+
+double PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, const CommonTime time, const Xvt satPos, TropModel * tropmdl)
+{
+	double delay;
+
+	delay = tropmdl->correction(recPos, satPos, time);
+
+	return delay;
 }
 
 double PseudoRangeCalculator::calcPseudoRangeNaive(const TrajectoryData trajData, const Xvt PVT) {

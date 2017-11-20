@@ -32,6 +32,7 @@ public:
 	void ProcessEphemerisFile(const char*);
 	bool isSatVisible(const Position, const CommonTime, const SatID, double&);
 	bool calcPseudoRange(const CommonTime, const SatID, double&);
+	bool calcPseudoRangeTrop(const CommonTime, const SatID, double&, TropModel* tropptr);
 	
 
 	double elevationLimitinDegree = 10;
@@ -40,7 +41,7 @@ public:
 	TrajectoryStore trajStore;
 	GPSEphemerisStore bceStore;
 
-	/*Calculate  TropModel Delays
+	/*Calculate  TropModel Delays from outside of the class
 	@Inputs : Position Reciever Position
 			  CommonTime time
 			  vector<SatID> containing the satellites
@@ -48,7 +49,7 @@ public:
 	@output delays: the vector of time delays for each satellite
 	*/
 	void CalculateTropModelDelays(const Position recPos,const CommonTime time,const vector<SatID> satVec,TropModel* tropmdl,vector<double>& delays);
-
+	double CalculateTropModelDelays(const Position recPos, const CommonTime time, const Xvt satPos, TropModel* tropmdl);
 
 private:
 	const double C_MPS = 2.99792458e8;
