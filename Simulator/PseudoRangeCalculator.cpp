@@ -158,7 +158,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		if (psdrange<0)
 			return false;
 
-		cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 	}
 	
 
@@ -166,6 +166,15 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 
 	cout << endl << "next sat "<< endl << endl;
 	return true;
+}
+
+void PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, const CommonTime time, const vector<SatID> satVec, TropModel * tropmdl, vector<double>& delays)
+{
+	Xvt satPos;
+	for (auto& currentSat : satVec) {
+		satPos = this->getSatXvt(recPos, time, currentSat);
+		delays.push_back(tropmdl->correction(recPos, satPos, time));
+	}
 }
 
 double PseudoRangeCalculator::calcPseudoRangeNaive(const TrajectoryData trajData, const Xvt PVT) {

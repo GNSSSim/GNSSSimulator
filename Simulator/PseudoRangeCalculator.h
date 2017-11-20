@@ -17,6 +17,8 @@
 #include "Position.hpp"
 #include "Xvt.hpp"
 
+#include "PRSolution2.hpp"
+
 using namespace gnsssimulator;
 using namespace gpstk;
 
@@ -37,6 +39,16 @@ public:
 	bool isEphemerisRead = false;
 	TrajectoryStore trajStore;
 	GPSEphemerisStore bceStore;
+
+	/*Calculate  TropModel Delays
+	@Inputs : Position Reciever Position
+			  CommonTime time
+			  vector<SatID> containing the satellites
+			  TropModel* pointer for the Model to use
+	@output delays: the vector of time delays for each satellite
+	*/
+	void CalculateTropModelDelays(const Position recPos,const CommonTime time,const vector<SatID> satVec,TropModel* tropmdl,vector<double>& delays);
+
 
 private:
 	const double C_MPS = 2.99792458e8;
