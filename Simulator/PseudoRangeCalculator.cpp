@@ -48,6 +48,16 @@ void PseudoRangeCalculator::ProcessEphemerisFile(const char* fileNamewPath) {
 
 	inavstrm >> Rnavhead;
 
+	try
+	{
+		io = Rnavhead.mapIonoCorr.at("GPSA");
+	}
+	catch (const std::exception&)
+	{
+		cout << "Ionospheric Correction not found." << endl;
+	}
+	
+
 	while (inavstrm >> Rnavdata) {
 		try {
 			bceStore.addEphemeris(Rnavdata);

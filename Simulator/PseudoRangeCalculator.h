@@ -53,6 +53,7 @@ public:
 
 private:
 	const double C_MPS = 2.99792458e8;
+	IonoCorr io;
 	double calcPseudoRangeNaive(const TrajectoryData, const Xvt);
 	bool isSatVisible(const Position, const CommonTime, const SatID, double&, Xvt&);
 	Xvt getSatXvt(const Position, const CommonTime, const SatID);
