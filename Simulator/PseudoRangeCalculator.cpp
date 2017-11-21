@@ -50,7 +50,8 @@ void PseudoRangeCalculator::ProcessEphemerisFile(const char* fileNamewPath) {
 
 	try
 	{
-		io = Rnavhead.mapIonoCorr.at("GPSA");
+		io_a = Rnavhead.mapIonoCorr.at("GPSA");
+		io_b = Rnavhead.mapIonoCorr.at("GPSB");
 	}
 	catch (const std::exception&)
 	{
@@ -69,6 +70,26 @@ void PseudoRangeCalculator::ProcessEphemerisFile(const char* fileNamewPath) {
 	}
 
 	isEphemerisRead = true;
+}
+
+bool PseudoRangeCalculator::getIonoVals(vector<double>& ionovec)
+{
+	try
+	{
+		ionovec.clear();
+		for (int i = 0; i < 4;i++) {
+			ionovec.push_back(io_a.param[i]);
+		}
+		for (int i = 0; i < 4;i++) {
+			ionovec.push_back(io_b.param[i]);
+		}
+		
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
+	return true;
 }
 
 bool PseudoRangeCalculator::isSatVisible(const Position pos,const CommonTime time, const SatID satId, double& elevation) {
@@ -239,6 +260,69 @@ bool PseudoRangeCalculator::calcPseudoRangeTrop(const CommonTime Tr, const SatID
 	return true;
 }
 
+bool PseudoRangeCalculator::calcPseudoRangeTropIono(const CommonTime Tr, const SatID satId, double & psdrange, TropModel* tropptr, IonoModel * ionoptr)
+{
+	Xvt PVT;
+	CommonTime tx;
+	tx = Tr;
+	double rho;
+
+	GPSWeekSecond gpsweeksecs(Tr);
+	TrajectoryData trajData = trajStore.findPosition(gpsweeksecs);
+	Position roverPos(trajData.pos);
+	if (&trajData == NULL) {
+		return false;
+	}
+
+	// Here we filter out the sats with low elevation
+	try {
+		PVT = this->getSatXvt(roverPos, Tr, satId);
+	}
+	catch (...) {
+		psdrange = -1;
+		return false;
+	}
+
+
+	tx = Tr;
+	PVT = this->getSatXvt(roverPos, tx, satId);
+	psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+	if (psdrange<0)
+		return false;
+
+	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+
+	for (int i = 0;i < 5; i++) {
+
+		tx = Tr;
+		tx -= psdrange / this->C_MPS;
+		PVT = this->getSatXvt(roverPos, tx, satId);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		rho = (psdrange) / this->C_MPS;
+		this->earthRotationCorrection(rho, &PVT);
+
+		psdrange = this->calcPseudoRangeNaive(trajData, PVT);
+		if (psdrange<0)
+			return false;
+
+		psdrange += CalculateTropModelDelays(roverPos, tx, PVT, tropptr);
+		psdrange += CalculateIonoModelDelays(tx, roverPos, PVT, IonoModel::Frequency::L1, ionoptr);
+		//psdrange += 200000.0;	//Pseudorange Bias
+
+		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	}
+
+
+	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+
+	cout << endl << "next sat " << endl << endl;
+	return true;
+}
+
 void PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, const CommonTime time, const vector<SatID> satVec, TropModel * tropmdl, vector<double>& delays)
 {
 	Xvt satPos;
@@ -255,6 +339,13 @@ double PseudoRangeCalculator::CalculateTropModelDelays(const Position recPos, co
 	delay = tropmdl->correction(recPos, satPos, time);
 
 	return delay;
+}
+
+double PseudoRangeCalculator::CalculateIonoModelDelays(const CommonTime time, const Position recPos, const Xvt satPos, IonoModel::Frequency freq,IonoModel* ionoptr)
+{
+	double ionodelay;
+	ionodelay = ionoptr->getCorrection(time, recPos, recPos.elevation(satPos.x), recPos.azimuth(satPos.x), freq);
+	return ionodelay;
 }
 
 double PseudoRangeCalculator::calcPseudoRangeNaive(const TrajectoryData trajData, const Xvt PVT) {

@@ -18,6 +18,7 @@
 #include "Xvt.hpp"
 
 #include "PRSolution2.hpp"
+#include "IonoModel.hpp"
 
 using namespace gnsssimulator;
 using namespace gpstk;
@@ -30,10 +31,12 @@ public:
 
 	void ProcessTrajectoryFile(const char*);
 	void ProcessEphemerisFile(const char*);
+	bool getIonoVals(vector<double>& );
 	bool isSatVisible(const Position, const CommonTime, const SatID, double&);
 	bool calcPseudoRange(const CommonTime, const SatID, double&);
 	bool calcPseudoRangeTrop(const CommonTime, const SatID, double&, TropModel* tropptr);
-	
+	bool calcPseudoRangeTropIono(const CommonTime, const SatID, double&, TropModel* tropptr,IonoModel* ionoptr);
+
 
 	double elevationLimitinDegree = 10;
 	bool isTrajectoryRead = false;
@@ -50,10 +53,11 @@ public:
 	*/
 	void CalculateTropModelDelays(const Position recPos,const CommonTime time,const vector<SatID> satVec,TropModel* tropmdl,vector<double>& delays);
 	double CalculateTropModelDelays(const Position recPos, const CommonTime time, const Xvt satPos, TropModel* tropmdl);
-
+	double CalculateIonoModelDelays(const CommonTime time, const Position recPos, const Xvt satPos, IonoModel::Frequency freq, IonoModel* ionoptr);
+	
 private:
 	const double C_MPS = 2.99792458e8;
-	IonoCorr io;
+	IonoCorr io_a, io_b;
 	double calcPseudoRangeNaive(const TrajectoryData, const Xvt);
 	bool isSatVisible(const Position, const CommonTime, const SatID, double&, Xvt&);
 	Xvt getSatXvt(const Position, const CommonTime, const SatID);
