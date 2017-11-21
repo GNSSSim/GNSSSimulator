@@ -17,6 +17,6 @@ int PseudoRangeCalculator_test6(void);
 /* Proper iteration method, erorrs are -e09, base is test4. Test7 includes proper
 	output logging to work with the Matlab
 	evaluation scripts. Another addition is the initial TropModel Error
-	Additions, for testing.
+	and Iono corr.
 */
 int PseudoRangeCalculator_test7(void);

@@ -431,6 +431,7 @@ int PseudoRangeCalculator_test7(void) {
 		vector<double> psdrangeVec;
 		vector<SatID> satIdVec;
 		vector<double> tropDelays;
+		vector<double> ionoParams;
 		double psdrange;
 
 		ostrm << "Epoch " << gpsweeksec.week << " " << std::setprecision(12) << gpsweeksec.sow << endl;
@@ -446,9 +447,13 @@ int PseudoRangeCalculator_test7(void) {
 		RaimSolver.NSatsReject = 0;
 
 		IonoModel ionoModel;
+		psdRangeCalc.getIonoVals(ionoParams);	//Put the 4 Ion values into the vector
+		ionoModel.setModel(ionoParams.data(), ionoParams.data() + 4);
 		
-		ZeroTropModel zeroTrop;
-		NeillTropModel neillTrop;
+		
+		
+		ZeroTropModel zeroTrop;			// Null Tropospheric Model
+		NeillTropModel neillTrop;		//Basic Neill Tropospheric Model
 		neillTrop.setReceiverLatitude(recpos.geodeticLatitude());
 		neillTrop.setReceiverHeight(25.0);
 		neillTrop.setDayOfYear(civtime);
@@ -460,7 +465,8 @@ int PseudoRangeCalculator_test7(void) {
 
 		for (int i = 1; i <= 32; i++) {
 			testId.id = i;
-			if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
+			//if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
+			if (psdRangeCalc.calcPseudoRangeTropIono(time_it.convertToCommonTime(), testId, psdrange, &neillTrop,&ionoModel)) {
 			//if (psdRangeCalc.calcPseudoRange(time_it.convertToCommonTime(), testId, psdrange)) {
 				psdrangeVec.push_back(psdrange);
 				SatID tempid(testId);
@@ -478,6 +484,7 @@ int PseudoRangeCalculator_test7(void) {
 		TropModel *tropModelPtr = &neillTrop;
 		//psdRangeCalc.CalculateTropModelDelays(recpos, comTime_temp, satIdVec, &neillTrop, tropDelays);
 		
+
 		cout << RaimSolver.RAIMCompute(civtime, satIdVec, psdrangeVec, psdRangeCalc.bceStore, tropModelPtr) << endl;
 		cout << std::setprecision(12) << RaimSolver.Solution[0] << " " <<
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
