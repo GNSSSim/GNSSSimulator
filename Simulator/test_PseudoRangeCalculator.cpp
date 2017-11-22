@@ -386,7 +386,8 @@ int PseudoRangeCalculator_test6(void) {
 int PseudoRangeCalculator_test7(void) {
 	int returnValue = true;
 
-	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
+	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_movingcoords_llh.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
@@ -506,7 +507,7 @@ int PseudoRangeCalculator_test7(void) {
 		diff = roverPos - calculated_roverPos;
 		cout << std::setprecision(7) <<
 			"Position difference: " << diff.getX() << " " << diff.getY() << " " << diff.getZ() << endl;
-		ostrm << "Rover " << roverPos[0] << " " << roverPos[1] << " " << roverPos[2] << endl;
+		ostrm << "Rover " << roverPos.asECEF()[0] << " " << roverPos.asECEF()[1] << " " << roverPos.asECEF()[2] << endl;
 	}
 	ostrm.close();
 
