@@ -115,6 +115,9 @@ for satid_it = 1:Cellsize
         plot(timematrix(:,2),datavector,'x-','DisplayName',graphlegend,'color',rand(1,3))
         hold all;
         legend('-DynamicLegend','location','best');
+        
+        text(timematrix(end,2),datavector(end),graphlegend);       
+        text(timematrix(1,2),datavector(1),graphlegend,'HorizontalAlignment','right');
     end
 end
 ylabel('Pseudorange [m]');

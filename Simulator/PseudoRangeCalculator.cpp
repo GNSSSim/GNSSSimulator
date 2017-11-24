@@ -169,7 +169,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 	if (psdrange<0)
 		return false;
 
-	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 
 	for( int i = 0;i < 5; i++){
 
@@ -194,7 +194,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 
-	cout << endl << "next sat "<< endl << endl;
+	//cout << endl << "next sat "<< endl << endl;
 	return true;
 }
 
@@ -228,7 +228,7 @@ bool PseudoRangeCalculator::calcPseudoRangeTrop(const CommonTime Tr, const SatID
 	if (psdrange<0)
 		return false;
 
-	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 
 	for (int i = 0;i < 5; i++) {
 
@@ -256,7 +256,7 @@ bool PseudoRangeCalculator::calcPseudoRangeTrop(const CommonTime Tr, const SatID
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 
-	cout << endl << "next sat " << endl << endl;
+	//cout << endl << "next sat " << endl << endl;
 	return true;
 }
 
@@ -290,7 +290,7 @@ bool PseudoRangeCalculator::calcPseudoRangeTropIono(const CommonTime Tr, const S
 	if (psdrange<0)
 		return false;
 
-	cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 
 	for (int i = 0;i < 5; i++) {
 
@@ -319,7 +319,7 @@ bool PseudoRangeCalculator::calcPseudoRangeTropIono(const CommonTime Tr, const S
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
 
-	cout << endl << "next sat " << endl << endl;
+	//cout << endl << "next sat " << endl << endl;
 	return true;
 }
 
