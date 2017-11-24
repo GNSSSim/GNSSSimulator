@@ -82,7 +82,7 @@ namespace gnsssimulator
 		try
 		{
 			gpsTime.week = asInt(currentLine.substr(0, 4));
-			gpsTime.sow = asDouble(currentLine.substr(7, 7));
+			gpsTime.sow = asDouble(currentLine.substr(6, 7));
 		
 		}
 		catch (std::exception &e)
