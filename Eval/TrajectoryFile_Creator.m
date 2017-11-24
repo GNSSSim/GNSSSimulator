@@ -18,22 +18,22 @@ coorSys = 1;
 %   GPS WEEK
 start_gpswk = 1966;
 %   GPS SOW
-start_gpssow = 4410;
+start_gpssow = 30000;         %600
 % End Time
 %   GPS WEEK
 end_gpswk = 1966;
 %   GPS SOW
-end_gpssow = 86310;
+end_gpssow = 60000;         % 86310
 
 % Epoch interval [s]
 epoch_delta = 10;
 
-% Delta-Coordinate
+% Delta-Coordinate , 
 if coorSys == 1
-    latitude = 0;
-    delta_lat = 0.1;
-    longitude = 0;
-    delta_long = 0.1;
+    latitude = -37.868768;
+    delta_lat = 0;
+    longitude = 145.124401;
+    delta_long = 0;
     height = 0;
     delta_height = 0;
 elseif coorSys == 0
@@ -59,7 +59,7 @@ lines = (end_gpssow - start_gpssow)/epoch_delta; % For 1 GPSWeek currently
 sow = start_gpssow;
 for i = 1:lines
     gpswk = start_gpswk;
-    epoch_data = sprintf('%u  %5u   ',gpswk,sow);
+    epoch_data = sprintf('%u  %5u    ',gpswk,sow);
     coor_data = sprintf('%10.7f   %10.7f   %10.7f',latitude,longitude,height);
     
     sow = sow+epoch_delta;
