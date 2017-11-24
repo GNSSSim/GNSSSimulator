@@ -385,9 +385,11 @@ int PseudoRangeCalculator_test6(void) {
 
 int PseudoRangeCalculator_test7(void) {
 	int returnValue = true;
+	bool outputfail = false;
 
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
-	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_movingcoords_llh.txt";
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_Generated_Fullday.txt";
+	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_moovingcoords_llh.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
 	ofstream ostrm("..\\Simulator\\TrajectoryTestFiles\\output_RaimSolution_test.txt", std::ios::out);	//Output file
@@ -479,7 +481,10 @@ int PseudoRangeCalculator_test7(void) {
 				/// End of Logging
 			}
 		}
-			
+		if (satIdVec.size() == 0) {
+			cout << "Satellite vector contains 0 satellites. Skipping Epoch!" << endl;
+			continue;
+		}
 
 		//TropModel *tropModelPtr = &zeroTrop;
 		TropModel *tropModelPtr = &neillTrop;
@@ -491,7 +496,7 @@ int PseudoRangeCalculator_test7(void) {
 			std::setprecision(12) << RaimSolver.Solution[1] << "  " <<
 			std::setprecision(12) << RaimSolver.Solution[2] << endl;
 		ostrm << std::setprecision(20) << RaimSolver.Solution[0] << " " << std::setprecision(20) << RaimSolver.Solution[1]
-			<< " " << std::setprecision(20) << RaimSolver.Solution[2] << endl;
+				<< " " << std::setprecision(20) << RaimSolver.Solution[2] << endl;
 		cout << "Size of sat vector:" << satIdVec.size() << endl;
 		cout << "Number of good satelite are used in the solution: " << RaimSolver.Nsvs << endl;
 
