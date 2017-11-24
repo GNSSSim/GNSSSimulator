@@ -1,5 +1,6 @@
 %% GNSS Simulator Data Evaluator 0.1
-% Plots the Pseudorange and Navigation solution deviaton.
+% Plots the Pseudorange and Navigation solution deviaton
+% from the output of the GNSSSIM program.
 %% Important variables: 
 %   navsol_cell     Navigation Solution for each epoch
 %   rover_cell      Rover position for each epoch
@@ -111,8 +112,8 @@ for satid_it = 1:Cellsize
         datavector = data(:,3);
         
         graphlegend = sprintf('PRN: %d',satid_it);
-        plot(timematrix(:,2),datavector,'x-','DisplayName',graphlegend)
-        hold on;
+        plot(timematrix(:,2),datavector,'x','DisplayName',graphlegend,'color',rand(1,3))
+        hold all;
         legend('-DynamicLegend','location','best');
     end
 end
