@@ -106,7 +106,7 @@ namespace gnsssimulator
 			this->pos = this->pos.transformTo(this->coorSys);
 
 		}
-		catch (std::exception &e)
+		catch (gpstk::GeometryException &e)
 		{
 			gpstk::FFStreamError err("std::exception: " +
 				string(e.what()));
