@@ -112,7 +112,7 @@ for satid_it = 1:Cellsize
         datavector = data(:,3);
         
         graphlegend = sprintf('PRN: %d',satid_it);
-        plot(timematrix(:,2),datavector,'x','DisplayName',graphlegend,'color',rand(1,3))
+        plot(timematrix(:,2),datavector,'x-','DisplayName',graphlegend,'color',rand(1,3))
         hold all;
         legend('-DynamicLegend','location','best');
     end
