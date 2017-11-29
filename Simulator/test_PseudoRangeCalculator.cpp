@@ -468,9 +468,9 @@ int PseudoRangeCalculator_test7(void) {
 
 		for (int i = 1; i <= 32; i++) {
 			testId.id = i;
-			if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
+			//if (psdRangeCalc.calcPseudoRangeTrop(time_it.convertToCommonTime(), testId, psdrange,&neillTrop)) {
 			//if (psdRangeCalc.calcPseudoRangeTropIono(time_it.convertToCommonTime(), testId, psdrange, &neillTrop,&ionoModel)) {
-			//if (psdRangeCalc.calcPseudoRange(time_it.convertToCommonTime(), testId, psdrange)) {
+			if (psdRangeCalc.calcPseudoRange(time_it.convertToCommonTime(), testId, psdrange)) {
 				psdrangeVec.push_back(psdrange);
 				SatID tempid(testId);
 				satIdVec.push_back(tempid);
@@ -486,8 +486,8 @@ int PseudoRangeCalculator_test7(void) {
 			continue;
 		}
 
-		//TropModel *tropModelPtr = &zeroTrop;
-		TropModel *tropModelPtr = &neillTrop;
+		TropModel *tropModelPtr = &zeroTrop;
+		//TropModel *tropModelPtr = &neillTrop;
 		//psdRangeCalc.CalculateTropModelDelays(recpos, comTime_temp, satIdVec, &neillTrop, tropDelays);
 		
 
