@@ -170,6 +170,9 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		return false;
 
 	//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+	
+	extern std::default_random_engine generator;	// Definition in Simulator.cpp
+	extern std::normal_distribution<double> dist;	// Definition in Simulator.cpp
 
 	for( int i = 0;i < 5; i++){
 
@@ -188,11 +191,16 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		if (psdrange<0)
 			return false;
 
+		double noise = dist(generator);
+		psdrange += noise;
 		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 	}
 	
 
 	psdrange = psdrange - C_MPS * (PVT.clkbias + PVT.relcorr);
+
+	
+	
 
 	//cout << endl << "next sat "<< endl << endl;
 	return true;
