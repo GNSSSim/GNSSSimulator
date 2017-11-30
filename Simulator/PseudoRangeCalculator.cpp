@@ -171,6 +171,7 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 
 	//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
 	
+	///Extern definitions for Gaussian errors
 	extern std::default_random_engine generator;	// Definition in Simulator.cpp
 	extern std::normal_distribution<double> dist;	// Definition in Simulator.cpp
 
@@ -191,9 +192,14 @@ bool PseudoRangeCalculator::calcPseudoRange(const CommonTime Tr, const SatID sat
 		if (psdrange<0)
 			return false;
 
-		double noise = dist(generator);
-		psdrange += noise;
-		//cout << std::setprecision(20) << "travel time: " << (psdrange) / this->C_MPS << endl;
+		///----- Additional Errors 
+		if (this->isTropModelSet)
+			psdrange += this->trpmdl->correction(roverPos, PVT, tx);
+		if (this->isIonoModelSet)
+			psdrange += this->ionomdl->getCorrection(tx, roverPos, roverPos.elevation(PVT.x), 
+				roverPos.azimuth(PVT.x), IonoModel::Frequency::L1);
+		if (this->isNormalDistSet)
+			psdrange += dist(generator);
 	}
 	
 
@@ -354,6 +360,49 @@ double PseudoRangeCalculator::CalculateIonoModelDelays(const CommonTime time, co
 	double ionodelay;
 	ionodelay = ionoptr->getCorrection(time, recPos, recPos.elevation(satPos.x), recPos.azimuth(satPos.x), freq);
 	return ionodelay;
+}
+
+void PseudoRangeCalculator::setTropModel(TropModel * trpmdl)
+{
+	if (typeid(ZeroTropModel) == typeid(trpmdl) || trpmdl == nullptr)
+	{
+		this->isTropModelSet = false;
+		this->trpmdl = nullptr;
+	}
+	else {
+		this->trpmdl = trpmdl;
+		this->isTropModelSet = true;
+	}
+}
+
+void PseudoRangeCalculator::setIonoModel(IonoModel * ionomdl)
+{
+	if (ionomdl == nullptr)
+	{
+		this->isIonoModelSet = false;
+		this->ionomdl = nullptr;
+	}
+	else {
+		this->ionomdl = ionomdl;
+		this->isIonoModelSet = true;
+	}
+}
+
+void PseudoRangeCalculator::setNormalDIstError(double mean, double sigma)
+{
+	if (mean != NULL && sigma != NULL) {
+		extern std::normal_distribution<double> dist;	// Definition in Simulator.cpp
+
+		dist.param(std::normal_distribution<double>::param_type(mean, sigma));
+	}
+}
+
+TropModel * PseudoRangeCalculator::getTropModel()
+{
+	if (this->isTropModelSet)
+		return this->trpmdl;
+	else
+		return nullptr;
 }
 
 double PseudoRangeCalculator::calcPseudoRangeNaive(const TrajectoryData trajData, const Xvt PVT) {

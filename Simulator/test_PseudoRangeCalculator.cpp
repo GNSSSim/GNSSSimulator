@@ -465,6 +465,11 @@ int PseudoRangeCalculator_test7(void) {
 		satIdVec.clear();
 		tropDelays.clear();
 
+		///Psdrangecalc model and error config
+		psdRangeCalc.setTropModel(&neillTrop);
+		psdRangeCalc.setIonoModel(nullptr);
+		psdRangeCalc.setNormalDIstError(NULL,NULL);
+		/// Error config end
 
 		for (int i = 1; i <= 32; i++) {
 			testId.id = i;
@@ -486,8 +491,13 @@ int PseudoRangeCalculator_test7(void) {
 			continue;
 		}
 
-		TropModel *tropModelPtr = &zeroTrop;
+		//TropModel *tropModelPtr = &zeroTrop;
 		//TropModel *tropModelPtr = &neillTrop;
+		TropModel *tropModelPtr;
+		if (psdRangeCalc.getTropModel() != nullptr)
+			tropModelPtr = &neillTrop;
+		else
+			tropModelPtr = &zeroTrop;
 		//psdRangeCalc.CalculateTropModelDelays(recpos, comTime_temp, satIdVec, &neillTrop, tropDelays);
 		
 
