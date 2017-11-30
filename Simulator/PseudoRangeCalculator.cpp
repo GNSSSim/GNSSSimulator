@@ -390,11 +390,13 @@ void PseudoRangeCalculator::setIonoModel(IonoModel * ionomdl)
 
 void PseudoRangeCalculator::setNormalDIstError(double mean, double sigma)
 {
-	if (mean != NULL && sigma != NULL) {
+	if (mean != NULL || sigma != NULL) {
 		extern std::normal_distribution<double> dist;	// Definition in Simulator.cpp
-
+		this->isNormalDistSet = true;
 		dist.param(std::normal_distribution<double>::param_type(mean, sigma));
 	}
+	else
+		this->isNormalDistSet = false;
 }
 
 TropModel * PseudoRangeCalculator::getTropModel()

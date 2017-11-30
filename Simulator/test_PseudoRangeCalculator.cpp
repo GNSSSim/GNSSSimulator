@@ -466,9 +466,9 @@ int PseudoRangeCalculator_test7(void) {
 		tropDelays.clear();
 
 		///Psdrangecalc model and error config
-		psdRangeCalc.setTropModel(&neillTrop);
+		psdRangeCalc.setTropModel(nullptr);				//&neillTrop,&zeroTrop
 		psdRangeCalc.setIonoModel(nullptr);
-		psdRangeCalc.setNormalDIstError(NULL,NULL);
+		psdRangeCalc.setNormalDIstError(0.0,5.0);
 		/// Error config end
 
 		for (int i = 1; i <= 32; i++) {
