@@ -388,7 +388,8 @@ int PseudoRangeCalculator_test7(void) {
 	bool outputfail = false;
 
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
-	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_Generated_Fullday.txt";
+	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_Generated_Fullday.txt";
+	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_movingcoords_llh_handpicked.txt";
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt";
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_moovingcoords_llh.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
@@ -451,7 +452,7 @@ int PseudoRangeCalculator_test7(void) {
 		RaimSolver.NSatsReject = 0;
 
 		IonoModel ionoModel;
-		psdRangeCalc.getIonoVals(ionoParams);	//Put the 4 Ion values into the vector
+		psdRangeCalc.getIonoVals(ionoParams);	//Put the 4+4 Ion values into the vector
 		ionoModel.setModel(ionoParams.data(), ionoParams.data() + 4);		//.data() tömb pointert ad vissza a vektorból
 		
 		
@@ -469,7 +470,7 @@ int PseudoRangeCalculator_test7(void) {
 		///Psdrangecalc model and error config
 		psdRangeCalc.setTropModel(&neillTrop);				//&neillTrop,&zeroTrop,nullptr
 		psdRangeCalc.setIonoModel(&ionoModel);
-		psdRangeCalc.setNormalDIstError(0.0,0.0);
+		psdRangeCalc.setNormalDIstError(0.0,1.5);
 		/// Error config end
 
 		for (int i = 1; i <= 32; i++) {
