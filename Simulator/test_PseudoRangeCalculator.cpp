@@ -389,6 +389,7 @@ int PseudoRangeCalculator_test7(void) {
 
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_long.txt";
 	string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_Generated_Fullday.txt";
+	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_RinexMatch_rinexcoord_only1.txt";
 	//string trajFileNamewPath = "..\\Simulator\\TrajectoryTestFiles\\TrajectoryFileExample_moovingcoords_llh.txt";
 	string navFileNamewPath("..\\SimulatorTest\\TestFiles\\RINEX_nav\\brdc2530.17n");
 
@@ -451,7 +452,7 @@ int PseudoRangeCalculator_test7(void) {
 
 		IonoModel ionoModel;
 		psdRangeCalc.getIonoVals(ionoParams);	//Put the 4 Ion values into the vector
-		ionoModel.setModel(ionoParams.data(), ionoParams.data() + 4);
+		ionoModel.setModel(ionoParams.data(), ionoParams.data() + 4);		//.data() tömb pointert ad vissza a vektorból
 		
 		
 		
@@ -466,9 +467,9 @@ int PseudoRangeCalculator_test7(void) {
 		tropDelays.clear();
 
 		///Psdrangecalc model and error config
-		psdRangeCalc.setTropModel(nullptr);				//&neillTrop,&zeroTrop
-		psdRangeCalc.setIonoModel(nullptr);
-		psdRangeCalc.setNormalDIstError(0.0,5.0);
+		psdRangeCalc.setTropModel(&neillTrop);				//&neillTrop,&zeroTrop,nullptr
+		psdRangeCalc.setIonoModel(&ionoModel);
+		psdRangeCalc.setNormalDIstError(0.0,0.0);
 		/// Error config end
 
 		for (int i = 1; i <= 32; i++) {
@@ -491,13 +492,14 @@ int PseudoRangeCalculator_test7(void) {
 			continue;
 		}
 
-		//TropModel *tropModelPtr = &zeroTrop;
+		TropModel *tropModelPtr = &zeroTrop;
 		//TropModel *tropModelPtr = &neillTrop;
-		TropModel *tropModelPtr;
+		/*TropModel *tropModelPtr;
 		if (psdRangeCalc.getTropModel() != nullptr)
 			tropModelPtr = &neillTrop;
 		else
 			tropModelPtr = &zeroTrop;
+		*/
 		//psdRangeCalc.CalculateTropModelDelays(recpos, comTime_temp, satIdVec, &neillTrop, tropDelays);
 		
 
@@ -521,7 +523,8 @@ int PseudoRangeCalculator_test7(void) {
 
 		diff = roverPos - calculated_roverPos;
 		cout << std::setprecision(7) <<
-			"Position difference: " << diff.getX() << " " << diff.getY() << " " << diff.getZ() << endl;
+			"Position difference: " << diff.getX() << " " << diff.getY() << " " << diff.getZ() << " Abs: " <<
+			sqrt(pow(diff.getX(), 2) + pow(diff.getY(), 2) + pow(diff.getZ(), 2)) << endl;
 		ostrm << "Rover " << roverPos.asECEF()[0] << " " << roverPos.asECEF()[1] << " " << roverPos.asECEF()[2] << endl;
 	}
 	ostrm.close();

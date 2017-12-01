@@ -28,7 +28,7 @@ typedef pair<Triple, SatDataEpoch> SolutionDataBlock;
 
 /// Normal Distribution Error
 std::default_random_engine generator(time(0));
-std::normal_distribution<double> dist(0.0, 0.001);
+std::normal_distribution<double> dist(0.0, 0.0);
 
 int _tmain(int argc, _TCHAR* argv[]) {
 
