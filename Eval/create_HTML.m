@@ -125,7 +125,7 @@ function create_HTML(varargin)
     % Collect Lat Lon Tuples for Polyline plot
     for c=1:(nargin-1)/2
         fprintf(fid,sprintf('var coord%i = [',c));
-        for l=1:(length(varargin{c+1}))-1
+        for l=1:ln
             try
             fprintf(fid,'new google.maps.LatLng(%10.8f, %10.8f),\n',varargin{c+1}(l,1),varargin{c+1}(l,2));      
             end
