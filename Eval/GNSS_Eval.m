@@ -139,6 +139,68 @@ ylabel('Deviance of the navigation solution [m]');
 hold off;
  
 %% Satellite Trajectory Plot
-GNSS_SatTrajectory;
+%GNSS_SatTrajectory;
 
 
+%% Plot per-axis Deviance
+wgs84 = wgs84Ellipsoid('meter');
+[reflat reflon refh] = ecef2geodetic(wgs84,rover_cell(:,3),rover_cell(:,4),rover_cell(:,5));
+[calclat calclon calch] = ecef2geodetic(wgs84,navsol_cell(:,3),navsol_cell(:,4),navsol_cell(:,5));
+
+
+figure;
+subplot(2,2,1);
+plot(navsol_cell(:,2),abs(rover_cell(:,3)-navsol_cell(:,3)))
+xlabel('GPS SOW');
+ylabel('Deviance [m]');
+title('X coordinate Deviation');
+
+subplot(2,2,2);
+plot(navsol_cell(:,2),abs(rover_cell(:,4)-navsol_cell(:,4)))
+xlabel('GPS SOW');
+ylabel('Deviance [m]');
+title('Y coordinate Deviation');
+
+subplot(2,2,3);
+plot(navsol_cell(:,2),abs(rover_cell(:,5)-navsol_cell(:,5)))
+xlabel('GPS SOW');
+ylabel('Deviance [m]');
+title('Z coordinate Deviation');
+
+figure;
+subplot(2,2,1);
+plot(navsol_cell(:,2),abs(reflat-calclat));
+title('Latitude deviation');
+
+subplot(2,2,2);
+plot(navsol_cell(:,2),abs(reflon-calclon));
+title('Longitude deviation');
+
+subplot(2,2,3);
+plot(navsol_cell(:,2),abs(refh-calch));
+title('Height deviation');
+
+
+%% Create HTML Plot
+
+html_name = 'EVAL_HhtmlPlot';
+file.name = html_name;
+file.mode = [file.name,'_w_kinematic_reference'];  %_w_kinematic_reference , _w_static_reference
+
+% Convert GPS Time
+wk = rover_cell(:,1);
+sow = rover_cell(:,2);
+dow = sow/86400;
+hr = floor(24 * (dow - floor(dow)));
+min = rem(24 * (dow - floor(dow)),1)*60;
+sec = rem(min,1)*60;
+min = floor(min);
+sec = round(sec);
+
+%  create_HTML(    outFileStatic, [lat_kf lon_kf hours minutes seconds],     ...
+%                                      [lat_lsq lon_lsq hours minutes seconds],   ...
+%                                      [lat_ref_ lon_ref_ hours_common minutes_common seconds_common],'KF','LSQ','Static_Reference')
+create_HTML(file,[reflat reflon hr min sec],...
+                        [calclat calclon hr min sec],...
+                        'Reference','Calculated');
+winopen([file.name,'.html']);
